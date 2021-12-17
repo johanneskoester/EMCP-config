@@ -1,0 +1,10 @@
+
+- name: ensure mountflags are shared
+  ansible.builtin.copy:
+    src: mount-flags.conf
+    dest: /etc/systemd/system/docker.service.d/mount-flags.conf
+    owner: root
+    group: root
+    mode: 0644
+  become: true
+  notify: reload docker daemon

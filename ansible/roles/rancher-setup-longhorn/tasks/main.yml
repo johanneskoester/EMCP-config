@@ -1,0 +1,14 @@
+
+- name: setup docker for usage with longhorn
+  block:
+    - include_tasks: docker_config.yml
+  tags:
+    - rancher-setup-longhorn
+    - longhorn-docker
+
+- name: setup prerequisites fro longhorn
+  block:
+    - include_tasks: install_longhorn.yml
+  tags:
+    - rancher-setup-longhorn
+    - longhorn-install
