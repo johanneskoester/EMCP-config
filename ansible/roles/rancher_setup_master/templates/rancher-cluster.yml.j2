@@ -1,0 +1,17 @@
+cluster_name: {{ rancher_cluster_name }}
+ssh_key_path: /home/{{ rancher_user }}/.ssh/ikimk8s_rsa
+nodes:
+{% for rancher_node in groups['rancher'] %}
+  - address: {{ rancher_node }}
+    user: {{ rancher_user }}
+    role:
+      - controlplane
+      - etcd
+      - worker
+{% endfor %}
+
+services:
+  etcd:
+    backup_config:
+      interval_hours: 12
+      retention: 6

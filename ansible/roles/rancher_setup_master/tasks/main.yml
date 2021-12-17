@@ -1,0 +1,7 @@
+
+- name: install rancher
+  block:
+    - include_tasks: install_rancher.yml
+  tags:
+    - rancher
+    - rancher_install

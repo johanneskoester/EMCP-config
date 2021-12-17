@@ -1,0 +1,194 @@
+# per https://rancher.com/docs/rancher/v2.x/en/installation/install-rancher-on-linux/
+# see also:
+# https://rancher.com/docs/rancher/v2.x/en/installation/other-installation-methods/behind-proxy/launch-kubernetes/
+# setup rancherD
+
+- name: Check if kubectl is installed
+  ansible.builtin.command: kubectl version
+  changed_when: false
+  failed_when: false
+  register: ret_kubectl_version
+
+- name: get current stable kubectl version
+  ansible.builtin.uri:
+    url: https://storage.googleapis.com/kubernetes-release/release/stable.txt
+    return_content: true
+    use_proxy: true
+  environment: "{{ proxy_env | default({}) }}"
+  register: ret_kubernetes_stable_release
+
+- name: download current kubectl version
+  ansible.builtin.get_url:
+    url: "https://storage.googleapis.com/kubernetes-release/release/{{ ret_kubernetes_stable_release.content }}/bin/linux/amd64/kubectl"
+    dest: /usr/local/bin/kubectl
+    mode: 0755
+    owner: root
+    group: root
+    use_proxy: true
+  environment: "{{ proxy_env | default({}) }}"
+  become: true
+  when: ret_kubectl_version.rc>1
+
+- name: check if rke is installed
+  ansible.builtin.command: rke --version
+  changed_when: false
+  failed_when: false
+  register: ret_rke_version
+
+- name: download RKE
+  get_url:
+    url: "https://github.com/rancher/rke/releases/download/v{{ rancher_rke_version }}/rke_linux-amd64"
+    dest: /usr/local/bin/rke
+    mode: 0755
+    owner: root
+    group: root
+    use_proxy: true
+  environment: "{{ proxy_env | default({}) }}"
+  when: ret_rke_version.rc>1
+  become: true
+  tags: rancher
+
+- name: check if helm is installed
+  ansible.builtin.command: helm version
+  changed_when: false
+  failed_when: false
+  register: ret_helm_version
+
+- name: download helm installer
+  get_url:
+    url: https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
+    dest: /tmp/get_helm.sh
+    mode: 0755
+    use_proxy: true
+  environment: "{{ proxy_env | default({}) }}"
+  when: ret_helm_version.rc>1
+  tags: rancher
+
+- name: install helm
+  ansible.builtin.shell: bash /tmp/get_helm.sh
+  environment: "{{ proxy_env | default({}) }}"
+  when: ret_helm_version.rc>1
+  tags: rancher
+
+- name: Create systemd docker config directory
+  file:
+    path: /etc/rancher/rke2
+    owner: root
+    group: root
+    mode: 0755
+    state: directory
+  become: true
+
+- name: write rancher cluster config
+  ansible.builtin.template:
+    src: rancher-cluster.yml.j2
+    dest: "/etc/rancher/{{ rancher_cluster_config_name }}.yml"
+    mode: 0755
+    owner: root
+    group: root
+  become: true
+
+- name: write private key to host for provisioning
+  ansible.builtin.copy:
+    content: "{{ k8s_rsa_private_key }}"
+    dest: ~/.ssh/k8s_rsa
+    mode: 0600
+
+- name: create rke cluster if it does not already exist
+  ansible.builtin.command: 
+    cmd: "rke up -q --config /etc/rancher/{{ rancher_cluster_config_name }}.yml"
+    creates: "/etc/rancher/{{ rancher_cluster_config_name }}.rkestate"
+  become: true
+
+- name: install dependencies to use the pip module
+  ansible.builtin.apt:
+    name:
+      - python3-pip
+      - python3-virtualenv
+      - python3-setuptools
+    state: present
+  become: true
+
+- name: install python kubernetes client using pip
+  ansible.builtin.pip:
+    name: kubernetes
+  environment: "{{ proxy_env | default({}) }}"
+  become: true
+
+- name: add jetstack helm repo
+  kubernetes.core.helm_repository:
+    name: jetstack
+    repo_url: https://charts.jetstack.io
+  environment: "{{ proxy_env | default({}) }}"
+  become: true
+
+- name: Create the cert-manager namespace
+  kubernetes.core.k8s:
+    name: cert-manager
+    api_version: v1
+    kind: Namespace
+    kubeconfig: "/etc/rancher/kube_config_{{ rancher_cluster_config_name }}.yml"
+    state: present
+  become: true
+
+- name: Download cert-manager CRD
+  ansible.builtin.get_url:
+    url: "https://github.com/jetstack/cert-manager/releases/download/v{{ rancher_cert_manager_version }}/cert-manager.crds.yaml"
+    dest: /tmp/cert-manager-crd.yml
+    mode: 0644
+  environment: "{{ proxy_env | default({}) }}"
+
+- name: Apply the cert-manager CRD
+  kubernetes.core.k8s:
+    src: /tmp/cert-manager-crd.yml
+    kubeconfig: "/etc/rancher/kube_config_{{ rancher_cluster_config_name }}.yml"
+    state: present
+  become: true
+
+- name: install helm-diff plugin for better idempotency
+  kubernetes.core.helm_plugin:
+    plugin_path: "https://github.com/databus23/helm-diff"
+    kubeconfig: "/etc/rancher/kube_config_{{ rancher_cluster_config_name }}.yml"
+    state: present
+  environment: "{{ proxy_env | default({}) }}"
+
+- name: install cert-manager
+  kubernetes.core.helm:
+    release_name: cert-manager
+    release_namespace: cert-manager
+    chart_ref: jetstack/cert-manager
+    chart_version: "{{ rancher_cert_manager_version }}"
+    kubeconfig: "/etc/rancher/kube_config_{{ rancher_cluster_config_name }}.yml"
+    wait: true
+    release_state: present
+  environment: "{{ proxy_env | default({}) }}"
+  become: true
+
+- name: add the rancher helm repo
+  kubernetes.core.helm_repository:
+    name: rancher-latest
+    repo_url: https://releases.rancher.com/server-charts/latest
+  environment: "{{ proxy_env | default({}) }}"
+  become: true
+
+- name: Create the rancher namespace
+  kubernetes.core.k8s:
+    name: cattle-system
+    api_version: v1
+    kind: Namespace
+    kubeconfig: "/etc/rancher/kube_config_{{ rancher_cluster_config_name }}.yml"
+    state: present
+  become: true
+
+- name: install rancher
+  kubernetes.core.helm:
+    release_name: rancher
+    release_namespace: cattle-system
+    chart_ref: rancher-latest/rancher
+    kubeconfig: "/etc/rancher/kube_config_{{ rancher_cluster_config_name }}.yml"
+    wait: true
+    values:
+      hostname: "{{ rancher_hostname }}"
+    release_state: present
+  environment: "{{ proxy_env | default({}) }}"
+  become: true
