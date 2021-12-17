@@ -1,0 +1,86 @@
+
+- name: write cloud-init default gw config
+  ansible.builtin.template:
+    src: 60-default-gw.yml.j2
+    dest: /etc/netplan/60-default-gw.yaml
+    owner: root
+    group: root
+    mode: 0644
+  become: true
+  notify: apply netplan config
+  tags:
+    - rancher
+    - rancher_network
+
+- name: add user to docker group
+  ansible.builtin.user:
+    name: "{{ rancher_user }}"
+    groups: docker
+    append: true
+    state: present
+  become: true
+  tags:
+    - rancher
+    - rancher_user
+
+- name: Set authorized key for user ubuntu copying it from current user
+  ansible.posix.authorized_key:
+    user: ubuntu
+    state: present
+    key: "{{ ikimk8s_rsa_pub }}"
+  tags: rancher
+
+- name: create /local directory
+  file:
+    path: /local
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+  become: true
+  tags:
+    - mount_local
+    - rancher
+    - rancher_storage
+
+
+- name: partition all defined drives
+  community.general.parted:
+    device: "{{ rancher_setup_general_item.device }}"
+    number: "{{ rancher_setup_general_item.number }}"
+    state: present
+  become: true
+  loop: "{{ rancher_nodes_additional_storage_layout }}"
+  loop_control:
+    loop_var: rancher_setup_general_item
+  tags:
+    - mount_local
+    - rancher
+    - rancher_storage
+
+- name: format all defined drives
+  community.general.filesystem:
+    fstype: ext4
+    dev: "{{ rancher_setup_general_item.device }}{{ rancher_setup_general_item.number }}"
+  become: true
+  loop: "{{ rancher_nodes_additional_storage_layout }}"
+  loop_control:
+    loop_var: rancher_setup_general_item
+  tags:
+    - rancher
+    - rancher_storage
+
+- name: mount drives to /local/
+  mount:
+    path: "/local/{{ rancher_setup_general_item.name }}"
+    src: "{{ rancher_setup_general_item.device }}{{ rancher_setup_general_item.number }}"
+    fstype: ext4
+    state: mounted
+  become: true
+  loop: "{{ rancher_nodes_additional_storage_layout }}"
+  loop_control:
+    loop_var: rancher_setup_general_item
+  tags:
+    - mount_local
+    - rancher
+    - rancher_storage

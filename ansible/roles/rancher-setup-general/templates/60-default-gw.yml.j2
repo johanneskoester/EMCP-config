@@ -1,0 +1,6 @@
+network:
+  ethernets:
+    {{ rancher_main_interface }}:
+      routes:
+        - to: default
+          via: {{ rancher_default_gw }}
