@@ -27,7 +27,7 @@
   ansible.posix.authorized_key:
     user: ubuntu
     state: present
-    key: "{{ ikimk8s_rsa_pub }}"
+    key: "{{ k8s_rsa_pub }}"
   tags: rancher
 
 - name: create /local directory
@@ -48,6 +48,7 @@
   community.general.parted:
     device: "{{ rancher_setup_general_item.device }}"
     number: "{{ rancher_setup_general_item.number }}"
+    label: "{{ rancher_setup_general_item.label }}"
     state: present
   become: true
   loop: "{{ rancher_nodes_additional_storage_layout }}"
