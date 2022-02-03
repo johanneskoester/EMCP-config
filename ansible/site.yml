@@ -104,6 +104,7 @@
     - c_nodes
     - proxies
     - security
+    - base_packages
 
 
 - hosts: nfs_servers
