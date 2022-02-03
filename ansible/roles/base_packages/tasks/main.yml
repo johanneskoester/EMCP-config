@@ -1,0 +1,6 @@
+
+- name: install libc-dev
+  ansible.builtin.apt:
+    name: libc6-dev
+    state: present
+  become: true
