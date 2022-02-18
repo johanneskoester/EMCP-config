@@ -1,0 +1,11 @@
+
+- name: include IngressRoutes tasks
+  block:
+    - include_tasks: install_demo_app.yml
+  tags:
+    - rke2
+    - traefik
+    - traefik-routes
+  run_once: true
+  delegate_to: localhost
+  become: true
