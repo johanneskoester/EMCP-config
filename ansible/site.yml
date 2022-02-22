@@ -141,3 +141,12 @@
   roles:
     - seafile
     - user_skel
+
+
+- hosts: server, infra, origin
+  become: true
+  remote_user: ubuntu
+  gather_facts: true
+  environment: "{{ proxy_env | default({}) }}"
+  roles:
+    - telegraf_systemd
