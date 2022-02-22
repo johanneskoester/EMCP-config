@@ -149,3 +149,11 @@
   roles:
     - k8s_setup_traefik
     - k8s_setup_monitoring
+
+- hosts: server, infra, origin
+  become: true
+  remote_user: ubuntu
+  gather_facts: true
+  environment: "{{ proxy_env | default({}) }}"
+  roles:
+    - telegraf_systemd
