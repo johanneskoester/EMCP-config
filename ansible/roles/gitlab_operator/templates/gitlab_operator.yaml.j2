@@ -9,13 +9,12 @@ spec:
     values:
       global:
         hosts:
-          domain: {{ gitlab_domain }} # Provide a real base domain for GitLab. "gitlab." and "registry." will be exposed as subdomains.
+          domain: {{ gitlab_domain }}
+          externalIP: {{ gitlab_lb_ip }}
           https: false
+          gitlab:
+            name: gitlab.{{ gitlab_domain }}
+            https: false
         ingress:
           enabled: true
           configure_certmanager: false
-      gitlab:
-        webservice:
-          service:
-            type: LoadBalancer
-            LoadBalancerIP: {{ gitlab_lb_ip }}

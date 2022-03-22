@@ -7,11 +7,11 @@
   delegate_to: localhost
   become: true
 
-- name: include gitlab ingress tasks
-  block:
-    - include_tasks: ingress.yml
-  tags:
-    - gitlab
-  run_once: true
-  delegate_to: localhost
-  become: true
+# - name: include gitlab ingress tasks
+#   block:
+#     - include_tasks: ingress.yml
+#   tags:
+#     - gitlab
+#   run_once: true
+#   delegate_to: localhost
+#   become: true
