@@ -1,0 +1,21 @@
+apiVersion: apps.gitlab.com/v1beta1
+kind: GitLab
+metadata:
+  name: gitlab-instance
+  namespace: {{ gitlab_namespace }}
+spec:
+  chart:
+    version: "{{ gitlab_chart_version }}" 
+    values:
+      global:
+        hosts:
+          domain: {{ gitlab_domain }} # Provide a real base domain for GitLab. "gitlab." and "registry." will be exposed as subdomains.
+          https: false
+        ingress:
+          enabled: true
+          configure_certmanager: false
+      gitlab:
+        webservice:
+          service:
+            type: LoadBalancer
+            LoadBalancerIP: {{ gitlab_lb_ip }}

@@ -1,0 +1,29 @@
+- name: fetch manifests for current version
+  ansible.builtin.get_url:
+    url: "https://gitlab.com/api/v4/projects/18899486/packages/generic/gitlab-operator/{{ gitlab_operator_version }}/gitlab-operator-{{ gitlab_platform }}-{{ gitlab_operator_version }}.yaml"
+    dest: "{{ role_path }}/files/"
+    mode: 0664
+  environment: "{{ proxy_env }}"
+
+- name: create gitlab-system namespace
+  kubernetes.core.k8s:
+    name: "{{ gitlab_namespace }}"
+    api_version: v1
+    kind: Namespace
+    state: present
+    kubeconfig: "{{ kubeconfig_path }}"
+  delegate_to: localhost
+
+- name: deploy gitlab operator
+  kubernetes.core.k8s:
+    state: present
+    kubeconfig: "{{ kubeconfig_path }}"
+    src: "{{ role_path }}/files/gitlab-operator-{{ gitlab_platform }}-{{ gitlab_operator_version }}.yaml"
+  delegate_to: localhost
+
+- name: deploy gitlab cr
+  kubernetes.core.k8s:
+    state: present
+    kubeconfig: "{{ kubeconfig_path }}"
+    definition: "{{ lookup('template', 'gitlab_operator.yaml.j2') | from_yaml }}"
+  delegate_to: localhost

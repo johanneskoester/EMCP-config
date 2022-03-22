@@ -1,0 +1,71 @@
+- name: build ingress route
+  kubernetes.core.k8s:
+    state: present
+    kubeconfig: "{{ kubeconfig_path }}"
+    definition:
+      apiVersion: traefik.containo.us/v1alpha1
+      kind: IngressRoute
+      metadata:
+        name: gitlab-minio
+        namespace: gitlab-system
+      spec:
+        entrypoints:
+          - web
+          - websecure
+        routes:
+          - match: "Host(`minio.{{ gitlab_host_header_to_match }}`)"
+            kind: Rule
+            services:
+              - name: gitlab-instance-minio
+                namespace: gitlab-system
+                port: 9000
+
+- name: build ingress route
+  kubernetes.core.k8s:
+    state: present
+    kubeconfig: "{{ kubeconfig_path }}"
+    definition:
+      apiVersion: traefik.containo.us/v1alpha1
+      kind: IngressRoute
+      metadata:
+        name: gitlab-registry
+        namespace: gitlab-system
+      spec:
+        entrypoints:
+          - web
+          - websecure
+        routes:
+          - match: "Host(`registry.{{ gitlab_host_header_to_match }}`)"
+            kind: Rule
+            services:
+              - name: gitlab-instance-registry
+                namespace: gitlab-system
+                port: 5000
+
+- name: build ingress route
+  kubernetes.core.k8s:
+    state: present
+    kubeconfig: "{{ kubeconfig_path }}"
+    definition:
+      apiVersion: traefik.containo.us/v1alpha1
+      kind: IngressRoute
+      metadata:
+        name: gitlab-webservice
+        namespace: gitlab-system
+      spec:
+        entrypoints:
+          - web
+          - websecure
+        routes:
+          - match: "Host(`{{ gitlab_host_header_to_match }}`) && PathPrefix(`/admin/sidekiq`)"
+            kind: Rule
+            services:
+              - name: gitlab-instance-webservice-default
+                namespace: gitlab-system
+                port: 8080
+          - match: "Host(`{{ gitlab_host_header_to_match }}`) && PathPrefix(`/`)"
+            kind: Rule
+            services:
+              - name: gitlab-instance-webservice-default
+                namespace: gitlab-system
+                port: 8181
