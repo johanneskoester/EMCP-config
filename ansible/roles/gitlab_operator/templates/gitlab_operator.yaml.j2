@@ -12,9 +12,6 @@ spec:
           domain: {{ gitlab_domain }}
           externalIP: {{ gitlab_lb_ip }}
           https: false
-          gitlab:
-            name: gitlab.{{ gitlab_domain }}
-            https: false
         ingress:
           enabled: true
           configure_certmanager: false
