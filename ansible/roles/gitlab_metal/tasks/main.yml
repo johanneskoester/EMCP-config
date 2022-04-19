@@ -1,0 +1,5 @@
+
+- name: Install gitlab
+  block:
+    - include_tasks: install.yml
+  tags: gitlab-metal
