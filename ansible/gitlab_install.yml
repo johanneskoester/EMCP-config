@@ -1,0 +1,6 @@
+- hosts: gitlab_metal
+  gather_facts: true
+  remote_user: ubuntu
+  roles:
+    - c_nodes
+    - gitlab_metal
