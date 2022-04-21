@@ -1,6 +1,18 @@
 - hosts: gitlab_metal
   gather_facts: true
   remote_user: ubuntu
+  become: true
   roles:
+    - proxies
     - c_nodes
     - gitlab_metal
+
+- hosts: gitlab_runner
+  gather_facts: true
+  remote_user: ubuntu
+  roles:
+    - proxies
+    - c_nodes
+    - docker
+    - gitlab_runner
+  environment: "{{ proxy_env }}"
