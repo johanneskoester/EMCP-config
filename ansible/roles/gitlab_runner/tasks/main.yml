@@ -1,0 +1,6 @@
+
+- name: Configure the runner proxy settings
+  become: true
+  block:
+    - include_tasks: proxy_settings.yml
+  tags: gitlab-runner
