@@ -1,0 +1,15 @@
+- name: Download chectl installer
+  ansible.builtin.get_url:
+    url: https://www.eclipse.org/che/chectl
+    dest: /tmp/chectl-install.sh
+
+# Install chectl to /usr/local/bin/chectl
+- name: Install chectl
+  ansible.builtin.command: bash /tmp/chectl-install.sh
+
+# follwing instructions for kind: https://www.eclipse.org/che/docs/che-7/installation-guide/installing-che-on-kind/
+# requirements:
+# - ingress
+# - persistent volume management
+- name: Deploy eclipse che
+  ansible.builtin.command: chectl server:deploy --installer operator --platform k8s --domain <TODO insert correct domain here>
