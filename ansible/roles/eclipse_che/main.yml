@@ -8,7 +8,7 @@
 
 # Install chectl to /usr/local/bin/chectl
 - name: Install chectl
-  ansible.builtin.command: bash /tmp/chectl-install.sh
+  ansible.builtin.command: /tmp/chectl-install.sh
 
 # follwing instructions for kind: https://www.eclipse.org/che/docs/che-7/installation-guide/installing-che-on-kind/
 # requirements:
