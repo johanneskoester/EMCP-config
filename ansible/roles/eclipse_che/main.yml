@@ -2,6 +2,9 @@
   ansible.builtin.get_url:
     url: https://www.eclipse.org/che/chectl
     dest: /tmp/chectl-install.sh
+    owner: root
+    group: root
+    mode: 0755
 
 # Install chectl to /usr/local/bin/chectl
 - name: Install chectl
