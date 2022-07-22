@@ -16,3 +16,5 @@
 # - persistent volume management
 - name: Deploy eclipse che
   ansible.builtin.command: chectl server:deploy --installer operator --platform k8s --domain <TODO insert correct domain here>
+  async: 3600
+  poll: 10
