@@ -38,12 +38,12 @@
 
 - name: add to path
   become: true
-  ansible.builtin.template:
-    src: miniconda.sh.j2
+  ansible.builtin.file:
+    src: "{{ conda_home }}/etc/profile.d/conda.sh"
     dest: /etc/profile.d/miniconda.sh
+    state: link
     owner: root
     group: root
-    mode: 0755
 
 - name: miniconda +r+x for all
   become: true
