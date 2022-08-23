@@ -16,14 +16,20 @@
 - name: Create conda folder
   become: true
   ansible.builtin.file:
-    path: /opt/miniconda
+    path: "{{ conda_home }}"
     state: directory
     owner: root
     group: root
     mode: 0755
 
-- name: Run miniconda installer
-  ansible.builtin.command: /tmp/install-miniconda.sh -b -u -p /opt/miniconda
+- name: run miniconda installer
+  ansible.builtin.command:
+    argv:
+      - /tmp/install-miniconda.sh
+      - -b
+      - -u
+      - -p
+      - "{{ conda_home }}"
   when: cmd_conda_version.rc != 0
 
 - name: Remove miniconda installer
@@ -33,22 +39,16 @@
 
 - name: Add to path
   become: true
-  ansible.builtin.copy:
-    dest: "/etc/profile.d/miniconda.sh"
-    content: |
-      export PATH=/opt/miniconda/bin:$PATH
+  ansible.builtin.template:
+    src: miniconda.sh.j2
+    dest: /etc/profile.d/miniconda.sh
     owner: root
     group: root
     mode: 0755
 
-# - name: add PATH and initialize
-#   shell: export PATH=/opt/miniconda/bin:$PATH && conda init
-#   args:
-#     executable: /bin/bash
-
-- name: Miniconda +r+x for all
+- name: miniconda +r+x for all
   become: true
   ansible.builtin.file:
-    path: /opt/miniconda
+    path: "{{ conda_home }}"
     mode: 0755
     recurse: true
