@@ -61,7 +61,9 @@
   when: poetry_verification_result is success
 
 - name: Save the Bash completions output to a file
-  ansible.builtin.copy: 
+  ansible.builtin.copy:
     content: "{{ output }}"
     dest: "/etc/bash_completion.d/poetry.bash-completion"
-    
+    owner: root
+    group: root
+    mode: 0755

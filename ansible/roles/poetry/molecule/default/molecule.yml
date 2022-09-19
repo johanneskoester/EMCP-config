@@ -12,7 +12,7 @@ platforms:
     command: "/usr/sbin/init"
     pre_build_image: true
 provisioner:
-  name: ansible  
+  name: ansible
 verifier:
   name: ansible
 scenario:
@@ -23,4 +23,3 @@ scenario:
     - converge
     - verify
     - destroy
-    
