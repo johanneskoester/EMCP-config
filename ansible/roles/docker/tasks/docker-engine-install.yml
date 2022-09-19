@@ -13,15 +13,17 @@
       - software-properties-common
     state: present
 
-- name: Add Docker GPG key
-  ansible.builtin.apt_key: url=https://download.docker.com/linux/ubuntu/gpg
+- name: Download and install the docker gpg key
+  ansible.builtin.get_url:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    dest: /etc/apt/trusted.gpg.d/docker-gpg.asc
   environment:
     http_proxy: "{{ http_proxy }}"
     https_proxy: "{{ http_proxy }}"
 
 - name: Add Docker APT repository
   ansible.builtin.apt_repository:
-    repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable
+    repo: deb [arch=amd64 signed-by=/etc/apt/trusted.gpg.d/docker-gpg.asc] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable
 
 - name: install Docker Engine and the Docker SDK for Python
   ansible.builtin.apt:
