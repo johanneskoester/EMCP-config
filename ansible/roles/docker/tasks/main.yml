@@ -17,5 +17,5 @@
 - name: Install Docker Compose
   become: true
   block:
-    - include_tasks: docker-compose-install-v1.yml
+    - include_tasks: compose-install-v1.yml
   tags: docker-compose
