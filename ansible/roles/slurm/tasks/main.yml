@@ -3,7 +3,7 @@
   become: true
   block:
     - include_tasks: sssd_enumerate.yml
-  when: (inventory_hostname in groups[slurm_controller_group_name]) or (inventory_hostname in groups[slurm_user_group_name])
+  when: (inventory_hostname in groups[slurm_controller_group_name]) or (inventory_hostname in groups[slurm_user_facing_group_name])
   tags:
     - slurm
     - slurm-sssd
@@ -16,7 +16,7 @@
         - jammy
       loop_control:
         loop_var: slurm_item
-  when: inventory_hostname in groups[slurm_pkgrepo_group_name]
+  when: inventory_hostname in groups[slurm_packager_group_name]
   tags:
     - slurm
     - slurm-build
