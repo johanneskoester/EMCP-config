@@ -33,20 +33,20 @@
 - name: Add configuration files and start slurmd
   become: true
   block:
-    - include_tasks: slurmd_configure.yml
+    - include_tasks:
+      - munge_configure.yml
+      - slurmd_configure.yml
   when: inventory_hostname in groups[slurm_compute_group_name]
   tags:
     - slurm
     - slurm-config
 
-- name: Install slurm client tools to slurmq
+- name: Install slurm client tools to slurm_user
   become: true
   block:
-    - name: install slurm client tools
-      ansible.builtin.apt:
-        name: slurm-client
-        state: present
-        update_cache: true
+    - include_tasks:
+      - munge_configure.yml
+      - slurm_user_configure.yml
   when: inventory_hostname in groups[slurm_user_group_name]
   tags:
     - slurm

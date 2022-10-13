@@ -1,0 +1,14 @@
+- name: Make sure that munge is enabled and started
+  ansible.builtin.systemd:
+    name: munge
+    state: started
+    enabled: true
+
+- name: Add the munge key
+  ansible.builtin.template:
+    src: munge.key.j2
+    dest: /etc/munge/munge.key
+    owner: munge
+    group: munge
+    mode: 0400
+  notify: restart munge
