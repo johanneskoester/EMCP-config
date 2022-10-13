@@ -47,7 +47,7 @@
         name: slurm-client
         state: present
         update_cache: true
-  when: inventory_hostname in groups[slurm_user]
+  when: inventory_hostname in groups[slurm_user_group_name]
   tags:
     - slurm
     - slurm-user
