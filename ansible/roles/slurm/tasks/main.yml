@@ -38,3 +38,16 @@
   tags:
     - slurm
     - slurm-config
+
+- name: Install slurm client tools to slurmq
+  become: true
+  block:
+    - name: install slurm client tools
+      ansible.builtin.apt:
+        name: slurm-client
+        state: present
+        update_cache: true
+  when: inventory_hostname in groups[slurm_user]
+  tags:
+    - slurm
+    - slurm-user
