@@ -45,7 +45,7 @@
   block:
     - include_tasks: munge_configure.yml
     - include_tasks: slurm_user_configure.yml
-  when: inventory_hostname in groups[slurm_user_group_name]
+  when: inventory_hostname in groups[slurm_user_facing_group_name]
   tags:
     - slurm
     - slurm-user
