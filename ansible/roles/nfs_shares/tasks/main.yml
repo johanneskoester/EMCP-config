@@ -27,6 +27,6 @@
 
 - name: ensure the presence of the software share
   block:
-    - include_tasks: software_share.yml
+    - ansible.builtin.include_tasks: software_share.yml
   tags:
     - nfs_shares

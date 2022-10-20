@@ -10,7 +10,7 @@
     - mount_local
 
 - name: format the drive
-  filesystem:
+  community.general.filesystem:
     fstype: ext4
     dev: /dev/sdb1
   become: true
@@ -27,7 +27,7 @@
     - mount_local
 
 - name: mount /local/sdb
-  mount:
+  ansible.posix.mount:
     path: /local
     src: /dev/sdb1
     fstype: ext4
@@ -47,13 +47,13 @@
     - mount_local
 
 - name: format the drive
-  filesystem:
+  community.general.filesystem:
     fstype: ext4
     dev: /dev/sdc1
   become: true
 
 - name: mount /local/sdc
-  mount:
+  ansible.posix.mount:
     path: /local
     src: /dev/sdc1
     fstype: ext4
@@ -73,13 +73,13 @@
     - mount_local
 
 - name: format the drive
-  filesystem:
+  community.general.filesystem:
     fstype: ext4
     dev: /dev/sdd1
   become: true
 
 - name: mount /local/sdc
-  mount:
+  ansible.posix.mount:
     path: /local
     src: /dev/sdd1
     fstype: ext4

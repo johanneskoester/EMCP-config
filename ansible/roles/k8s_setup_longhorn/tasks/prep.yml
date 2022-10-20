@@ -32,7 +32,7 @@
     loop_var: k8s_setup_longhorn_item
 
 - name: mount drives to /local/
-  mount:
+  ansible.posix.mount:
     path: "/local/{{ k8s_setup_longhorn_item.name }}"
     src: "{{ k8s_setup_longhorn_item.device }}{{ k8s_setup_longhorn_item.number }}"
     fstype: ext4

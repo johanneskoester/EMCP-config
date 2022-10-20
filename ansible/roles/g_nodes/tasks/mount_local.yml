@@ -33,7 +33,7 @@
     state: unmounted
 
 - name: mount /local
-  mount:
+  ansible.posix.mount:
     path: /local
     src: /dev/md0
     fstype: ext4
