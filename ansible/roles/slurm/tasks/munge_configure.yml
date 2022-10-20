@@ -10,5 +10,5 @@
     dest: /etc/munge/munge.key
     owner: munge
     group: munge
-    mode: 0400
+    mode: 0600
   notify: restart munge
