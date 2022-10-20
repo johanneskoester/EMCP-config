@@ -17,8 +17,14 @@
     name: munged
     state: restarted
 
-- name: restart sssd
+- name: restart sssd systemd
   become: true
   ansible.builtin.systemd:
+    name: sssd
+    state: restarted
+
+- name: restart sssd supervisord
+  become: true
+  community.general.supervisorctl:
     name: sssd
     state: restarted

@@ -5,4 +5,4 @@
     owner: root
     group: root
     mode: 0644
-  notify: restart sssd
+  notify: "restart sssd {{ init_system }}"
