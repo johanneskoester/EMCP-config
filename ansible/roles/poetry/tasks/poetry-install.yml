@@ -56,13 +56,13 @@
 
 - name: Run Bash completions command
   ansible.builtin.command: "{{ poetry_home | quote }}/bin/poetry completions bash"
-  register: "output"
+  register: "cmd_poetry_bash_completions"
   changed_when: false
   when: poetry_verification_result is success
 
 - name: Save the Bash completions output to a file
   ansible.builtin.copy:
-    content: "{{ output }}"
+    content: "{{ cmd_poetry_bash_completions }}"
     dest: "/etc/bash_completion.d/poetry.bash-completion"
     owner: root
     group: root
