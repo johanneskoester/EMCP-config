@@ -1,0 +1,28 @@
+- name: See if systemd is runing
+  ansible.builtin.command: systemctl
+  changed_when: false
+  failed_when: false
+  register: cmd_systemctl
+
+- name: Use "supervisord" as the default value for init_system
+  ansible.builtin.set_fact:
+    init_system: supervisord
+
+- name: Indicate that systemd is the init system
+  ansible.builtin.set_fact:
+    init_system: systemd
+  when: cmd_systemctl['rc'] == 0
+
+- name: Use "none" as the default value for slurm_daemon_name
+  ansible.builtin.set_fact:
+    slurm_daemon_name: none
+
+- name: Associate slurm controller nodes with the slurmctld daemon
+  ansible.builtin.set_fact:
+    slurm_daemon_name: slurmctld
+  when: inventory_hostname in groups[slurm_controller_group_name]
+
+- name: Associate slurm compute nodes with the slurmd daemon
+  ansible.builtin.set_fact:
+    slurm_daemon_name: slurmd
+  when: inventory_hostname in groups[slurm_compute_group_name]

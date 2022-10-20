@@ -1,20 +1,22 @@
 ---
-- name: Determine the init system for subsequent tasks
+- name: Configure the controller node
+  become: true
   block:
-    - ansible.builtin.include_tasks: init_system.yml
+    - ansible.builtin.include_tasks: facts.yml
+    - ansible.builtin.include_tasks: sssd_enumerate.yml
+    - ansible.builtin.include_tasks: munge.yml
+    - ansible.builtin.include_tasks: slurm_install_controller.yml
+    - ansible.builtin.include_tasks: slurm_configure.yml
+  when: inventory_hostname in groups[slurm_controller_group_name]
   tags:
     - slurm
-    - slurm-sssd
-    - slurm-build
-    - slurm-install
-    - slurm-config
-    - slurm-user
+    - slurm-controller
 
-- name: On non-compute slurm nodes, enable the enumerate option in sssd.conf
+- name: On the user-facing node, enable the enumerate option in sssd.conf
   become: true
   block:
     - ansible.builtin.include_tasks: sssd_enumerate.yml
-  when: (inventory_hostname in groups[slurm_controller_group_name]) or (inventory_hostname in groups[slurm_user_facing_group_name])
+  when: inventory_hostname in groups[slurm_user_facing_group_name]
   tags:
     - slurm
     - slurm-sssd
@@ -44,7 +46,7 @@
 - name: Add configuration files and start slurmd
   become: true
   block:
-    - ansible.builtin.include_tasks: munge_configure.yml
+    - ansible.builtin.include_tasks: munge.yml
     - ansible.builtin.include_tasks: slurmd_configure.yml
   when: inventory_hostname in groups[slurm_compute_group_name]
   tags:
@@ -54,7 +56,7 @@
 - name: Install slurm client tools to slurm_user
   become: true
   block:
-    - ansible.builtin.include_tasks: munge_configure.yml
+    - ansible.builtin.include_tasks: munge.yml
     - ansible.builtin.include_tasks: slurm_user_configure.yml
   when: inventory_hostname in groups[slurm_user_facing_group_name]
   tags:

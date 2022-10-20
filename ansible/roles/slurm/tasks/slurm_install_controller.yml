@@ -1,0 +1,14 @@
+---
+- name: Install slurmctld and client tools
+  become: true
+  ansible.builtin.apt:
+    name:
+      - "slurmctld={{ slurm_ubuntu_repo_version_with_release }}"
+      - "slurm-wlm-basic-plugins={{ slurm_ubuntu_repo_version_with_release }}"
+      - "slurm-client={{ slurm_ubuntu_repo_version_with_release }}"
+    state: present
+
+- name: Enable and start slurmctld
+  community.general.supervisorctl:
+    name: slurmctld
+    state: started
