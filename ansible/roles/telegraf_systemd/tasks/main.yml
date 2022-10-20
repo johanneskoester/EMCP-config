@@ -1,5 +1,5 @@
 ---
-- name: include telegraf setup tasks
+- name: Include telegraf setup tasks
   block:
     - ansible.builtin.include_tasks: install_telegraf.yml
   tags:
@@ -7,7 +7,7 @@
     - telegraf
   become: true
 
-- name: include telegraf config tasks
+- name: Include telegraf config tasks
   block:
     - ansible.builtin.include_tasks: configure_telegraf.yml
   tags:

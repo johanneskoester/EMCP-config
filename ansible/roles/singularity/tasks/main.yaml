@@ -18,7 +18,7 @@
       - "0xA5D32F012649A5A9"
   tags: singularity
 
-- name: install singularity
+- name: Install singularity
   apt:
     name: singularity-container
     state: present

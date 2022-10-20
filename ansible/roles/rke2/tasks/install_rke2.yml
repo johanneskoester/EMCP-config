@@ -1,4 +1,4 @@
-- name: download the rke2 installation script
+- name: Download the rke2 installation script
   ansible.builtin.get_url:
     url: "{{ rke2_install_script_url }}"
     dest: /tmp/rke2.sh
@@ -6,15 +6,15 @@
   environment: "{{ proxy_env }}"
   become: true
 
-- name: determine the type of node
+- name: Determine the type of node
   ansible.builtin.set_fact:
     rke2_type: "{{ (inventory_hostname in groups[rke2_servers_group_name]) | ternary('server', 'agent') }}"
 
-- name: populate service facts
+- name: Populate service facts
   ansible.builtin.service_facts:
   become: true
 
-- name: get installed rke2 version
+- name: Get installed rke2 version
   ansible.builtin.shell: |
     set -o pipefail
     /usr/local/bin/rke2 --version | grep -E "rke2 version" | awk '{print $3}'
@@ -24,7 +24,7 @@
   register: installed_rke2_version
   when: ("rke2-" + rke2_type + ".service") in ansible_facts['services']
 
-- name: run the rke2 install script
+- name: Run the rke2 install script
   ansible.builtin.command: /tmp/rke2.sh
   environment:
     INSTALL_RKE2_VERSION: "{{ rke2_version }}"
@@ -39,14 +39,14 @@
         or installed_rke2_version is not defined
   become: true
 
-- name: create rke2 config dir
+- name: Create rke2 config dir
   ansible.builtin.file:
     path: /etc/rancher/rke2
     state: directory
     mode: 0755
   become: true
 
-- name: write the rke2 config file
+- name: Write the rke2 config file
   ansible.builtin.template:
     src: "{{ rke2_type }}_config.yaml.j2"
     dest: /etc/rancher/rke2/config.yaml
@@ -56,7 +56,7 @@
   become: true
   notify: "restart rke2-{{ rke2_type }}"
 
-- name: write proxy settings to rke2 systemd unit env file
+- name: Write proxy settings to rke2 systemd unit env file
   ansible.builtin.template:
     src: rke2.env.j2
     dest: "/etc/default/rke2-{{ rke2_type }}"
@@ -66,7 +66,7 @@
   become: true
   notify: "restart rke2-{{ rke2_type }}"
 
-- name: create a systemd service config directory
+- name: Create a systemd service config directory
   ansible.builtin.file:
     path: "/etc/systemd/system/rke2-{{ rke2_type }}.service.d"
     owner: root
@@ -76,7 +76,7 @@
   when: inventory_hostname in groups[rke2_primary_server_group_name]
   become: true
 
-- name: write the secret token in a systemd service configuration file
+- name: Write the secret token in a systemd service configuration file
   ansible.builtin.template:
     src: rke2-token.conf.j2
     dest: "/etc/systemd/system/rke2-{{ rke2_type }}.service.d/rke2-token.conf"
@@ -89,14 +89,14 @@
 
 # Ansible might report this task as failed when in reality it just needs a
 # little longer to start up.
-- name: start and enable the systemd service
+- name: Start and enable the systemd service
   ansible.builtin.systemd:
     name: "rke2-{{ rke2_type }}.service"
     state: started
     enabled: true
   become: true
 
-- name: change server reference in kubeconfig from localhost to actual url
+- name: Change server reference in kubeconfig from localhost to actual url
   ansible.builtin.replace:
     path: "{{ rke2_kubeconf_host_path }}{{ rke2_download_kubeconf_file_name }}"
     regexp: '(\s+server: https://)127\.0\.0\.1(:6443)'

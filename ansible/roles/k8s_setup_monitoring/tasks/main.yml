@@ -1,4 +1,4 @@
-- name: include kube-prometheus setup tasks
+- name: Include kube-prometheus setup tasks
   block:
     - ansible.builtin.include_tasks: install_kube_prometheus.yml
   when: inventory_hostname in groups[rke2_servers_group_name]
@@ -7,7 +7,7 @@
     - monitoring
     - kube-prometheus
 
-- name: include external prometheus target tasks
+- name: Include external prometheus target tasks
   block:
     - ansible.builtin.include_tasks: configure_prometheus_targets.yml
   tags:
@@ -16,7 +16,7 @@
   run_once: true
   delegate_to: localhost
 
-- name: include ingress setup tasks
+- name: Include ingress setup tasks
   block:
     - ansible.builtin.include_tasks: ingress.yml
   when: inventory_hostname in groups[rke2_servers_group_name]

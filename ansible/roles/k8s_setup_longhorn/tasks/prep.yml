@@ -1,4 +1,4 @@
-- name: create /local directory
+- name: Create /local directory
   ansible.builtin.file:
     path: /local
     state: directory
@@ -9,7 +9,7 @@
   tags:
     - mount_local
 
-- name: partition all defined drives
+- name: Partition all defined drives
   community.general.parted:
     device: "{{ k8s_setup_longhorn_item.device }}"
     number: "{{ k8s_setup_longhorn_item.number }}"
@@ -22,7 +22,7 @@
   tags:
     - mount_local
 
-- name: format all defined drives
+- name: Format all defined drives
   community.general.filesystem:
     fstype: ext4
     dev: "{{ k8s_setup_longhorn_item.device }}{{ k8s_setup_longhorn_item.number }}"
@@ -31,7 +31,7 @@
   loop_control:
     loop_var: k8s_setup_longhorn_item
 
-- name: mount drives to /local/
+- name: Mount drives to /local/
   ansible.posix.mount:
     path: "/local/{{ k8s_setup_longhorn_item.name }}"
     src: "{{ k8s_setup_longhorn_item.device }}{{ k8s_setup_longhorn_item.number }}"

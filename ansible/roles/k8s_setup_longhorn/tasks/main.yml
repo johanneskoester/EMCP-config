@@ -6,14 +6,14 @@
   tags: longhorn-multipath-disallow
   become: true
 
-- name: include longhorn preparation tasks
+- name: Include longhorn preparation tasks
   block:
     - ansible.builtin.include_tasks: prep.yml
   tags:
     - longhorn
     - longhorn-prep
 
-- name: include longhorn install tasks
+- name: Include longhorn install tasks
   block:
     - ansible.builtin.include_tasks: setup.yml
   when: inventory_hostname in groups[rke2_servers_group_name]
@@ -22,7 +22,7 @@
     - longhorn
     - longhorn-install
 
-- name: include IngressRoutes tasks
+- name: Include IngressRoutes tasks
   block:
     - ansible.builtin.include_tasks: ingress.yml
   when: inventory_hostname in groups[rke2_servers_group_name]
