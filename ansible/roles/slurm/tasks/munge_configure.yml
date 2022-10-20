@@ -1,3 +1,8 @@
+- name: Install munge
+  ansible.builtin.apt:
+    name: munge
+    state: present
+
 - name: Enable and start munge
   ansible.builtin.systemd:
     name: munge
