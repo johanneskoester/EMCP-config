@@ -1,4 +1,4 @@
-- name: install kube-prometheus setup-manifests
+- name: Install kube-prometheus setup-manifests
   kubernetes.core.k8s:
     state: present
     kubeconfig: "{{ rke2_kubeconf_host_path }}{{ rke2_download_kubeconf_file_name }}"
@@ -9,7 +9,7 @@
     loop_var: k8s_setup_monitoring_item
   become: true
 
-- name: install kube-prometheus manifests
+- name: Install kube-prometheus manifests
   kubernetes.core.k8s:
     state: present
     kubeconfig: "{{ rke2_kubeconf_host_path }}{{ rke2_download_kubeconf_file_name }}"

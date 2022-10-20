@@ -1,5 +1,5 @@
 ---
-- name: write the telegraf config file
+- name: Write the telegraf config file
   ansible.builtin.template:
     src: telegraf.conf.j2
     dest: /etc/telegraf/telegraf.conf

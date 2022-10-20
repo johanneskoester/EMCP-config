@@ -15,7 +15,7 @@
 
 - name: Perform the update
   block:
-    - include_tasks: update.yml
+    - ansible.builtin.include_tasks: update.yml
   tags:
     - never
     - update

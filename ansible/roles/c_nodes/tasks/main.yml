@@ -1,6 +1,6 @@
 ---
 
-- name: partition the 2nd drive
+- name: Partition the 2nd drive
   parted:
     device: /dev/sdb
     number: 1
@@ -10,13 +10,13 @@
     - mount_local
     - skip_ansible_lint
 
-- name: format the drive
-  filesystem:
+- name: Format the drive
+  community.general.filesystem:
     fstype: ext4
     dev: /dev/sdb1
   become: true
 
-- name: create /local directory
+- name: Create /local directory
   ansible.builtin.file:
     path: /local
     state: directory
@@ -27,8 +27,8 @@
   tags:
     - mount_local
 
-- name: mount /local
-  mount:
+- name: Mount /local
+  ansible.posix.mount:
     path: /local
     src: /dev/sdb1
     fstype: ext4
@@ -39,7 +39,7 @@
     - mount_local
 
 
-- name: create /local/work directory
+- name: Create /local/work directory
   ansible.builtin.file:
     path: /local/work
     state: directory
@@ -50,7 +50,7 @@
   tags:
     - mount_local
 
-- name: create /local/cache directory
+- name: Create /local/cache directory
   ansible.builtin.file:
     path: /local/cache
     state: directory
@@ -62,7 +62,7 @@
     - mount_local
 
 
-- name: create /local/cache directory
+- name: Create /local/cache directory
   ansible.builtin.file:
     path: /local/cache/fscache
     state: directory

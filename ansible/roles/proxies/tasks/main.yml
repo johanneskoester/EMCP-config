@@ -10,7 +10,7 @@
     - proxy
   become: true
 
-- name: gather information about installed packages
+- name: Gather information about installed packages
   ansible.builtin.package_facts:
     manager: apt
   tags:
