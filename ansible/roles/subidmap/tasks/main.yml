@@ -1,14 +1,14 @@
 ---
 - name: Calculate suitable ID ranges for mapping users and groups to subordinate IDs
   block:
-  - include_tasks: calculate_range.yml
+  - ansible.builtin.include_tasks: calculate_range.yml
   run_once: true
   tags: subidmap
 
 - name: Write the mapping file on the controller host
   become: false
   block:
-  - include_tasks: generate_mappings.yml
+  - ansible.builtin.include_tasks: generate_mappings.yml
   run_once: true
   delegate_to: "127.0.0.1"
   notify: remove local temp file

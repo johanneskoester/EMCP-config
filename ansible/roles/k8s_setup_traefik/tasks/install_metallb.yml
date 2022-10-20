@@ -1,4 +1,4 @@
-- name: add the metallb helm repo
+- name: Add the metallb helm repo
   kubernetes.core.helm_repository:
     repo_name: metallb
     repo_url: https://metallb.github.io/metallb
@@ -6,7 +6,7 @@
   environment: "{{ proxy_env | default('') }}"
   become: true
 
-- name: install metallb chart
+- name: Install metallb chart
   kubernetes.core.helm:
     release_name: metallb
     release_namespace: metallb

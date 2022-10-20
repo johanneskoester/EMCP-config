@@ -1,5 +1,5 @@
 ---
-- name: remove old docker install
+- name: Remove old docker install
   ansible.builtin.apt:
     name: ['docker', 'docker-engine', 'docker.io', 'containerd', 'runc']
     state: absent
@@ -14,7 +14,8 @@
     state: present
 
 - name: Add Docker GPG key
-  ansible.builtin.apt_key: url=https://download.docker.com/linux/ubuntu/gpg
+  ansible.builtin.apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
   environment:
     http_proxy: "{{ http_proxy }}"
     https_proxy: "{{ http_proxy }}"
@@ -23,7 +24,7 @@
   ansible.builtin.apt_repository:
     repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable
 
-- name: install Docker Engine and the Docker SDK for Python
+- name: Install Docker Engine and the Docker SDK for Python
   ansible.builtin.apt:
     name:
       - docker-ce

@@ -1,11 +1,11 @@
-- name: add the traefik helm repo
+- name: Add the traefik helm repo
   kubernetes.core.helm_repository:
     repo_name: traefik
     repo_url: https://helm.traefik.io/traefik
     repo_state: present
   environment: "{{ proxy_env | default('') }}"
 
-- name: ensure traefik namespace
+- name: Ensure traefik namespace
   kubernetes.core.k8s:
     state: present
     kubeconfig: "{{ rke2_kubeconf_host_path }}{{ rke2_download_kubeconf_file_name }}"
@@ -13,14 +13,14 @@
     kind: Namespace
     name: traefik
 
-- name: create a temp directory for CRD files
+- name: Create a temp directory for CRD files
   ansible.builtin.tempfile:
     state: directory
     suffix: traefikcrd
   register: traefik_crd_temp
   become: false
 
-- name: copy CRD files to the remote host
+- name: Copy CRD files to the remote host
   ansible.builtin.copy:
     src: "{{ k8s_setup_traefik_item }}"
     dest: "{{ (traefik_crd_temp['path'], k8s_setup_traefik_item) | path_join }}"
@@ -33,7 +33,7 @@
     loop_var: k8s_setup_traefik_item
   become: false
 
-- name: install CRDs
+- name: Install CRDs
   kubernetes.core.k8s:
     src: "{{ (traefik_crd_temp['path'], k8s_setup_traefik_item) | path_join }}"
     kubeconfig: "{{ rke2_kubeconf_host_path }}{{ rke2_download_kubeconf_file_name }}"
@@ -52,7 +52,7 @@
   when: traefik_crd_temp['path'] is defined
   become: false
 
-- name: create traefik service account
+- name: Create traefik service account
   kubernetes.core.k8s:
     kubeconfig: "{{ rke2_kubeconf_host_path }}{{ rke2_download_kubeconf_file_name }}"
     definition:
@@ -63,7 +63,7 @@
         name: "{{ traefik_service_account }}"
     state: present
 
-- name: install traefik chart
+- name: Install traefik chart
   kubernetes.core.helm:
     release_name: traefik
     release_namespace: traefik

@@ -1,32 +1,32 @@
 ---
 
-- name: include ipa services tasks
+- name: Include ipa services tasks
   block:
-    - include_tasks: create_services.yml
+    - ansible.builtin.include_tasks: create_services.yml
   run_once: true
   tags:
     - ipa-services
     - ipa-settings
 
-- name: include ipa services tasks
+- name: Include ipa services tasks
   block:
-    - include_tasks: ensure_general_config.yml
+    - ansible.builtin.include_tasks: ensure_general_config.yml
   run_once: true
   tags:
     - ipa-generalconfig
     - ipa-settings
 
-- name: include ipa hostgroups tasks
+- name: Include ipa hostgroups tasks
   block:
-    - include_tasks: create_hostgroups.yml
+    - ansible.builtin.include_tasks: create_hostgroups.yml
   run_once: true
   tags:
     - ipa-hostgroups
     - ipa-settings
 
-- name: include ipa habac rule tasks
+- name: Include ipa habac rule tasks
   block:
-    - include_tasks: create_hbacrules.yml
+    - ansible.builtin.include_tasks: create_hbacrules.yml
   run_once: true
   tags:
     - ipa-hbacrules
@@ -35,7 +35,7 @@
 # FIXME: kerberos authentication needed to automatically create the automountmaps
 # - name: include automountmaps tasks
 #   block:
-#     - include_tasks: create_automountmaps.yml
+#     - ansible.builtin.include_tasks: create_automountmaps.yml
 #   run_once: true
 #   loop: "{{ ipa-automountmaps }}"
 #   loop_control:

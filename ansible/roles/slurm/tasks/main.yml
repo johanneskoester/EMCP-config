@@ -2,7 +2,7 @@
 - name: On non-compute slurm nodes, enable the enumerate option in sssd.conf
   become: true
   block:
-    - include_tasks: sssd_enumerate.yml
+    - ansible.builtin.include_tasks: sssd_enumerate.yml
   when: (inventory_hostname in groups[slurm_controller_group_name]) or (inventory_hostname in groups[slurm_user_facing_group_name])
   tags:
     - slurm
@@ -10,7 +10,7 @@
 
 - name: Build slurm and create a package repository
   block:
-    - include_tasks: slurmd_repo_create.yml
+    - ansible.builtin.include_tasks: slurmd_repo_create.yml
       loop:
         - focal
         - jammy
@@ -24,7 +24,7 @@
 - name: Install slurmd from the custom repository
   become: true
   block:
-    - include_tasks: slurmd_repo_install.yml
+    - ansible.builtin.include_tasks: slurmd_repo_install.yml
   when: inventory_hostname in groups[slurm_compute_group_name]
   tags:
     - slurm
@@ -33,8 +33,8 @@
 - name: Add configuration files and start slurmd
   become: true
   block:
-    - include_tasks: munge_configure.yml
-    - include_tasks: slurmd_configure.yml
+    - ansible.builtin.include_tasks: munge_configure.yml
+    - ansible.builtin.include_tasks: slurmd_configure.yml
   when: inventory_hostname in groups[slurm_compute_group_name]
   tags:
     - slurm
@@ -43,8 +43,8 @@
 - name: Install slurm client tools to slurm_user
   become: true
   block:
-    - include_tasks: munge_configure.yml
-    - include_tasks: slurm_user_configure.yml
+    - ansible.builtin.include_tasks: munge_configure.yml
+    - ansible.builtin.include_tasks: slurm_user_configure.yml
   when: inventory_hostname in groups[slurm_user_facing_group_name]
   tags:
     - slurm

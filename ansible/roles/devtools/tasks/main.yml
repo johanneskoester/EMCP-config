@@ -2,5 +2,5 @@
 - name: Install development tools
   become: true
   block:
-    - include_tasks: devtools.yml
+    - ansible.builtin.include_tasks: devtools.yml
   tags: devtools
