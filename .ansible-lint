@@ -35,7 +35,6 @@ use_default_rules: true
 
 # This makes linter to fully ignore rules/tags listed below
 skip_list:
-  - name[casing]  # Rule for checking task and play names.
   - name[missing]  # This rule flags missing names in blocks, which would result in many redundant names
 
 # Any rule that has the 'opt-in' tag will not be loaded unless its 'id' is
