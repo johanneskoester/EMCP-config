@@ -1,4 +1,15 @@
 ---
+- name: Determine the init system for subsequent tasks
+  block:
+    - ansible.builtin.include_tasks: init_system.yml
+  tags:
+    - slurm
+    - slurm-sssd
+    - slurm-build
+    - slurm-install
+    - slurm-config
+    - slurm-user
+
 - name: On non-compute slurm nodes, enable the enumerate option in sssd.conf
   become: true
   block:

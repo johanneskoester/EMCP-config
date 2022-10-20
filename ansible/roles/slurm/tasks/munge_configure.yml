@@ -1,8 +1,15 @@
-- name: Make sure that munge is enabled and started
+- name: Enable and start munge
   ansible.builtin.systemd:
     name: munge
     state: started
     enabled: true
+  when: init_system == 'systemd'
+
+- name: Start munge
+  community.general.supervisorctl:
+    name: munged
+    state: started
+  when: init_system == 'supervisord'
 
 - name: Add the munge key
   ansible.builtin.template:
@@ -11,4 +18,4 @@
     owner: munge
     group: munge
     mode: 0600
-  notify: restart munge
+  notify: "restart munge {{ init_system }}"
