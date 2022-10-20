@@ -14,7 +14,8 @@
     state: present
 
 - name: Add Docker GPG key
-  ansible.builtin.apt_key: url=https://download.docker.com/linux/ubuntu/gpg
+  ansible.builtin.apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
   environment:
     http_proxy: "{{ http_proxy }}"
     https_proxy: "{{ http_proxy }}"
