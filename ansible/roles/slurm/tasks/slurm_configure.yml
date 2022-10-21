@@ -6,7 +6,7 @@
     owner: root
     group: root
     mode: 0644
-  notify: "reload {{ slurm_daemon_name | default(omit) }}"
+  notify: "{{ slurm_daemon_handler | default(omit) }}"
 
 - name: Add the GPU configuration file
   ansible.builtin.template:
@@ -18,7 +18,7 @@
   when:
     - ansible_local['gpu']['count'] is defined
     - ansible_local['gpu']['count'] > 0
-  notify: "reload {{ slurm_daemon_name | default(omit) }}"
+  notify: "{{ slurm_daemon_handler | default(omit) }}"
 
 - name: Add the main configuration file
   ansible.builtin.template:
@@ -27,4 +27,4 @@
     owner: root
     group: root
     mode: 0644
-  notify: "reload {{ slurm_daemon_name | default(omit) }}"
+  notify: "{{ slurm_daemon_handler | default(omit) }}"
