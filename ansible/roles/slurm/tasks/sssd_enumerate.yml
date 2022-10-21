@@ -1,7 +1,9 @@
 - name: Verify that a domain is defined
   ansible.builtin.fail:
-    msg: ansible_facts['domain'] must be non-empty
-  when: not ansible_facts['domain']
+    msg: Either slurm_sssd_domain must be defined or ansible_facts['domain'] must be non-empty.
+  when:
+    - slurm_sssd_domain is not defined
+    - not ansible_facts['domain']
 
 - name: Enable the enumerate option in sssd.conf
   ansible.builtin.template:
@@ -11,4 +13,3 @@
     group: root
     mode: 0644
   notify: "restart sssd {{ init_system }}"
-  when: ansible_facts['domain']

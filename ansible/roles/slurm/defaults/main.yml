@@ -11,6 +11,10 @@ slurm_version: "19.05.8"
 slurm_version_with_release: "{{ slurm_version }}-1"
 slurm_github_tag: "slurm-{{ slurm_version_with_release | replace('.', '-') }}"
 
+# Optional: the SSSD domain that slurm should be able to enumerate.
+# If undefined, defaults to ansible_facts['domain'].
+# slurm_sssd_domain:
+
 # Path of the work directory on the builder host
 slurm_builddir: /var/tmp/slurmbuild
 
