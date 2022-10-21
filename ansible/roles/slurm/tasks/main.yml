@@ -1,4 +1,31 @@
 ---
+- name: Determine whether the slurm-build tag was specified
+  ansible.builtin.set_fact:
+    slurm_build: true
+  tags:
+    - never
+    - slurm-build
+
+- name: Display a message if the packaging task is being skipped
+  ansible.builtin.debug:
+    msg: The slurm packaging task is skipped by default. Add '--tags slurm-build' to enable it.
+  when: slurm_build is not defined
+  tags:
+    - slurm
+
+- name: Build slurm and create a package repository
+  block:
+    - ansible.builtin.include_tasks: slurm_repo_create.yml
+      loop:
+        - focal
+        - jammy
+      loop_control:
+        loop_var: slurm_item
+  when: inventory_hostname in groups[slurm_packager_group_name]
+  tags:
+    - never
+    - slurm-build
+
 - name: Configure the controller node
   become: true
   block:
@@ -12,19 +39,6 @@
   tags:
     - slurm
     - slurm-controller
-
-- name: Build slurm and create a package repository
-  block:
-    - ansible.builtin.include_tasks: slurm_repo_create.yml
-      loop:
-        - focal
-        - jammy
-      loop_control:
-        loop_var: slurm_item
-  when: inventory_hostname in groups[slurm_packager_group_name]
-  tags:
-    - slurm
-    - slurm-packager
 
 - name: Configure the user-facing node
   become: true
