@@ -4,13 +4,13 @@ dependency:
 driver:
   name: docker
 platforms:
-  - name: ubuntu-1
+  - name: ubuntu-focal
     image: geerlingguy/docker-ubuntu2004-ansible:latest
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
     privileged: true
     pre_build_image: true
-  - name: ubuntu-2
+  - name: ubuntu-jammy
     image: geerlingguy/docker-ubuntu2204-ansible:latest
     # Ansible roles managing services using systemd need the following options: --privileged -v /sys/fs/cgroup:/sys/fs/cgroup:rw
     volumes:
