@@ -18,7 +18,7 @@
     slurm_daemon_handler: restart slurmctld
   when: inventory_hostname in groups[slurm_controller_group_name]
 
-- name: Associate slurm compute nodes with the slurmd daemon
+- name: Associate worker nodes with the slurmd daemon
   ansible.builtin.set_fact:
     slurm_daemon_handler: reload slurmd
-  when: inventory_hostname in groups[slurm_compute_group_name]
+  when: inventory_hostname in groups[slurm_worker_group_name]

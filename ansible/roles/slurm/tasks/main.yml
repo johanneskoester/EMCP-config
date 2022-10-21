@@ -40,30 +40,16 @@
     - slurm
     - slurm-controller
 
-- name: Configure the user-facing node
+- name: Configure worker nodes
   become: true
   block:
     - ansible.builtin.include_tasks: facts.yml
     - ansible.builtin.include_tasks: sssd_enumerate.yml
     - ansible.builtin.include_tasks: munge.yml
-    - ansible.builtin.include_tasks: slurm_repo_install.yml
-    - ansible.builtin.include_tasks: slurm_install_user_facing.yml
+    - ansible.builtin.include_tasks: slurm_install_worker.yml
     - ansible.builtin.include_tasks: slurm_configure.yml
-  when: inventory_hostname in groups[slurm_user_facing_group_name]
+    - ansible.builtin.include_tasks: slurm_start_worker.yml
+  when: inventory_hostname in groups[slurm_worker_group_name]
   tags:
     - slurm
-    - slurm-user-facing
-
-- name: Configure compute nodes
-  become: true
-  block:
-    - ansible.builtin.include_tasks: facts.yml
-    - ansible.builtin.include_tasks: munge.yml
-    - ansible.builtin.include_tasks: slurm_repo_install.yml
-    - ansible.builtin.include_tasks: slurm_install_compute.yml
-    - ansible.builtin.include_tasks: slurm_configure.yml
-    - ansible.builtin.include_tasks: slurm_start_compute.yml
-  when: inventory_hostname in groups[slurm_compute_group_name]
-  tags:
-    - slurm
-    - slurm-compute
+    - slurm-worker

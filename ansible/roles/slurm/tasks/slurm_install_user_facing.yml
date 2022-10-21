@@ -1,8 +1,0 @@
----
-- name: Install client tools from the custom repository
-  become: true
-  ansible.builtin.apt:
-    name:
-      - "slurm-client={{ slurm_version_with_release }}"
-    state: present
-    update_cache: true

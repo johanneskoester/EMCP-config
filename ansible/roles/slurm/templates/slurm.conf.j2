@@ -54,13 +54,14 @@ SlurmctldLogFile=/var/log/slurmctld.log
 SlurmdLogFile=/var/log/slurmd.log
 #
 #
-# COMPUTE NODES
+# WORKER NODES
 GresTypes=gpu
-{% for host in groups[slurm_compute_group_name] %}
+{% for host in groups[slurm_worker_group_name] %}
 {% set gpu_count = hostvars[host]['ansible_local']['gpu']['count'] | default(0) %}
 NodeName={{ hostvars[host]['ansible_hostname'] }} {% if gpu_count > 0 -%} Gres=gpu:{{ gpu_count }} {% endif -%} CPUs={{ hostvars[host]['ansible_processor_nproc'] }} Boards=1 SocketsPerBoard={{ hostvars[host]['ansible_processor_count'] }} CoresPerSocket={{ hostvars[host]['ansible_processor_cores'] }} ThreadsPerCore={{ hostvars[host]['ansible_processor_threads_per_core'] }} State=UNKNOWN
 {% endfor %}
 
+# PARTITIONS
 {% for partition in slurm_partitions %}
 {% if partition['hosts'] %}
 {% set is_default = partition['default'] | default(false) | bool %}

@@ -1,8 +1,7 @@
 # Inventory group names
 slurm_packager_group_name: slurm_packager
 slurm_controller_group_name: slurm_controller
-slurm_user_facing_group_name: slurm_user_facing
-slurm_compute_group_name: slurm_compute
+slurm_worker_group_name: slurm_worker
 
 # The version to install
 slurm_ubuntu_repo_version: "19.05.5"
@@ -49,10 +48,10 @@ slurm_cluster_name: slurmcluster
 #   hosts: either the special value "ALL" or a list of inventory hosts
 #   default: the value of the "Default" parameter in slurm.conf (optional boolean, false if unspecified)
 # Example:
-#   - name: stable
-#     hosts: "{{ groups[slurm_compute_group_name] }}"
+#   - name: compute
+#     hosts: "{{ groups['slurm_compute'] }}"
 #     default: true
-#   - name: test
+#   - name: debug
 #     hosts:
 #       - t01.example.org
 #       - t02.example.org
