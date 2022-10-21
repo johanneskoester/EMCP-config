@@ -1,8 +1,4 @@
 ---
-- name: reload none
-  ansible.builtin.debug:
-    msg: No slurm daemons to reload on the current node
-
 - name: reload slurmctld
   become: true
   community.general.supervisorctl:

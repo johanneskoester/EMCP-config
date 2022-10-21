@@ -13,10 +13,6 @@
     init_system: systemd
   when: cmd_systemctl['rc'] == 0
 
-- name: Use "none" as the default value for slurm_daemon_name
-  ansible.builtin.set_fact:
-    slurm_daemon_name: none
-
 - name: Associate slurm controller nodes with the slurmctld daemon
   ansible.builtin.set_fact:
     slurm_daemon_name: slurmctld
