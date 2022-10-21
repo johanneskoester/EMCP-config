@@ -14,7 +14,7 @@
 
 - name: Build slurm and create a package repository
   block:
-    - ansible.builtin.include_tasks: slurmd_repo_create.yml
+    - ansible.builtin.include_tasks: slurm_repo_create.yml
       loop:
         - focal
         - jammy
