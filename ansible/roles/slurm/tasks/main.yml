@@ -50,4 +50,4 @@
   when: inventory_hostname in groups[slurm_compute_group_name]
   tags:
     - slurm
-    - slurm-user
+    - slurm-compute
