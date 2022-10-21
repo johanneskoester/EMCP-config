@@ -1,0 +1,22 @@
+---
+- name: Install slurmd and client tools from the custom repository
+  become: true
+  ansible.builtin.apt:
+    name:
+      - "slurmd={{ slurm_version_with_release }}"
+      - "slurm-wlm-basic-plugins={{ slurm_version_with_release }}"
+      - "slurm-client={{ slurm_version_with_release }}"
+    state: present
+    update_cache: true
+
+- name: Stop and disable slurmctld
+  ansible.builtin.systemd:
+    name: slurmctld
+    state: stopped
+    enabled: false
+
+- name: Start and enable slurmd
+  ansible.builtin.systemd:
+    name: slurmd
+    state: started
+    enabled: true

@@ -3,12 +3,17 @@
   become: true
   ansible.builtin.apt:
     name:
-      - "slurmctld={{ slurm_ubuntu_repo_version_with_release }}"
-      - "slurm-wlm-basic-plugins={{ slurm_ubuntu_repo_version_with_release }}"
-      - "slurm-client={{ slurm_ubuntu_repo_version_with_release }}"
+      - slurmctld
+      - slurm-wlm-basic-plugins
+      - slurm-client
     state: present
 
-- name: Enable and start slurmctld
+- name: Stop slurmd
+  community.general.supervisorctl:
+    name: slurmd
+    state: stopped
+
+- name: Start slurmctld
   community.general.supervisorctl:
     name: slurmctld
     state: started

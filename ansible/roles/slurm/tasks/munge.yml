@@ -3,14 +3,14 @@
     name: munge
     state: present
 
-- name: Enable and start munge
+- name: Enable and start munge with systemd
   ansible.builtin.systemd:
     name: munge
     state: started
     enabled: true
   when: init_system == 'systemd'
 
-- name: Start munge
+- name: Start munge with supervisord
   community.general.supervisorctl:
     name: munged
     state: started

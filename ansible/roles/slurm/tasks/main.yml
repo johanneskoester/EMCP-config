@@ -12,15 +12,6 @@
     - slurm
     - slurm-controller
 
-- name: On the user-facing node, enable the enumerate option in sssd.conf
-  become: true
-  block:
-    - ansible.builtin.include_tasks: sssd_enumerate.yml
-  when: inventory_hostname in groups[slurm_user_facing_group_name]
-  tags:
-    - slurm
-    - slurm-sssd
-
 - name: Build slurm and create a package repository
   block:
     - ansible.builtin.include_tasks: slurmd_repo_create.yml
@@ -32,33 +23,31 @@
   when: inventory_hostname in groups[slurm_packager_group_name]
   tags:
     - slurm
-    - slurm-build
+    - slurm-packager
 
-- name: Install slurmd from the custom repository
+- name: Configure the user-facing node
   become: true
   block:
-    - ansible.builtin.include_tasks: slurmd_repo_install.yml
-  when: inventory_hostname in groups[slurm_compute_group_name]
-  tags:
-    - slurm
-    - slurm-install
-
-- name: Add configuration files and start slurmd
-  become: true
-  block:
+    - ansible.builtin.include_tasks: facts.yml
+    - ansible.builtin.include_tasks: sssd_enumerate.yml
     - ansible.builtin.include_tasks: munge.yml
-    - ansible.builtin.include_tasks: slurmd_configure.yml
-  when: inventory_hostname in groups[slurm_compute_group_name]
-  tags:
-    - slurm
-    - slurm-config
-
-- name: Install slurm client tools to slurm_user
-  become: true
-  block:
-    - ansible.builtin.include_tasks: munge.yml
-    - ansible.builtin.include_tasks: slurm_user_configure.yml
+    - ansible.builtin.include_tasks: slurm_repo_install.yml
+    - ansible.builtin.include_tasks: slurm_install_user_facing.yml
+    - ansible.builtin.include_tasks: slurm_configure.yml
   when: inventory_hostname in groups[slurm_user_facing_group_name]
+  tags:
+    - slurm
+    - slurm-user-facing
+
+- name: Configure compute nodes
+  become: true
+  block:
+    - ansible.builtin.include_tasks: facts.yml
+    - ansible.builtin.include_tasks: munge.yml
+    - ansible.builtin.include_tasks: slurm_repo_install.yml
+    - ansible.builtin.include_tasks: slurm_install_compute.yml
+    - ansible.builtin.include_tasks: slurm_configure.yml
+  when: inventory_hostname in groups[slurm_compute_group_name]
   tags:
     - slurm
     - slurm-user

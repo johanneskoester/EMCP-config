@@ -1,0 +1,5 @@
+---
+- name: Add the repository
+  ansible.builtin.apt_repository:
+    repo: "deb [ trusted=yes ] {{ slurm_repo_uri }}/{{ ansible_distribution_release }} ./"
+    state: present
