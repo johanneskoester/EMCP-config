@@ -6,7 +6,7 @@
 - name: reload slurmctld
   become: true
   community.general.supervisorctl:
-    name: slurmd
+    name: slurmctld
     state: restarted
 
 - name: reload slurmd
