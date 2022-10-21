@@ -1,9 +1,0 @@
----
-- name: Install slurmctld and client tools
-  become: true
-  ansible.builtin.apt:
-    name:
-      - slurmctld
-      - slurm-wlm-basic-plugins
-      - slurm-client
-    state: present

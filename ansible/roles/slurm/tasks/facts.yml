@@ -15,10 +15,10 @@
 
 - name: Associate slurm controller nodes with the slurmctld daemon
   ansible.builtin.set_fact:
-    slurm_daemon_handler: restart slurmctld
+    slurm_daemon_name: slurmctld
   when: inventory_hostname in groups[slurm_controller_group_name]
 
 - name: Associate worker nodes with the slurmd daemon
   ansible.builtin.set_fact:
-    slurm_daemon_handler: reload slurmd
+    slurm_daemon_name: slurmd
   when: inventory_hostname in groups[slurm_worker_group_name]

@@ -1,5 +1,5 @@
 ---
-- name: restart slurmctld
+- name: reload slurmctld
   become: true
   community.general.supervisorctl:
     name: slurmctld

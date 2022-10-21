@@ -1,6 +1,0 @@
----
-- name: Start and enable slurmd
-  ansible.builtin.systemd:
-    name: slurmd
-    state: started
-    enabled: true

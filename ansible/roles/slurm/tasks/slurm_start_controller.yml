@@ -1,5 +1,0 @@
----
-- name: Start slurmctld
-  community.general.supervisorctl:
-    name: slurmctld
-    state: started

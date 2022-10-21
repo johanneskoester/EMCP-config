@@ -26,30 +26,14 @@
     - never
     - slurm-build
 
-- name: Configure the controller node
+- name: Configure slurm nodes
   become: true
   block:
     - ansible.builtin.include_tasks: facts.yml
     - ansible.builtin.include_tasks: sssd_enumerate.yml
     - ansible.builtin.include_tasks: munge.yml
-    - ansible.builtin.include_tasks: slurm_install_controller.yml
-    - ansible.builtin.include_tasks: slurm_configure.yml
-    - ansible.builtin.include_tasks: slurm_start_controller.yml
-  when: inventory_hostname in groups[slurm_controller_group_name]
+    - ansible.builtin.include_tasks: slurm_install.yml
+  when: (inventory_hostname in groups[slurm_controller_group_name]) or (inventory_hostname in groups[slurm_worker_group_name])
   tags:
     - slurm
-    - slurm-controller
-
-- name: Configure worker nodes
-  become: true
-  block:
-    - ansible.builtin.include_tasks: facts.yml
-    - ansible.builtin.include_tasks: sssd_enumerate.yml
-    - ansible.builtin.include_tasks: munge.yml
-    - ansible.builtin.include_tasks: slurm_install_worker.yml
-    - ansible.builtin.include_tasks: slurm_configure.yml
-    - ansible.builtin.include_tasks: slurm_start_worker.yml
-  when: inventory_hostname in groups[slurm_worker_group_name]
-  tags:
-    - slurm
-    - slurm-worker
+    - slurm-node

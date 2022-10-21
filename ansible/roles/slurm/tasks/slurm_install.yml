@@ -1,0 +1,70 @@
+---
+- name: Install slurmctld and client tools
+  become: true
+  ansible.builtin.apt:
+    name:
+      - slurmctld
+      - slurm-wlm-basic-plugins
+      - slurm-client
+    state: present
+  when: slurm_daemon_name == 'slurmctld'
+
+- name: Add the repository
+  ansible.builtin.apt_repository:
+    repo: "deb [ trusted=yes ] {{ slurm_repo_uri }}/{{ ansible_distribution_release }} ./"
+    state: present
+  when: slurm_daemon_name == 'slurmd'
+
+- name: Install slurmd and client tools from the custom repository
+  become: true
+  ansible.builtin.apt:
+    name:
+      - "slurmd={{ slurm_version_with_release }}"
+      - "slurm-wlm-basic-plugins={{ slurm_version_with_release }}"
+      - "slurm-client={{ slurm_version_with_release }}"
+    state: present
+    update_cache: true
+  when: slurm_daemon_name == 'slurmd'
+
+- name: Add the cgroup configuration file
+  ansible.builtin.copy:
+    src: cgroup.conf
+    dest: /etc/slurm-llnl/cgroup.conf
+    owner: root
+    group: root
+    mode: 0644
+  notify: "reload {{ slurm_daemon_name }}"
+
+- name: Add the GPU configuration file
+  ansible.builtin.template:
+    src: gres.conf.j2
+    dest: /etc/slurm-llnl/gres.conf
+    owner: root
+    group: root
+    mode: 0644
+  when:
+    - ansible_local['gpu']['count'] is defined
+    - ansible_local['gpu']['count'] > 0
+  notify: "reload {{ slurm_daemon_name }}"
+
+- name: Add the main configuration file
+  ansible.builtin.template:
+    src: slurm.conf.j2
+    dest: /etc/slurm-llnl/slurm.conf
+    owner: root
+    group: root
+    mode: 0644
+  notify: "reload {{ slurm_daemon_name }}"
+
+- name: Start slurmctld
+  community.general.supervisorctl:
+    name: slurmctld
+    state: started
+  when: slurm_daemon_name == 'slurmctld'
+
+- name: Start and enable slurmd
+  ansible.builtin.systemd:
+    name: slurmd
+    state: started
+    enabled: true
+  when: slurm_daemon_name == 'slurmd'
