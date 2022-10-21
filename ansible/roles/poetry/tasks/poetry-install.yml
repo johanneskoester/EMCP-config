@@ -62,7 +62,7 @@
 
 - name: Save the Bash completions output to a file
   ansible.builtin.copy:
-    content: "{{ cmd_poetry_bash_completions }}"
+    content: "{{ cmd_poetry_bash_completions.stdout }}"
     dest: "/etc/bash_completion.d/poetry.bash-completion"
     owner: root
     group: root
