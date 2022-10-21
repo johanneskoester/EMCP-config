@@ -49,7 +49,6 @@
     - ansible.builtin.include_tasks: slurm_repo_install.yml
     - ansible.builtin.include_tasks: slurm_install_user_facing.yml
     - ansible.builtin.include_tasks: slurm_configure.yml
-    - ansible.builtin.include_tasks: slurm_start_user_facing.yml
   when: inventory_hostname in groups[slurm_user_facing_group_name]
   tags:
     - slurm
