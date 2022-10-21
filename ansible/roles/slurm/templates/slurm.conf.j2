@@ -4,7 +4,11 @@
 #
 ClusterName={{ slurm_cluster_name }}
 {% for host in groups[slurm_controller_group_name] %}
+{% if host == inventory_hostname %}
+SlurmctldHost={{ ansible_facts['hostname'] }}
+{% else %}
 SlurmctldHost={{ host }}
+{% endif %}
 {% endfor %}
 #
 #MailProg=/bin/mail
