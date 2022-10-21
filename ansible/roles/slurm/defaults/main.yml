@@ -1,6 +1,5 @@
 # Inventory group names
 slurm_packager_group_name: slurm_packager
-slurm_node_group_name: slurm_node
 slurm_controller_group_name: slurm_controller
 slurm_user_facing_group_name: slurm_user_facing
 slurm_compute_group_name: slurm_compute
