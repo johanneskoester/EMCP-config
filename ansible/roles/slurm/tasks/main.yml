@@ -7,6 +7,7 @@
     - ansible.builtin.include_tasks: munge.yml
     - ansible.builtin.include_tasks: slurm_install_controller.yml
     - ansible.builtin.include_tasks: slurm_configure.yml
+    - ansible.builtin.include_tasks: slurm_start_controller.yml
   when: inventory_hostname in groups[slurm_controller_group_name]
   tags:
     - slurm
@@ -34,6 +35,7 @@
     - ansible.builtin.include_tasks: slurm_repo_install.yml
     - ansible.builtin.include_tasks: slurm_install_user_facing.yml
     - ansible.builtin.include_tasks: slurm_configure.yml
+    - ansible.builtin.include_tasks: slurm_start_user_facing.yml
   when: inventory_hostname in groups[slurm_user_facing_group_name]
   tags:
     - slurm
@@ -47,6 +49,7 @@
     - ansible.builtin.include_tasks: slurm_repo_install.yml
     - ansible.builtin.include_tasks: slurm_install_compute.yml
     - ansible.builtin.include_tasks: slurm_configure.yml
+    - ansible.builtin.include_tasks: slurm_start_compute.yml
   when: inventory_hostname in groups[slurm_compute_group_name]
   tags:
     - slurm

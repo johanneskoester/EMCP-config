@@ -6,15 +6,3 @@
       - "slurm-client={{ slurm_version_with_release }}"
     state: present
     update_cache: true
-
-- name: Stop and disable slurmctld
-  ansible.builtin.systemd:
-    name: slurmctld
-    state: stopped
-    enabled: false
-
-- name: Stop and disable slurmd
-  ansible.builtin.systemd:
-    name: slurmd
-    state: stopped
-    enabled: false

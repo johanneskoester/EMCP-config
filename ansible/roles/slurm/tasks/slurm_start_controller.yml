@@ -1,0 +1,10 @@
+---
+- name: Stop slurmd
+  community.general.supervisorctl:
+    name: slurmd
+    state: stopped
+
+- name: Start slurmctld
+  community.general.supervisorctl:
+    name: slurmctld
+    state: started
