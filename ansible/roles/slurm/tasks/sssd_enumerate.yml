@@ -1,3 +1,8 @@
+- name: Verify that a domain is defined
+  ansible.builtin.fail:
+    msg: ansible_facts['domain'] must be non-empty
+  when: not ansible_facts['domain']
+
 - name: Enable the enumerate option in sssd.conf
   ansible.builtin.template:
     src: ssd_slurm_conf.j2
@@ -6,3 +11,4 @@
     group: root
     mode: 0644
   notify: "restart sssd {{ init_system }}"
+  when: ansible_facts['domain']
