@@ -141,7 +141,7 @@
   gather_facts: true
   environment: "{{ proxy_env | default({}) }}"
   roles:
-    - slurm
+    - slurm_install
 
 
 - hosts: rke_k8s_cluster
