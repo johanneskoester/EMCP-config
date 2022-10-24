@@ -13,9 +13,9 @@
     init_system: supervisord
   when: (pids_supervisord['pids'] | length) > 0
 
-- name: Assume systemd as the default init system
+- name: Use the init system detected by ansible
   ansible.builtin.set_fact:
-    init_system: systemd
+    init_system: "{{ ansible_facts['service_mgr'] }}"
   when: init_system is not defined
 
 - name: Associate slurm controller nodes with slurmctld
