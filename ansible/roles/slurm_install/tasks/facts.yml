@@ -1,17 +1,22 @@
-- name: Check whether systemd is runing
-  ansible.builtin.command: systemctl
-  changed_when: false
-  failed_when: false
-  register: cmd_systemctl
+- name: Install dependencies for the pids module
+  ansible.builtin.apt:
+    name: python3-psutil
+    state: present
 
-- name: Use supervisord as the default value for init_system
+- name: Check whether supervisord is runing
+  community.general.pids:
+    name: supervisord
+  register: pids_supervisord
+
+- name: Indicate that supervisord is running
   ansible.builtin.set_fact:
     init_system: supervisord
+  when: (pids_supervisord['pids'] | length) > 0
 
-- name: Indicate that systemd is the init system
+- name: Assume systemd as the default init system
   ansible.builtin.set_fact:
     init_system: systemd
-  when: cmd_systemctl['rc'] == 0
+  when: init_system is not defined
 
 - name: Associate slurm controller nodes with slurmctld
   ansible.builtin.set_fact:
