@@ -1,6 +1,8 @@
 # The version to build.
 slurm_version: "19.05.8"
 slurm_version_with_release: "{{ slurm_version }}-1"
+
+# Version of the upstream source package.
 slurm_github_tag: "slurm-{{ slurm_version_with_release | replace('.', '-') }}"
 
 # Version of the ubuntu source package.

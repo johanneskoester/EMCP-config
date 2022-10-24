@@ -3,8 +3,13 @@
   block:
     - ansible.builtin.include_tasks: slurm_build.yml
       loop:
-        - focal
-        - jammy
+        - distro: focal
+          patch_file: "slurm-{{ slurm_version_with_release }}-jammy.patch"
+        - distro: jammy
+          patch_file: "slurm-{{ slurm_version_with_release }}-jammy.patch"
+        - distro: jammy
+          patch_file: "slurm-{{ slurm_version_with_release }}-jammy-nvidia.patch"
+          gpu: true
       loop_control:
         loop_var: slurm_pkgbuild_item
   tags:

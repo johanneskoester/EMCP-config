@@ -52,9 +52,10 @@
 
 - name: Patch the source tree
   ansible.posix.patch:
-    src: "{{ slurm_github_tag }}-{{ ansible_distribution_release }}.patch"
+    src: "{{ slurm_pkgbuild_item['patch_file'] }}"
     basedir: "{{ slurm_builddir }}/slurm-{{ slurm_github_tag }}"
     strip: 1
+  when: slurm_pkgbuild_item['patch_file'] is defined
 
 - name: Create a buildable source package
   ansible.builtin.command:
@@ -69,7 +70,7 @@
 
 - name: Clean up the pbuilder result directory if it already exists
   ansible.builtin.file:
-    path: "{{ slurm_builddir }}/pbuilder/{{ slurm_pkgbuild_item }}_result"
+    path: "{{ slurm_builddir }}/pbuilder/{{ slurm_pkgbuild_item['distro'] }}_result"
     state: absent
 
 - name: Create a pbuilder environment (max 30 minutes, poll every 10 seconds)
@@ -78,7 +79,7 @@
   ansible.builtin.command:
     argv:
       - pbuilder-dist
-      - "{{ slurm_pkgbuild_item }}"
+      - "{{ slurm_pkgbuild_item['distro'] }}"
       - create
   changed_when: true
   async: 1800
@@ -90,7 +91,7 @@
   ansible.builtin.command:
     argv:
       - pbuilder-dist
-      - "{{ slurm_pkgbuild_item }}"
+      - "{{ slurm_pkgbuild_item['distro'] }}"
       - build
       - "{{ slurm_builddir }}/slurm-llnl_{{ slurm_version_with_release }}.dsc"
   async: 3600
@@ -98,15 +99,20 @@
   changed_when: true
 
 - name: Copy the built packages to the local repository
+  vars:
+    # This name scheme must match the one defined in the slurm_install role
+    slurm_repo_suffix: "{{ slurm_pkgbuild_item['gpu'] | default(false) | ternary('nvidia', '') }}"
+    slurm_repo_name: "{{ slurm_pkgbuild_item['distro'] ~ slurm_repo_suffix }}"
   ansible.builtin.copy:
-    src: "{{ slurm_builddir }}/pbuilder/{{ slurm_pkgbuild_item }}_result/"
-    dest: "{{ slurm_repo_local_path }}/{{ slurm_pkgbuild_item }}/"
+    src: "{{ slurm_builddir }}/pbuilder/{{ slurm_pkgbuild_item['distro'] }}_result/"
+    dest: "{{ slurm_repo_local_path }}/{{ slurm_repo_name }}/"
     remote_src: true
     mode: preserve
     directory_mode: 02775
+  register: slurm_pkg_copy
 
 - name: Create the package index on the local repository
   ansible.builtin.shell:
-    chdir: "{{ slurm_repo_local_path }}/{{ slurm_pkgbuild_item }}"
+    chdir: "{{ slurm_pkg_copy['dest'] }}"
     cmd: dpkg-scanpackages . /dev/null | gzip -9c > Packages.gz
   changed_when: true
