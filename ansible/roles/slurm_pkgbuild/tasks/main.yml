@@ -6,6 +6,6 @@
         - focal
         - jammy
       loop_control:
-        loop_var: slurm_item
+        loop_var: slurm_pkgbuild_item
   tags:
     - slurm-pkgbuild
