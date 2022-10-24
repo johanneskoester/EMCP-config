@@ -1,0 +1,8 @@
+---
+- name: Install the controller daemon and client tools
+  ansible.builtin.apt:
+    name:
+      - slurmctld
+      - slurm-wlm-basic-plugins
+      - slurm-client
+    state: present

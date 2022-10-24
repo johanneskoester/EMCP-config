@@ -69,7 +69,7 @@
 
 - name: Clean up the pbuilder result directory if it already exists
   ansible.builtin.file:
-    path: "{{ slurm_builddir }}/pbuilder/{{ slurm_item }}_result"
+    path: "{{ slurm_builddir }}/pbuilder/{{ slurm_pkgbuild_item }}_result"
     state: absent
 
 - name: Create a pbuilder environment (max 30 minutes, poll every 10 seconds)
@@ -78,7 +78,7 @@
   ansible.builtin.command:
     argv:
       - pbuilder-dist
-      - "{{ slurm_item }}"
+      - "{{ slurm_pkgbuild_item }}"
       - create
   changed_when: true
   async: 1800
@@ -90,7 +90,7 @@
   ansible.builtin.command:
     argv:
       - pbuilder-dist
-      - "{{ slurm_item }}"
+      - "{{ slurm_pkgbuild_item }}"
       - build
       - "{{ slurm_builddir }}/slurm-llnl_{{ slurm_version_with_release }}.dsc"
   async: 3600
@@ -99,14 +99,14 @@
 
 - name: Copy the built packages to the local repository
   ansible.builtin.copy:
-    src: "{{ slurm_builddir }}/pbuilder/{{ slurm_item }}_result/"
-    dest: "{{ slurm_repo_local_path }}/{{ slurm_item }}/"
+    src: "{{ slurm_builddir }}/pbuilder/{{ slurm_pkgbuild_item }}_result/"
+    dest: "{{ slurm_repo_local_path }}/{{ slurm_pkgbuild_item }}/"
     remote_src: true
     mode: preserve
     directory_mode: 02775
 
 - name: Create the package index on the local repository
   ansible.builtin.shell:
-    chdir: "{{ slurm_repo_local_path }}/{{ slurm_item }}"
+    chdir: "{{ slurm_repo_local_path }}/{{ slurm_pkgbuild_item }}"
     cmd: dpkg-scanpackages . /dev/null | gzip -9c > Packages.gz
   changed_when: true

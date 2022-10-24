@@ -1,0 +1,11 @@
+---
+- name: Build slurm and create a package repository
+  block:
+    - ansible.builtin.include_tasks: slurm_build.yml
+      loop:
+        - focal
+        - jammy
+      loop_control:
+        loop_var: slurm_pkgbuild_item
+  tags:
+    - slurm-pkgbuild
