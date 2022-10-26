@@ -1,2 +1,2 @@
-cuda_driver_version: "515"
-cuda_toolkit_version: "11.7"
+cuda_driver_version: "520"
+cuda_toolkit_version: "11.8"
