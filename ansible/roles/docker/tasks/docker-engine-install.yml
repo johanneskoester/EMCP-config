@@ -13,6 +13,14 @@
       - software-properties-common
     state: present
 
+- name: Make sure signing key directory exists
+  ansible.builtin.file:
+    path: "{{ docker_signing_key_directory }}"
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+
 - name: Download and install the docker gpg key
   ansible.builtin.get_url:
     url: https://download.docker.com/linux/ubuntu/gpg
