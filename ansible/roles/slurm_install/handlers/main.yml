@@ -1,15 +1,15 @@
 ---
-- name: reload slurmctld
+- name: restart slurmctld
   become: true
   community.general.supervisorctl:
     name: slurmctld
     state: restarted
 
-- name: reload slurmd
+- name: restart slurmd
   become: true
   ansible.builtin.systemd:
     name: slurmd
-    state: reloaded
+    state: restarted
 
 - name: restart munge systemd
   become: true
