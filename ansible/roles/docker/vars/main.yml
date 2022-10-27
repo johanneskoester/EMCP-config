@@ -6,3 +6,4 @@ docker_compose_v2_digest_url: "{{ docker_compose_v2_url }}.sha256"
 
 # The cli-plugins directory can be discovered with `dpkg -L docker-ce-cli | grep cli-plugins`
 docker_cli_plugins_dir: /usr/libexec/docker/cli-plugins
+docker_signing_key_path: "/etc/apt/trusted.gpg.d/docker-gpg.asc"
