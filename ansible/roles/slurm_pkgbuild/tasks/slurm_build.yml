@@ -10,16 +10,33 @@
     state: present
     update_cache: true
 
-- name: Configure pbuilder to use the http proxy
+- name: Create the pbuilder hook directory
+  become: true
+  ansible.builtin.file:
+    path: "{{ pbuilder_hookdir }}"
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+
+- name: Copy the pbuilder hook which adds the nvidia repository
+  become: true
+  ansible.builtin.template:
+    src: D99nvidiarepo.j2
+    dest: "{{ pbuilder_hookdir }}/D99nvidiarepo"
+    owner: root
+    group: root
+    mode: 0755
+
+- name: Configure pbuilder
   become: true
   ansible.builtin.blockinfile:
     path: /etc/pbuilderrc
-    block: "export http_proxy={{ http_proxy }}"
+    block: "{{ lookup('template', 'pbuilderrc.j2') }}"
     owner: root
     group: root
     mode: 0644
     state: present
-  when: http_proxy is defined
 
 - name: Create the work directory
   ansible.builtin.file:
@@ -52,9 +69,23 @@
 
 - name: Patch the source tree
   ansible.posix.patch:
-    src: "{{ slurm_github_tag }}-{{ ansible_distribution_release }}.patch"
+    src: "slurm-{{ slurm_version_with_release }}.patch"
     basedir: "{{ slurm_builddir }}/slurm-{{ slurm_github_tag }}"
     strip: 1
+
+- name: Add NVML dependencies
+  ansible.builtin.lineinfile:
+    path: "{{ slurm_builddir }}/slurm-{{ slurm_github_tag }}/debian/control"
+    line: " {{ slurm_pkgbuild_builddep }},"
+    insertafter: '^Build-Depends:$'
+    firstmatch: true
+    state: present
+  loop: "{{ slurm_nvml_builddeps }}"
+  loop_control:
+    loop_var: slurm_pkgbuild_builddep
+  when:
+    - slurm_pkgbuild_item['gpu'] is defined
+    - slurm_pkgbuild_item['gpu']
 
 - name: Create a buildable source package
   ansible.builtin.command:
@@ -69,7 +100,7 @@
 
 - name: Clean up the pbuilder result directory if it already exists
   ansible.builtin.file:
-    path: "{{ slurm_builddir }}/pbuilder/{{ slurm_pkgbuild_item }}_result"
+    path: "{{ slurm_builddir }}/pbuilder/{{ slurm_pkgbuild_item['distro'] }}_result"
     state: absent
 
 - name: Create a pbuilder environment (max 30 minutes, poll every 10 seconds)
@@ -78,7 +109,7 @@
   ansible.builtin.command:
     argv:
       - pbuilder-dist
-      - "{{ slurm_pkgbuild_item }}"
+      - "{{ slurm_pkgbuild_item['distro'] }}"
       - create
   changed_when: true
   async: 1800
@@ -90,7 +121,7 @@
   ansible.builtin.command:
     argv:
       - pbuilder-dist
-      - "{{ slurm_pkgbuild_item }}"
+      - "{{ slurm_pkgbuild_item['distro'] }}"
       - build
       - "{{ slurm_builddir }}/slurm-llnl_{{ slurm_version_with_release }}.dsc"
   async: 3600
@@ -98,15 +129,20 @@
   changed_when: true
 
 - name: Copy the built packages to the local repository
+  vars:
+    # This name scheme must match the one defined in the slurm_install role
+    slurm_repo_suffix: "{{ slurm_pkgbuild_item['gpu'] | default(false) | ternary('nvidia', '') }}"
+    slurm_repo_name: "{{ slurm_pkgbuild_item['distro'] }}{{ slurm_repo_suffix }}"
   ansible.builtin.copy:
-    src: "{{ slurm_builddir }}/pbuilder/{{ slurm_pkgbuild_item }}_result/"
-    dest: "{{ slurm_repo_local_path }}/{{ slurm_pkgbuild_item }}/"
+    src: "{{ slurm_builddir }}/pbuilder/{{ slurm_pkgbuild_item['distro'] }}_result/"
+    dest: "{{ slurm_repo_local_path }}/{{ slurm_repo_name }}/"
     remote_src: true
     mode: preserve
     directory_mode: 02775
+  register: slurm_pkg_copy
 
 - name: Create the package index on the local repository
   ansible.builtin.shell:
-    chdir: "{{ slurm_repo_local_path }}/{{ slurm_pkgbuild_item }}"
+    chdir: "{{ slurm_pkg_copy['dest'] }}"
     cmd: dpkg-scanpackages . /dev/null | gzip -9c > Packages.gz
   changed_when: true

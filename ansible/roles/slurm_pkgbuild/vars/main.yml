@@ -1,0 +1,5 @@
+pbuilder_hookdir: /etc/pbuilder/hooks
+
+slurm_nvml_builddeps:
+  - "libnvidia-compute-{{ slurm_builddep_nvidia_version }}"
+  - "cuda-nvml-dev-{{ slurm_builddep_cuda_version | replace('.', '-') }}"
