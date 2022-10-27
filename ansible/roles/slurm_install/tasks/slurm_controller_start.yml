@@ -1,0 +1,5 @@
+---
+- name: Start the controller daemon
+  community.general.supervisorctl:
+    name: slurmctld
+    state: started

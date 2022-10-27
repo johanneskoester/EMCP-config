@@ -1,0 +1,25 @@
+# The version to build.
+slurm_version: "19.05.8"
+slurm_version_with_release: "{{ slurm_version }}-1"
+
+# Version of the upstream source package.
+slurm_github_tag: "slurm-{{ slurm_version_with_release | replace('.', '-') }}"
+
+# Version of the ubuntu source package.
+slurm_ubuntu_repo_version: "19.05.5"
+slurm_ubuntu_repo_version_with_release: "{{ slurm_ubuntu_repo_version }}-1"
+
+# Versions of the build dependencies for the NVML-enabled slurm package.
+# They should match the nvidia driver packages installed on GPU compute nodes.
+slurm_builddep_nvidia_version: "520"
+slurm_builddep_cuda_version: "11.8"
+
+# Path of the work directory on the builder host.
+slurm_builddir: /var/tmp/slurmbuild
+
+# Path of the local package repository on the builder host.
+# The builder host builds the deb packages, copies them to the specified path
+# and creates repository metadata so that compute nodes can install the packages
+# via package manager. The user executing this role must have write permission
+# at the specified path.
+slurm_repo_local_path: /srv/pkg

@@ -6,7 +6,7 @@
 # install admin tools
 
 
-- name: add root account password
+- name: Add root account password
   ansible.builtin.user:
     name: root
     uid: 0
@@ -14,7 +14,7 @@
     update_password: always
   tags: security
 
-- name: install packages
+- name: Install packages
   apt:
     pkg:
       - htop

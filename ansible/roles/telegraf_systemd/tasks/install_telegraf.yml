@@ -1,5 +1,5 @@
 ---
-- name: get influxdata apt repo key
+- name: Get influxdata apt repo key
   ansible.builtin.get_url:
     url: https://repos.influxdata.com/influxdb.key
     dest: /etc/apt/trusted.gpg.d/influxdb.asc
@@ -8,19 +8,19 @@
     group: root
   environment: "{{ proxy_env | default('') }}"
 
-- name: install influxdata apt repo
+- name: Install influxdata apt repo
   ansible.builtin.apt_repository:
     repo: "deb https://repos.influxdata.com/{{ ansible_lsb.id | lower }} {{ ansible_lsb.codename }} stable"
     filename: influxdata
     state: present
 
-- name: install telegraf
+- name: Install telegraf
   ansible.builtin.apt:
     name: telegraf
     update_cache: true
     state: present
 
-- name: start and enable telegraf systemd unit
+- name: Start and enable telegraf systemd unit
   ansible.builtin.systemd:
     name: telegraf
     state: started

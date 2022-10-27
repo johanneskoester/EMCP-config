@@ -1,5 +1,5 @@
 ---
-- name: remove old docker install
+- name: Remove old docker install
   ansible.builtin.apt:
     name: ['docker', 'docker-engine', 'docker.io', 'containerd', 'runc']
     state: absent
@@ -30,7 +30,7 @@
     mode: 0644
   notify: refresh apt cache
 
-- name: install Docker Engine and the Docker SDK for Python
+- name: Install Docker Engine and the Docker SDK for Python
   ansible.builtin.apt:
     name:
       - docker-ce

@@ -1,6 +1,6 @@
 ---
 
-- name: check for krb5 package needed for kinit
+- name: Check for krb5 package needed for kinit
   ansible.builtin.apt:
     name: krb5-user
     state: present

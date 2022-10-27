@@ -1,0 +1,48 @@
+---
+- name: Obtain information for subsequent tasks
+  become: true
+  block:
+    - ansible.builtin.include_tasks: facts.yml
+  tags:
+    - slurm
+    - slurm-sssd
+    - slurm-munge
+    - slurm-node
+
+# This needs testing to find out if it's necessary.
+# See https://slurm.schedmd.com/faq.html#sssd
+# - name: Enable enumeration in SSSD
+#   become: true
+#   block:
+#     - ansible.builtin.include_tasks: sssd_enumerate.yml
+#   tags:
+#     - slurm
+#     - slurm-sssd
+
+- name: Install munge
+  become: true
+  block:
+    - ansible.builtin.include_tasks: munge.yml
+  tags:
+    - slurm
+    - slurm-munge
+
+- name: Install slurm
+  become: true
+  block:
+    - ansible.builtin.include_tasks: slurm_controller_install.yml
+      when: inventory_hostname in groups[slurm_controller_group_name]
+
+    - ansible.builtin.include_tasks: slurm_worker_install.yml
+      when: inventory_hostname in groups[slurm_worker_group_name]
+
+    - ansible.builtin.include_tasks: slurm_configure.yml
+
+    - ansible.builtin.include_tasks: slurm_controller_start.yml
+      when: inventory_hostname in groups[slurm_controller_group_name]
+
+    - ansible.builtin.include_tasks: slurm_worker_start.yml
+      when: inventory_hostname in groups[slurm_worker_group_name]
+  tags:
+    - slurm
+    - slurm-node

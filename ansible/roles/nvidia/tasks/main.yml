@@ -1,9 +1,9 @@
 - name: Install drivers and libraries
   block:
-  - include_tasks: nvidia-driver-libs.yml
+  - ansible.builtin.include_tasks: nvidia-driver-libs.yml
   tags: nvidia
 
 - name: Install the Docker runtime
   block:
-  - include_tasks: nvidia-docker.yml
+  - ansible.builtin.include_tasks: nvidia-docker.yml
   tags: nvidia

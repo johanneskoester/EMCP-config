@@ -2,13 +2,13 @@
 - name: Install Docker Engine
   become: true
   block:
-    - include_tasks: docker-engine-install.yml
+    - ansible.builtin.include_tasks: docker-engine-install.yml
   tags: docker
 
 - name: Make Docker aware of the http proxy
   become: true
   block:
-    - include_tasks: docker-proxy-config.yml
+    - ansible.builtin.include_tasks: docker-proxy-config.yml
   tags: docker-proxy
 
 # As of version 2.2.2, Docker Compose V2 has a regression over V1 in that
@@ -17,5 +17,5 @@
 - name: Install Docker Compose
   become: true
   block:
-    - include_tasks: compose-install-v1.yml
+    - ansible.builtin.include_tasks: docker-compose-install-v1.yml
   tags: docker-compose

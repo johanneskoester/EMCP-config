@@ -27,13 +27,13 @@
 #   tags:
 #     - mount_local
 
-- name: unmount /local
+- name: Unmount /local
   ansible.posix.mount:
     path: /local
     state: unmounted
 
-- name: mount /local
-  mount:
+- name: Mount /local
+  ansible.posix.mount:
     path: /local
     src: /dev/md0
     fstype: ext4
@@ -41,7 +41,7 @@
     state: mounted
 
 
-- name: create /local/work directory
+- name: Create /local/work directory
   ansible.builtin.file:
     path: /local/work
     state: directory
@@ -49,7 +49,7 @@
     group: root
     mode: 0777
 
-- name: create /local/cache directory
+- name: Create /local/cache directory
   ansible.builtin.file:
     path: /local/cache
     state: directory
@@ -58,7 +58,7 @@
     mode: 0770
 
 
-- name: create /local/cache directory
+- name: Create /local/cache directory
   ansible.builtin.file:
     path: /local/cache/fscache
     state: directory

@@ -1,0 +1,29 @@
+- name: Install dependencies for the pids module
+  ansible.builtin.apt:
+    name: python3-psutil
+    state: present
+
+- name: Check whether supervisord is runing
+  community.general.pids:
+    name: supervisord
+  register: pids_supervisord
+
+- name: Indicate that supervisord is running
+  ansible.builtin.set_fact:
+    init_system: supervisord
+  when: (pids_supervisord['pids'] | length) > 0
+
+- name: Use the init system detected by ansible
+  ansible.builtin.set_fact:
+    init_system: "{{ ansible_facts['service_mgr'] }}"
+  when: init_system is not defined
+
+- name: Associate slurm controller nodes with slurmctld
+  ansible.builtin.set_fact:
+    slurm_daemon_name: slurmctld
+  when: inventory_hostname in groups[slurm_controller_group_name]
+
+- name: Associate worker nodes with slurmd
+  ansible.builtin.set_fact:
+    slurm_daemon_name: slurmd
+  when: inventory_hostname in groups[slurm_worker_group_name]

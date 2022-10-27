@@ -1,4 +1,4 @@
-- name: install docker python bindings
+- name: Install docker python bindings
   ansible.builtin.apt:
     name: python3-docker
     state: present
@@ -7,7 +7,7 @@
     - powerdns
   become: true
 
-- name: create the pdns group
+- name: Create the pdns group
   ansible.builtin.group:
     name: "{{ pdns_group }}"
     system: true
@@ -17,7 +17,7 @@
     - powerdns
   become: true
 
-- name: create the pdns user
+- name: Create the pdns user
   ansible.builtin.user:
     name: "{{ pdns_user }}"
     group: "{{ pdns_group }}"
@@ -28,7 +28,7 @@
     - powerdns
   become: true
 
-- name: create pdns base directory
+- name: Create pdns base directory
   ansible.builtin.file:
     path: "{{ pdns_mount_host_path }}"
     state: directory
@@ -40,7 +40,7 @@
     - powerdns
   become: true
 
-- name: create pdns config directory
+- name: Create pdns config directory
   ansible.builtin.file:
     path: "{{ pdns_mount_host_path }}/config"
     state: directory
@@ -52,7 +52,7 @@
     - powerdns
   become: true
 
-- name: create pdns data directory
+- name: Create pdns data directory
   ansible.builtin.file:
     path: "{{ pdns_mount_host_path }}/data"
     state: directory
@@ -64,7 +64,7 @@
     - powerdns
   become: true
 
-- name: write the pdns_bind config file
+- name: Write the pdns_bind config file
   ansible.builtin.template:
     src: "pdns_bind.conf.j2"
     dest: "{{ pdns_mount_host_path }}/config/pdns.conf"
@@ -76,7 +76,7 @@
     - powerdns
   become: true
 
-- name: write the bind backend config file
+- name: Write the bind backend config file
   ansible.builtin.template:
     src: "bind.conf.j2"
     dest: "{{ pdns_mount_host_path }}/data/bind.conf"
@@ -88,7 +88,7 @@
     - powerdns
   become: true
 
-- name: write the bind zone file
+- name: Write the bind zone file
   ansible.builtin.template:
     src: "zone_file.conf.j2"
     dest: "{{ pdns_mount_host_path }}/data/{{ ikim_zone_file_name }}"
@@ -100,7 +100,7 @@
     - powerdns
   become: true
 
-- name: stop and disable systemd-resolved
+- name: Stop and disable systemd-resolved
   ansible.builtin.systemd:
     name: systemd-resolved
     state: stopped
@@ -111,7 +111,7 @@
     - powerdns
   become: true
 
-- name: manually set internal dns server
+- name: Manually set internal dns server
   ansible.builtin.template:
     src: resolv.conf.j2
     dest: /etc/resolv.conf
@@ -123,7 +123,7 @@
     - powerdns
   become: true
 
-- name: launch pdns docker image
+- name: Launch pdns docker image
   community.docker.docker_container:
     auto_remove: false
     detach: true

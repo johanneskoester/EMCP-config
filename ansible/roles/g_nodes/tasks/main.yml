@@ -2,11 +2,11 @@
 - name: Create the /local mountpoint
   become: true
   block:
-    - include_tasks: mount_local.yml
+    - ansible.builtin.include_tasks: mount_local.yml
   tags: mount_local
 
 - name: Prepare the host for gathering GPU facts
   become: true
   block:
-    - include_tasks: gpufacts.yml
+    - ansible.builtin.include_tasks: gpufacts.yml
   tags: gpufacts

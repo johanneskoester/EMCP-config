@@ -1,0 +1,36 @@
+---
+- name: reload slurmctld
+  become: true
+  community.general.supervisorctl:
+    name: slurmctld
+    state: restarted
+
+- name: reload slurmd
+  become: true
+  ansible.builtin.systemd:
+    name: slurmd
+    state: reloaded
+
+- name: restart munge systemd
+  become: true
+  ansible.builtin.systemd:
+    name: munge
+    state: restarted
+
+- name: restart munge supervisord
+  become: true
+  community.general.supervisorctl:
+    name: munged
+    state: restarted
+
+- name: restart sssd systemd
+  become: true
+  ansible.builtin.systemd:
+    name: sssd
+    state: restarted
+
+- name: restart sssd supervisord
+  become: true
+  community.general.supervisorctl:
+    name: sssd
+    state: restarted

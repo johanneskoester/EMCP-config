@@ -1,0 +1,46 @@
+# Inventory group names
+slurm_controller_group_name: slurm_controller
+slurm_worker_group_name: slurm_worker
+
+# The version to install.
+slurm_version: "19.05.8"
+slurm_version_with_release: "{{ slurm_version }}-1"
+
+# Optional: the SSSD domain that slurm should be able to enumerate.
+# If undefined, defaults to ansible_facts['domain'].
+# slurm_sssd_domain:
+
+# URI of the package repository.
+# The package repository can be built using the slurm_pkgbuild role.
+# See `man sources.list` for the supported URI schemes.
+slurm_repo_local_path: /srv/pkg
+slurm_repo_uri: "file:{{ slurm_repo_local_path }}"
+
+# The munge secret which is hashed to create the munge key.
+# It should be encrypted with Ansible Vault.
+# It can be any value such as a random string generated with
+# cat /dev/urandom | tr -dc '[:alnum:]' | head -c 128
+# As a general indication, pick a length matching MUNGE_KEY_LEN_DFL_BYTES from
+# from https://github.com/dun/munge/blob/master/src/libcommon/munge_defs.h
+slurm_munge_secret: "{{ vault_slurm_munge_secret }}"
+
+# Cluster name for the configuration file
+slurm_cluster_name: slurmcluster
+
+# The compute node partitions as a list of hashes.
+# Each hash has the following keys:
+#   name: the partition name as a string
+#   hosts: either the special value "ALL" or a list of inventory hosts
+#   default: the value of the "Default" parameter in slurm.conf (optional boolean, false if unspecified)
+# Example:
+#   - name: compute
+#     hosts: "{{ groups['slurm_compute'] }}"
+#     default: true
+#   - name: debug
+#     hosts:
+#       - t01.example.org
+#       - t02.example.org
+slurm_partitions:
+  - name: batch
+    hosts: ALL
+    default: true

@@ -1,4 +1,4 @@
-- name: create monitoring auth secret
+- name: Create monitoring auth secret
   kubernetes.core.k8s:
     state: present
     kubeconfig: "{{ rke2_kubeconf_host_path }}{{ rke2_download_kubeconf_file_name }}"
@@ -12,7 +12,7 @@
         users: "{{ monitoring_http_auth_pass }}"
   become: true
 
-- name: basic auth monitoring middleware
+- name: Basic auth monitoring middleware
   kubernetes.core.k8s:
     state: present
     kubeconfig: "{{ rke2_kubeconf_host_path }}{{ rke2_download_kubeconf_file_name }}"
@@ -27,7 +27,7 @@
           secret: monitoring-auth-secret
   become: true
 
-- name: build monitoring ingress routes
+- name: Build monitoring ingress routes
   kubernetes.core.k8s:
     state: present
     kubeconfig: "{{ rke2_kubeconf_host_path }}{{ rke2_download_kubeconf_file_name }}"
