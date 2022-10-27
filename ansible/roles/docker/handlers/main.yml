@@ -5,3 +5,7 @@
     name: docker
     state: restarted
     daemon_reload: true
+
+- name: refresh apt cache
+  ansible.builtin.apt:
+    update_cache: true

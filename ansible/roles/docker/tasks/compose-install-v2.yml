@@ -3,7 +3,7 @@
 # depdendencies which clash with the Docker Engine installation
 - name: Remove Docker Compose V1
   ansible.builtin.file:
-    path: /usr/bin/docker-compose
+    path: /usr/local/bin/docker-compose
     state: absent
 
 - name: Download the Docker Compose v2 executable
