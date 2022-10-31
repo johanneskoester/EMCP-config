@@ -2,8 +2,23 @@
 - name: Verify
   hosts: all
   become: true
+  vars:
+    http_proxy_host: proxy.example.docker.de
+    http_proxy_port: "3128"
+    http_proxy: "http://{{ http_proxy_host }}:{{ http_proxy_port }}"
+    https_proxy: "{{ http_proxy }}"
+    HTTPS_PROXY: "{{ http_proxy }}"
+    no_proxy: localhost,127.0.0.1
   tasks:
-  - name: Print variables from proxies.sh
-    command: cat /etc/profile.d/proxy.sh
+  - name: Execute proxies.sh
+    shell: . /etc/profile.d/proxy.sh  && echo $https_proxy $HTTPS_PROXY $no_proxy
     register: "output"
-  - debug: var=output.stdout_lines
+    
+  - debug: msg="http_proxy = {{ output.stdout.split(' ')[0] }} is verified"
+    when: output.stdout.split(' ')[0]==https_proxy
+    
+  - debug: msg="HTTPS_PROXY = {{ output.stdout.split(' ')[1] }} is verified"
+    when: output.stdout.split(' ')[1]==HTTPS_PROXY
+  
+  - debug: msg="no_proxy = {{ output.stdout.split(' ')[2] }} is verified"
+    when: output.stdout.split(' ')[2]==no_proxy
