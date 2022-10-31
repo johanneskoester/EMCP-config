@@ -12,7 +12,7 @@
   tasks:
   - name: Execute proxies.sh
     shell: . /etc/profile.d/proxy.sh  && echo $https_proxy $HTTPS_PROXY $no_proxy
-    register: "output"    
+    register: "output"
   - debug: msg="http_proxy = {{ output.stdout.split(' ')[0] }} is verified"
     when: output.stdout.split(' ')[0]==https_proxy
   - debug: msg="HTTPS_PROXY = {{ output.stdout.split(' ')[1] }} is verified"
