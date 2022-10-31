@@ -11,7 +11,9 @@
     no_proxy: localhost,127.0.0.1
   tasks:
   - name: Execute proxies script and store it in a variable
-    shell: . /etc/profile.d/proxy.sh  && echo $https_proxy $HTTPS_PROXY $no_proxy
+    shell: |
+      . /etc/profile.d/proxy.sh
+      echo $https_proxy $HTTPS_PROXY $no_proxy
     register: "output"
   - debug: msg="http_proxy = {{ output.stdout.split(' ')[0] }} is verified"
     when: output.stdout.split(' ')[0]==https_proxy
