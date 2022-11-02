@@ -27,6 +27,17 @@ slurm_munge_secret: "{{ vault_slurm_munge_secret }}"
 # Cluster name for the configuration file
 slurm_cluster_name: slurmcluster
 
+# The amount of memory on each node that is *not* intended to be usable by
+# slurm jobs. The usable memory is obtained by subtracting slurm_reserved_mem_mb
+# from the physical memory.
+# Note that this policy is enforced only if memory is declared as a consumable
+# resource in slurm.conf, in which case slurm prevents allocating more than the
+# usable memory. If memory is not a consumable resource, the usable memory is
+# simply the maximum that a job can request on a given node, but slurm will not
+# enforce any limits.
+# See https://slurm.schedmd.com/cons_res.html for details.
+slurm_reserved_mem_mb: 4096
+
 # The compute node partitions as a list of hashes.
 # Each hash has the following keys:
 #   name: the partition name as a string
