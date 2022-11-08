@@ -16,6 +16,8 @@
       metadata:
         namespace: "{{ slurm_namespace }}"
         name: slurmctld-service
+        annotations:
+          metallb.universe.tf/loadBalancerIPs: "{{ slurmctld_lb_ip | default(omit) }}"
       spec:
         selector:
           app: slurmctld
@@ -24,65 +26,14 @@
             protocol: TCP
             port: "{{ slurmctld_external_port }}"
             targetPort: "{{ slurmctld_internal_port }}"
-    state: present
-
-- name: Create slurmctld ssh service
-  kubernetes.core.k8s:
-    kubeconfig: "{{ rke2_kubeconf_host_path }}{{ rke2_download_kubeconf_file_name }}"
-    definition:
-      apiVersion: v1
-      kind: Service
-      metadata:
-        namespace: "{{ slurm_namespace }}"
-        name: slurmctldssh-service
-      spec:
-        selector:
-          app: slurmctld
-        ports:
           - name: slurmctldssh
             protocol: TCP
             port: "{{ slurmctld_external_ssh_port }}"
             targetPort: "{{ slurmctld_internal_ssh_port }}"
-    state: present
-
-- name: Create slurmctld ingress route
-  kubernetes.core.k8s:
-    kubeconfig: "{{ rke2_kubeconf_host_path }}{{ rke2_download_kubeconf_file_name }}"
-    definition:
-      apiVersion: traefik.containo.us/v1alpha1
-      kind: IngressRouteTCP
-      metadata:
-        name: slurmctld-route
-        namespace: "{{ slurm_namespace }}"
-      spec:
-        entryPoints:
-          - slurmctld
-        routes:
-          - match: "HostSNI(`*`)"
-            services:
-              - name: slurmctld-service
-                namespace: "{{ slurm_namespace }}"
-                port: "{{ slurmctld_external_port }}"
-    state: present
-
-- name: Create slurmctld ssh ingress route
-  kubernetes.core.k8s:
-    kubeconfig: "{{ rke2_kubeconf_host_path }}{{ rke2_download_kubeconf_file_name }}"
-    definition:
-      apiVersion: traefik.containo.us/v1alpha1
-      kind: IngressRouteTCP
-      metadata:
-        name: slurmctldssh-route
-        namespace: "{{ slurm_namespace }}"
-      spec:
-        entryPoints:
-          - slurmctldssh
-        routes:
-          - match: "HostSNI(`*`)"
-            services:
-              - name: slurmctldssh-service
-                namespace: "{{ slurm_namespace }}"
-                port: "{{ slurmctld_external_ssh_port }}"
+        # Since slurmctld needs to see the source IP from slurm clients, deploy
+        # it as a LoadBalancer service with externalTrafficPolicy set to Local.
+        externalTrafficPolicy: Local
+        type: LoadBalancer
     state: present
 
 - name: Create slurmctld deployment
