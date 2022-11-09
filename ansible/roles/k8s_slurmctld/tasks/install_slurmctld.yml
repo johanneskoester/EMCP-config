@@ -36,6 +36,60 @@
         type: LoadBalancer
     state: present
 
+- name: Allocate persistent storage for the Slurm state
+  kubernetes.core.k8s:
+    kubeconfig: "{{ rke2_kubeconf_host_path }}{{ rke2_download_kubeconf_file_name }}"
+    definition:
+      apiVersion: v1
+      kind: PersistentVolumeClaim
+      metadata:
+        name: longhorn-slurm-state
+        namespace: "{{ slurm_namespace }}"
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        storageClassName: longhorn
+        resources:
+          requests:
+            storage: "{{ slurmctld_state_volume_size }}"
+    state: present
+
+- name: Allocate persistent storage for the Slurm configuration directory
+  kubernetes.core.k8s:
+    kubeconfig: "{{ rke2_kubeconf_host_path }}{{ rke2_download_kubeconf_file_name }}"
+    definition:
+      apiVersion: v1
+      kind: PersistentVolumeClaim
+      metadata:
+        name: longhorn-slurm-config
+        namespace: "{{ slurm_namespace }}"
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        storageClassName: longhorn
+        resources:
+          requests:
+            storage: 2Mi
+    state: present
+
+- name: Allocate persistent storage for the Munge configuration directory
+  kubernetes.core.k8s:
+    kubeconfig: "{{ rke2_kubeconf_host_path }}{{ rke2_download_kubeconf_file_name }}"
+    definition:
+      apiVersion: v1
+      kind: PersistentVolumeClaim
+      metadata:
+        name: longhorn-munge-config
+        namespace: "{{ slurm_namespace }}"
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        storageClassName: longhorn
+        resources:
+          requests:
+            storage: 2Mi
+    state: present
+
 - name: Create slurmctld deployment
   kubernetes.core.k8s:
     kubeconfig: "{{ rke2_kubeconf_host_path }}{{ rke2_download_kubeconf_file_name }}"
@@ -57,6 +111,19 @@
             labels:
               app: slurmctld
           spec:
+            # Use an init container to make sure that slurmctld process can
+            # write to StateSaveLocation.
+            initContainers:
+              - name: state-dir-chown
+                image: "{{ slurmctld_image_url }}"
+                command:
+                  - chown
+                args:
+                  - "{{ slurmctld_state_volume_owner }}:{{ slurmctld_state_volume_owner }}"
+                  - "{{ slurmctld_state_save_location }}"
+                volumeMounts:
+                  - name: slurm-state
+                    mountPath: "{{ slurmctld_state_save_location }}"
             containers:
               - name: slurmctld
                 image: "{{ slurmctld_image_url }}"
@@ -67,9 +134,26 @@
                   limits:
                     memory: "{{ slurmctld_resources_lim_mem }}"
                     cpu: "{{ slurmctld_resources_lim_cpu }}"
+                volumeMounts:
+                  - name: slurm-state
+                    mountPath: "{{ slurmctld_state_save_location }}"
+                  - name: slurm-config
+                    mountPath: "{{ slurmctld_config_dir }}"
+                  - name: munge-config
+                    mountPath: "{{ slurmctld_munge_dir }}"
                 ports:
                   - containerPort: "{{ slurmctld_internal_port }}"
                   - containerPort: "{{ slurmctld_internal_ssh_port }}"
+            volumes:
+              - name: slurm-state
+                persistentVolumeClaim:
+                  claimName: longhorn-slurm-state
+              - name: slurm-config
+                persistentVolumeClaim:
+                  claimName: longhorn-slurm-config
+              - name: munge-config
+                persistentVolumeClaim:
+                  claimName: longhorn-munge-config
             imagePullSecrets:
               - name: "{{ slurmctld_image_registry_secret_name | default(omit) }}"
     state: present
