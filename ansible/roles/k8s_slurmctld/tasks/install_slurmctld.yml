@@ -42,7 +42,9 @@
           metallb.universe.tf/loadBalancerIPs: "{{ slurmctld_lb_ip | default(omit) }}"
       spec:
         selector:
-          app: slurmctld
+          # Since slurmctld doesn't support more than 1 pod, the service should
+          # target it directly. With StatefulSets, the pod name is predictable.
+          statefulset.kubernetes.io/pod-name: "{{ slurmctld_deployment_name }}-0"
         ports:
           - name: slurmctld
             protocol: TCP
