@@ -71,5 +71,5 @@
                   - containerPort: "{{ slurmctld_internal_port }}"
                   - containerPort: "{{ slurmctld_internal_ssh_port }}"
             imagePullSecrets:
-              - name: "{{ slurmctld_image_registry_secret_name }}"
+              - name: "{{ slurmctld_image_registry_secret_name | default(omit) }}"
     state: present
