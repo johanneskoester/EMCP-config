@@ -31,6 +31,12 @@ slurm_cluster_name: slurmcluster
 # It should match the variable of the same name in the k8s_slurmctld role.
 slurmctld_state_save_location: /var/spool/slurmctld
 
+# Directory for storing logs
+slurm_log_dir: /var/log/slurm
+
+# Directory for storing pid files
+slurm_pid_dir: /run/slurm
+
 # The amount of memory on each node that is *not* intended to be usable by
 # slurm jobs. The usable memory is obtained by subtracting slurm_reserved_mem_mb
 # from the physical memory.

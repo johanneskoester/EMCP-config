@@ -42,9 +42,9 @@ RUN mkdir "/home/$USERNAME/.ssh" \
 COPY etc/ssh/sshd_config.d/*.conf /etc/ssh/sshd_config.d/
 RUN mkdir /run/sshd
 
-# Create the SLURM state directory.
-RUN mkdir /var/spool/slurmctld \
-    && chown slurm:slurm /var/spool/slurmctld
+# Create directories used by SLURM.
+RUN mkdir /var/spool/slurmctld /var/log/slurm /run/slurm \
+    && chown slurm:slurm /var/spool/slurmctld /var/log/slurm /run/slurm
 
 # Create the MUNGE state directory.
 RUN mkdir /run/munge \

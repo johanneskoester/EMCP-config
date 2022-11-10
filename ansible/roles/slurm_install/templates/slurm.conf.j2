@@ -13,9 +13,9 @@ ProctrackType=proctrack/cgroup
 ReturnToService=1
 RebootProgram="/usr/bin/systemctl reboot"
 ResumeTimeout=600
-SlurmctldPidFile=/var/run/slurmctld.pid
+SlurmctldPidFile={{ slurm_pid_dir }}/slurmctld.pid
 #SlurmctldPort=6817
-SlurmdPidFile=/var/run/slurmd.pid
+SlurmdPidFile={{ slurm_pid_dir }}/slurmd.pid
 #SlurmdPort=6818
 SlurmdSpoolDir=/var/spool/slurmd
 SlurmUser=slurm
@@ -47,9 +47,9 @@ SelectTypeParameters=CR_Core
 #JobAcctGatherFrequency=30
 #JobAcctGatherType=jobacct_gather/linux
 #SlurmctldDebug=info
-SlurmctldLogFile=/var/log/slurmctld.log
+SlurmctldLogFile={{ slurm_log_dir }}/slurmctld.log
 #SlurmdDebug=info
-SlurmdLogFile=/var/log/slurmd.log
+SlurmdLogFile={{ slurm_log_dir }}/slurmd.log
 #
 #
 # WORKER NODES
