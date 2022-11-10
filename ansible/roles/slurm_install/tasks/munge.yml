@@ -3,6 +3,15 @@
     name: munge
     state: present
 
+- name: Add the munge key
+  ansible.builtin.template:
+    src: munge.key.j2
+    dest: /etc/munge/munge.key
+    owner: munge
+    group: munge
+    mode: 0600
+  notify: "restart munge {{ init_system }}"
+
 - name: Enable and start munge with systemd
   ansible.builtin.systemd:
     name: munge
@@ -15,12 +24,3 @@
     name: munged
     state: started
   when: init_system == 'supervisord'
-
-- name: Add the munge key
-  ansible.builtin.template:
-    src: munge.key.j2
-    dest: /etc/munge/munge.key
-    owner: munge
-    group: munge
-    mode: 0600
-  notify: "restart munge {{ init_system }}"
