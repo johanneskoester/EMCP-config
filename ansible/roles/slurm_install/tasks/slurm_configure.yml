@@ -29,17 +29,9 @@
     mode: 0644
   notify: "restart {{ slurm_daemon['name'] }}"
 
-- name: Create log directory
+- name: Create the log directory
   ansible.builtin.file:
     path: "{{ slurm_log_dir }}"
-    state: directory
-    mode: 0755
-    owner: "{{ slurm_daemon['owner'] }}"
-    group: "{{ slurm_daemon['owner'] }}"
-
-- name: Create the pid directory
-  ansible.builtin.file:
-    path: "{{ slurm_pid_dir }}"
     state: directory
     mode: 0755
     owner: "{{ slurm_daemon['owner'] }}"
