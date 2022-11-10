@@ -7,20 +7,44 @@
     kind: Namespace
     name: "{{ slurm_namespace }}"
 
-- name: Create slurmctld service
+# A headless service is required for StatefulSet in order to keep the network
+# identity of pods stable.
+- name: Create the internal-facing slurmctld headless service
   kubernetes.core.k8s:
     kubeconfig: "{{ rke2_kubeconf_host_path }}{{ rke2_download_kubeconf_file_name }}"
     definition:
       apiVersion: v1
       kind: Service
       metadata:
+        name: slurmctld-headless
         namespace: "{{ slurm_namespace }}"
-        name: slurmctld-service
+      spec:
+        selector:
+          app: slurmctld
+        ports:
+          - name: slurmctld
+            protocol: TCP
+            port: "{{ slurmctld_external_port }}"
+            targetPort: "{{ slurmctld_internal_port }}"
+        clusterIP: None
+    state: present
+
+- name: Create the external-facing slurmctld service
+  kubernetes.core.k8s:
+    kubeconfig: "{{ rke2_kubeconf_host_path }}{{ rke2_download_kubeconf_file_name }}"
+    definition:
+      apiVersion: v1
+      kind: Service
+      metadata:
+        name: slurmctld-lb
+        namespace: "{{ slurm_namespace }}"
         annotations:
           metallb.universe.tf/loadBalancerIPs: "{{ slurmctld_lb_ip | default(omit) }}"
       spec:
         selector:
-          app: slurmctld
+          # Since slurmctld doesn't support more than 1 pod, the service should
+          # target it directly. With StatefulSets, the pod name is predictable.
+          statefulset.kubernetes.io/pod-name: "{{ slurmctld_deployment_name }}-0"
         ports:
           - name: slurmctld
             protocol: TCP
@@ -36,18 +60,19 @@
         type: LoadBalancer
     state: present
 
-- name: Create slurmctld deployment
+- name: Create the slurmctld StatefulSet
   kubernetes.core.k8s:
     kubeconfig: "{{ rke2_kubeconf_host_path }}{{ rke2_download_kubeconf_file_name }}"
     definition:
       apiVersion: apps/v1
-      kind: Deployment
+      kind: StatefulSet
       metadata:
         name: "{{ slurmctld_deployment_name }}"
         namespace: "{{ slurm_namespace }}"
         labels:
           app: slurmctld
       spec:
+        serviceName: slurmctld-headless
         replicas: 1
         selector:
           matchLabels:
@@ -57,6 +82,19 @@
             labels:
               app: slurmctld
           spec:
+            # Use an init container to make sure that the slurmctld process can
+            # write to StateSaveLocation.
+            initContainers:
+              - name: state-dir-chown
+                image: "{{ slurmctld_image_url }}"
+                command:
+                  - chown
+                args:
+                  - "{{ slurmctld_state_volume_owner }}:{{ slurmctld_state_volume_owner }}"
+                  - "{{ slurmctld_state_save_location }}"
+                volumeMounts:
+                  - name: slurm-state
+                    mountPath: "{{ slurmctld_state_save_location }}"
             containers:
               - name: slurmctld
                 image: "{{ slurmctld_image_url }}"
@@ -67,9 +105,47 @@
                   limits:
                     memory: "{{ slurmctld_resources_lim_mem }}"
                     cpu: "{{ slurmctld_resources_lim_cpu }}"
+                volumeMounts:
+                  - name: slurm-state
+                    mountPath: "{{ slurmctld_state_save_location }}"
+                  - name: slurm-config
+                    mountPath: "{{ slurmctld_config_dir }}"
+                  - name: munge-config
+                    mountPath: "{{ slurmctld_munge_dir }}"
                 ports:
                   - containerPort: "{{ slurmctld_internal_port }}"
                   - containerPort: "{{ slurmctld_internal_ssh_port }}"
             imagePullSecrets:
               - name: "{{ slurmctld_image_registry_secret_name | default(omit) }}"
+        volumeClaimTemplates:
+          - metadata:
+              name: slurm-state
+              namespace: "{{ slurm_namespace }}"
+            spec:
+              accessModes:
+                - ReadWriteOnce
+              storageClassName: longhorn
+              resources:
+                requests:
+                  storage: "{{ slurmctld_state_volume_size }}"
+          - metadata:
+              name: slurm-config
+              namespace: "{{ slurm_namespace }}"
+            spec:
+              accessModes:
+                - ReadWriteOnce
+              storageClassName: longhorn
+              resources:
+                requests:
+                  storage: 2Mi
+          - metadata:
+              name: munge-config
+              namespace: "{{ slurm_namespace }}"
+            spec:
+              accessModes:
+                - ReadWriteOnce
+              storageClassName: longhorn
+              resources:
+                requests:
+                  storage: 2Mi
     state: present
