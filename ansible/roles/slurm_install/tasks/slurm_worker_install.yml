@@ -16,3 +16,11 @@
       - "slurm-client={{ slurm_version_with_release }}"
     state: present
     update_cache: true
+
+- name: Relax user limits
+  ansible.builtin.template:
+    src: ulimit_slurm_conf.j2
+    dest: /etc/security/limits.d/99-slurm.conf
+    owner: root
+    group: root
+    mode: 0644
