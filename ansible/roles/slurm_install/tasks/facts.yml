@@ -18,12 +18,16 @@
     init_system: "{{ ansible_facts['service_mgr'] }}"
   when: init_system is not defined
 
-- name: Associate slurm controller nodes with slurmctld
+- name: Associate the controller node with daemon slurmctld owned by user slurm
   ansible.builtin.set_fact:
-    slurm_daemon_name: slurmctld
+    slurm_daemon:
+      name: slurmctld
+      owner: slurm
   when: inventory_hostname in groups[slurm_controller_group_name]
 
-- name: Associate worker nodes with slurmd
+- name: Associate worker nodes with daemon slurmd owned by root
   ansible.builtin.set_fact:
-    slurm_daemon_name: slurmd
+    slurm_daemon:
+      name: slurmd
+      owner: root
   when: inventory_hostname in groups[slurm_worker_group_name]
