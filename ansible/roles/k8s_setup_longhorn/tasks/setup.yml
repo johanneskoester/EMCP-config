@@ -59,6 +59,21 @@
   environment: "{{ proxy_env | default('') }}"
   become: true
 
+- name: Create longhorn backup secret
+  kubernetes.core.k8s:
+    state: present
+    kubeconfig: "{{ rke2_kubeconf_host_path }}{{ rke2_download_kubeconf_file_name }}"
+    definition:
+      apiVersion: v1
+      kind: Secret
+      metadata:
+        name: "{{ longhorn_backup_cred_secret }}"
+        namespace: longhorn-system
+      data:
+        AWS_ACCESS_KEY_ID: "{{ longhorn_minio_access_key }}"
+        AWS_SECRET_ACCESS_KEY: "{{ longhorn_minio_secret_key }}"
+        AWS_ENDPOINTS: "{{ longhorn_minio_endpoint }}"
+
 - name: Install longhorn chart
   kubernetes.core.helm:
     release_name: longhorn
@@ -68,6 +83,8 @@
     kubeconfig: "{{ rke2_kubeconf_host_path }}{{ rke2_download_kubeconf_file_name }}"
     values:
       defaultSettings:
+        backupTarget: "{{ longhorn_backup_target_url }}"
+        backupTargetCredentialSecret: "{{ longhorn_backup_cred_secret }}"
         createDefaultDiskLabeledNodes: true
     wait: true
     create_namespace: true
