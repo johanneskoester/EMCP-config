@@ -23,4 +23,4 @@ jobs:
           # The default Github token cannot be used here as deleting packages
           # requires a personal access token with the appropriate permissions.
           # See https://github.com/snok/container-retention-policy#token.
-          # token: ${{ secrets.PAT }}
+          token: ${{ secrets.PAT_HFRSCHMIDT }}
