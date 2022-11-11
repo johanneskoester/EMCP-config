@@ -1,7 +1,6 @@
 name: Clean up old container images
 
 on:
-  pull_request:
   schedule:
     # Every day at 4:15 am
     - cron: 15 4 * * *
@@ -21,4 +20,7 @@ jobs:
           cut-off: One month ago UTC
           account-type: org
           org-name: ${{ github.repository_owner }}
-          token: ${{ secrets.GITHUB_TOKEN }}
+          # The default Github token cannot be used here as deleting packages
+          # requires a personal access token with the appropriate permissions.
+          # See https://github.com/snok/container-retention-policy#token.
+          # token: ${{ secrets.PAT }}
