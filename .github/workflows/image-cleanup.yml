@@ -1,7 +1,7 @@
 name: Clean up old container images
 
 on:
-  workflow_dispatch:
+  pull_request:
   schedule:
     # Every day at 4:15 am
     - cron: 15 4 * * *
