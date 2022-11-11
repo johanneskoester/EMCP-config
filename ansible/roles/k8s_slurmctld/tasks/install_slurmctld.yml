@@ -113,6 +113,8 @@
                     mountPath: "{{ slurmctld_config_dir }}"
                   - name: munge-config
                     mountPath: "{{ slurmctld_munge_dir }}"
+                  - name: slurmctld-ssh
+                    mountPath: "/home/{{ slurmctld_ssh_user }}/.ssh"
                 ports:
                   - containerPort: "{{ slurmctld_internal_port }}"
                   - containerPort: "{{ slurmctld_internal_ssh_port }}"
@@ -141,6 +143,16 @@
                   storage: 2Mi
           - metadata:
               name: munge-config
+              namespace: "{{ slurm_namespace }}"
+            spec:
+              accessModes:
+                - ReadWriteOnce
+              storageClassName: longhorn
+              resources:
+                requests:
+                  storage: 2Mi
+          - metadata:
+              name: slurmctld-ssh
               namespace: "{{ slurm_namespace }}"
             spec:
               accessModes:
