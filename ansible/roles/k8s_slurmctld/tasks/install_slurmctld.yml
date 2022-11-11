@@ -98,6 +98,7 @@
             containers:
               - name: slurmctld
                 image: "{{ slurmctld_image_url }}"
+                imagePullPolicy: "{{ slurmctld_image_pull_policy | default(omit) }}"
                 resources:
                   requests:
                     memory: "{{ slurmctld_resources_req_mem }}"
