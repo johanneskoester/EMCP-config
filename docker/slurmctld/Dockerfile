@@ -14,6 +14,7 @@ RUN export DEBIAN_FRONTEND=noninteractive \
         munge \
         openssh-server \
         slurmctld \
+        sssd-ldap \
         sudo \
         supervisor \
     && apt-get clean -y \
@@ -52,6 +53,10 @@ RUN mkdir /run/munge \
 
 # Copy the supervisor definition files.
 COPY etc/supervisor/conf.d/*.conf /etc/supervisor/conf.d/
+
+# Set up sssd to obtain users from the freeipa server.
+COPY etc/sssd/sssd.conf /etc/sssd/sssd.conf
+RUN chmod 600 /etc/sssd/sssd.conf
 
 ENTRYPOINT ["/usr/bin/supervisord"]
 CMD ["--nodaemon"]
