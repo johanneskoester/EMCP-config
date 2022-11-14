@@ -36,6 +36,9 @@
     - ansible.builtin.include_tasks: slurm_worker_install.yml
       when: inventory_hostname in groups[slurm_worker_group_name]
 
+    - ansible.builtin.include_tasks: slurm_worker_limits.yml
+      when: inventory_hostname in groups[slurm_worker_group_name]
+
     - ansible.builtin.include_tasks: slurm_configure.yml
 
     - ansible.builtin.include_tasks: slurm_controller_start.yml
