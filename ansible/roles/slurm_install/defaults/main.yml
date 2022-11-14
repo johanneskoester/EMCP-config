@@ -50,7 +50,7 @@ slurm_ulimit_memlock_soft: "unlimited"
 slurm_ulimit_memlock_hard: "unlimited"
 slurm_ulimit_nofile_soft: "65536"  # 2^16
 slurm_ulimit_nofile_hard: "131072"  # 2^17
-slurm_ulimit_stack_soft: "unlimited"
+slurm_ulimit_stack_soft: "67108864"  # 64 GiB
 slurm_ulimit_stack_hard: "unlimited"
 
 # The compute node partitions as a list of hashes.
