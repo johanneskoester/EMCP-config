@@ -3,9 +3,17 @@ on:
   push:
     branches:
       - main
+    paths:
+    - ansible/roles/miniconda/**
+    - ansible/roles/poetry/**
+    - ansible/roles/proxies/**
   pull_request:
     branches:
       - "*"
+    paths:
+    - ansible/roles/miniconda/**
+    - ansible/roles/poetry/**
+    - ansible/roles/proxies/**
 
 jobs:
   build:
