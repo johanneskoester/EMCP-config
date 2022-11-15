@@ -53,10 +53,6 @@ RUN mkdir /run/sshd
 RUN mkdir "$SLURM_STATE_SAVE_LOCATION" "$SLURM_LOG_DIR" "$SLURMCTLD_PID_DIR" \
     && chown slurm:slurm "$SLURM_STATE_SAVE_LOCATION" "$SLURM_LOG_DIR" "$SLURMCTLD_PID_DIR"
 
-# Create the MUNGE state directory.
-RUN mkdir /run/munge \
-    && chown munge:munge /run/munge
-
 # Copy the supervisor definition files.
 COPY etc/supervisor/conf.d/*.conf /etc/supervisor/conf.d/
 
