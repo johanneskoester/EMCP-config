@@ -30,13 +30,10 @@
 - name: Install slurm
   become: true
   block:
-    - ansible.builtin.include_tasks: slurm_controller_install.yml
+    - ansible.builtin.include_tasks: slurm_controller_prepare.yml
       when: inventory_hostname in groups[slurm_controller_group_name]
 
-    - ansible.builtin.include_tasks: slurm_worker_install.yml
-      when: inventory_hostname in groups[slurm_worker_group_name]
-
-    - ansible.builtin.include_tasks: slurm_worker_limits.yml
+    - ansible.builtin.include_tasks: slurm_worker_prepare.yml
       when: inventory_hostname in groups[slurm_worker_group_name]
 
     - ansible.builtin.include_tasks: slurm_configure.yml
