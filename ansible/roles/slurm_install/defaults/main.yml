@@ -45,6 +45,14 @@ slurm_log_dir: /var/log/slurm
 # See https://slurm.schedmd.com/cons_res.html for details.
 slurm_reserved_mem_mb: 4096
 
+# User limits on worker nodes
+slurm_ulimit_memlock_soft: "unlimited"
+slurm_ulimit_memlock_hard: "unlimited"
+slurm_ulimit_nofile_soft: "65536"  # 2^16
+slurm_ulimit_nofile_hard: "131072"  # 2^17
+slurm_ulimit_stack_soft: "67108864"  # 64 GiB
+slurm_ulimit_stack_hard: "unlimited"
+
 # The compute node partitions as a list of hashes.
 # Each hash has the following keys:
 #   name: the partition name as a string
