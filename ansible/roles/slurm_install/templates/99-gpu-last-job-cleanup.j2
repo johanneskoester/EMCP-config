@@ -1,0 +1,38 @@
+#!/usr/bin/env sh
+set -eu
+
+SCRIPTNAME="$(basename $0)"
+
+log () {
+	logger -s -t "slurm_epilog_$SCRIPTNAME" "$1"
+}
+
+if ! command -v nvidia-smi > /dev/null 2>&1; then
+	log "Skipping as this node is not gpu-equipped."
+	exit 0
+fi
+
+if [ $SLURM_JOB_UID -eq 0 ]; then
+	log "Skipping for user root."
+	exit 0
+fi
+
+remaining_jobs="$(squeue -h -u "$SLURM_JOB_USER" -w "$SLURM_JOB_NODELIST")"
+if [ "$remaining_jobs" ]; then
+	log "Skipping as this is not the last job for user $SLURM_JOB_USER on nodes $SLURM_JOB_NODELIST."
+	exit 0
+fi
+
+log "Starting for user $SLURM_JOB_USER."
+
+gpu_count=$(nvidia-smi -L | wc -l)
+gpu_ids="$(seq --separator="," 0 $((gpu_count - 1)))"
+killed_pids="$(runuser -u "$SLURM_JOB_USER" -- fuser -k /dev/nvidia{$gpu_ids})"
+
+if [ "$killed_pids" ]; then
+	log "Killed pids $killed_pids."
+else
+	log "Nothing to kill."
+fi
+
+log "Finished for user $SLURM_JOB_USER."

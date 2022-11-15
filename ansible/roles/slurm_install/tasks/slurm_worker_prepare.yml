@@ -24,3 +24,19 @@
     owner: root
     group: root
     mode: 0644
+
+- name: Create the epilog directory
+  ansible.builtin.file:
+    path: /etc/slurm-llnl/epilog.d
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+
+- name: Copy the GPU epilog script
+  ansible.builtin.template:
+    src: 99-gpu-last-job-cleanup.j2
+    dest: /etc/slurm-llnl/epilog.d/99-gpu-last-job-cleanup
+    owner: root
+    group: root
+    mode: 0755
