@@ -1,7 +1,8 @@
 #!/bin/sh
 set -eu
 
-# NTP should be handled by the host.
+# Enroll this container in freeipa. Note that the host must have a working
+# NTP configuration as it is purposefully skipped here.
 ipa-client-install \
 	--unattended \
 	--force-join \
@@ -14,4 +15,6 @@ ipa-client-install \
 	--domain="$IPACLIENT_DOMAIN" \
 	--realm="$IPACLIENT_REALM" \
 	< /ipaadmin/password
+
+# Start supervisord.
 exec /usr/bin/supervisord "$@"
