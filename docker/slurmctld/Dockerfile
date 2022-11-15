@@ -17,10 +17,10 @@ ENV TZ=Etc/UTC
 RUN export DEBIAN_FRONTEND=noninteractive \
     && apt-get update \
     && apt-get -y install --no-install-recommends \
+        freeipa-client \
         munge \
         openssh-server \
         slurmctld \
-        sssd-ldap \
         sudo \
         supervisor \
     && apt-get clean -y \
@@ -53,19 +53,15 @@ RUN mkdir /run/sshd
 RUN mkdir "$SLURM_STATE_SAVE_LOCATION" "$SLURM_LOG_DIR" "$SLURMCTLD_PID_DIR" \
     && chown slurm:slurm "$SLURM_STATE_SAVE_LOCATION" "$SLURM_LOG_DIR" "$SLURMCTLD_PID_DIR"
 
-# Create the MUNGE state directory.
-RUN mkdir /run/munge \
-    && chown munge:munge /run/munge
-
 # Copy the supervisor definition files.
 COPY etc/supervisor/conf.d/*.conf /etc/supervisor/conf.d/
 
-# Set up sssd to obtain users from the freeipa server.
-COPY etc/sssd/sssd.conf /etc/sssd/sssd.conf
-RUN chmod 600 /etc/sssd/sssd.conf
+# Copy the entrypoint script.
+COPY entrypoint.sh /entrypoint.sh
 
-ENTRYPOINT ["/usr/bin/supervisord"]
+ENTRYPOINT ["/entrypoint.sh"]
 CMD ["--nodaemon"]
 
+VOLUME ["/ipaadmin"]
 EXPOSE 22
 EXPOSE 6817
