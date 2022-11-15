@@ -14,7 +14,6 @@
     - monitoring
     - prometheus-targets
   run_once: true
-  delegate_to: localhost
 
 - name: Include ingress setup tasks
   block:
