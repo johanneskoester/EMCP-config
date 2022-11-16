@@ -6,6 +6,7 @@ ClusterName={{ slurm_cluster_name }}
 SlurmctldHost={{ hostvars[host]['ansible_hostname'] }}({{ host }})
 {% endfor %}
 #
+Epilog=/etc/slurm-llnl/epilog.sh
 #MailProg=/bin/mail
 MpiDefault=none
 #MpiParams=ports=#-#

@@ -16,3 +16,35 @@
       - "slurm-client={{ slurm_version_with_release }}"
     state: present
     update_cache: true
+
+- name: Relax user limits
+  ansible.builtin.template:
+    src: ulimit_slurm_conf.j2
+    dest: /etc/security/limits.d/99-slurm.conf
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Copy the top-level epilog script
+  ansible.builtin.copy:
+    src: epilog.sh
+    dest: /etc/slurm-llnl/epilog.sh
+    owner: root
+    group: root
+    mode: 0755
+
+- name: Create the epilog script directory
+  ansible.builtin.file:
+    path: /etc/slurm-llnl/epilog.d
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+
+- name: Copy the GPU epilog script
+  ansible.builtin.template:
+    src: 99-gpu-last-job-cleanup.j2
+    dest: /etc/slurm-llnl/epilog.d/99-gpu-last-job-cleanup
+    owner: root
+    group: root
+    mode: 0755

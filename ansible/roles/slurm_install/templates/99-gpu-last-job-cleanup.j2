@@ -1,0 +1,30 @@
+#!/usr/bin/env sh
+set -e
+
+description="GPU cleanup for user $SLURM_JOB_USER, nodes $SLURM_JOB_NODELIST"
+echo "Starting $description."
+
+if ! command -v nvidia-smi > /dev/null 2>&1; then
+	echo "Skipping as nvidia-smi is not installed on this node."
+	exit 0
+fi
+
+if [ $SLURM_JOB_UID -eq 0 ]; then
+	echo "Skipping for user root."
+	exit 0
+fi
+
+remaining_jobs="$(squeue -h -u "$SLURM_JOB_USER" -w "$SLURM_JOB_NODELIST")"
+if [ "$remaining_jobs" ]; then
+	echo "Skipping as this is not the user's last job on the target nodes."
+	exit 0
+fi
+
+gpu_count=$(nvidia-smi -L | wc -l)
+nvidia_devices="$(seq --separator=" " 0 $((gpu_count - 1)) | sed -E 's|([[:digit:]]+)|/dev/nvidia\1|g')"
+
+# Suppress the exit status of fuser as it returns non-zero when there are no
+# processes to kill
+runuser -u "$SLURM_JOB_USER" -- fuser -k $nvidia_devices || true
+
+echo "Finished $description."
