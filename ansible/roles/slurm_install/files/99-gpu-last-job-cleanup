@@ -23,8 +23,16 @@ if [ "$remaining_jobs" ]; then
 	exit 0
 fi
 
-# Suppress the exit status of fuser as it returns non-zero when there are no
-# processes to kill
+# To address the issue of misbehaving GPU workloads which leave orphan processes
+# with allocated GPU memory, after checking that the user doesn't have any
+# running processes on the target nodes, kill any processes owned by the user
+# that are still attached to the GPU.
+#
+# Since the sequence of checking -> killing is not atomic, no other instructions
+# should be inserted between these two commands.
+#
+# The exit status of fuser is suppressed as the program returns non-zero when
+# there are simply no processes to kill.
 /usr/sbin/runuser -u "$SLURM_JOB_USER" -- /usr/bin/fuser -k $nvidia_devices || true
 
 echo "Finished $description."
