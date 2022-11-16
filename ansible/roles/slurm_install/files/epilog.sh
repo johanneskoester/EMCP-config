@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 
-systemd-cat \
+/usr/bin/systemd-cat \
 	--identifier="slurm-epilog" \
 	--priority=info \
 	--stderr-priority=err \

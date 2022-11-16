@@ -42,8 +42,8 @@
     mode: 0755
 
 - name: Copy the GPU epilog script
-  ansible.builtin.template:
-    src: 99-gpu-last-job-cleanup.j2
+  ansible.builtin.copy:
+    src: 99-gpu-last-job-cleanup
     dest: /etc/slurm-llnl/epilog.d/99-gpu-last-job-cleanup
     owner: root
     group: root
