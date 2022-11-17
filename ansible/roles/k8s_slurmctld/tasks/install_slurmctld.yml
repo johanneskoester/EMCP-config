@@ -28,7 +28,7 @@
       apiVersion: v1
       kind: Service
       metadata:
-        name: slurmctld-headless
+        name: "{{ slurmctld_deployment_name }}-headless"
         namespace: "{{ slurm_namespace }}"
       spec:
         selector:
@@ -48,7 +48,7 @@
       apiVersion: v1
       kind: Service
       metadata:
-        name: slurmctld-lb
+        name: "{{ slurmctld_deployment_name }}-lb"
         namespace: "{{ slurm_namespace }}"
         annotations:
           metallb.universe.tf/loadBalancerIPs: "{{ slurmctld_lb_ip | default(omit) }}"
@@ -84,7 +84,7 @@
         labels:
           app: slurmctld
       spec:
-        serviceName: slurmctld-headless
+        serviceName: "{{ slurmctld_deployment_name }}-headless"
         replicas: 1
         selector:
           matchLabels:
