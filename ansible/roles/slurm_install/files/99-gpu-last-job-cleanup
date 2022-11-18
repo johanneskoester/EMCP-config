@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 set -e
 
-description="GPU cleanup for user $SLURM_JOB_USER, nodes $SLURM_JOB_NODELIST"
+description="GPU cleanup for user $SLURM_JOB_USER on node $SLURMD_NODENAME"
 echo "Starting $description."
 
 if ! command -v /usr/bin/nvidia-smi > /dev/null 2>&1; then
@@ -16,7 +16,7 @@ fi
 
 gpu_count=$(/usr/bin/nvidia-smi -L | wc -l)
 nvidia_devices="$(/usr/bin/seq --separator=" " 0 $((gpu_count - 1)) | /usr/bin/sed -E 's|([[:digit:]]+)|/dev/nvidia\1|g')"
-remaining_jobs="$(/usr/bin/squeue -h -u "$SLURM_JOB_USER" -w "$SLURM_JOB_NODELIST")"
+remaining_jobs="$(/usr/bin/squeue -h -u "$SLURM_JOB_USER" -w "$SLURMD_NODENAME")"
 
 if [ "$remaining_jobs" ]; then
 	echo "Skipping as this is not the user's last job on the target nodes."
