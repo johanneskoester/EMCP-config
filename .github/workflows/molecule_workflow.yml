@@ -17,8 +17,11 @@ on:
 
 jobs:
   build:
-    name: Test Roles using MOLECULE
+    name: MOLECULE Role Test
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        roles: [miniconda, poetry, proxies]
 
     steps:
       - name: Checkout Code
@@ -36,7 +39,8 @@ jobs:
         run: ansible-galaxy collection install community.docker
         
       - name: Test roles that initialized with molecule
-        run: find -type d -name molecule -execdir molecule test \;
+        working-directory: ansible/roles/${{ matrix.roles }}
+        run: molecule test
         env:
           PY_COLORS: '1'
           ANSIBLE_FORCE_COLOR: '1'
