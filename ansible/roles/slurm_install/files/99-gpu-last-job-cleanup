@@ -16,7 +16,7 @@ fi
 
 gpu_count=$(/usr/bin/nvidia-smi -L | wc -l)
 nvidia_devices="$(/usr/bin/seq --separator=" " 0 $((gpu_count - 1)) | /usr/bin/sed -E 's|([[:digit:]]+)|/dev/nvidia\1|g')"
-remaining_jobs="$(/usr/bin/squeue -h -u "$SLURM_JOB_USER" -w "$SLURMD_NODENAME")"
+remaining_jobs="$(/usr/bin/squeue -h -u "$SLURM_JOB_USER" -w "$SLURMD_NODENAME" --states=pending,running)"
 
 if [ "$remaining_jobs" ]; then
 	echo "Skipping as this is not the user's last job on the target nodes."
