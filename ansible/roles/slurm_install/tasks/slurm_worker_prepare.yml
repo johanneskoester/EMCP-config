@@ -8,6 +8,14 @@
     repo: "deb [ trusted=yes ] {{ slurm_repo_uri }}/{{ slurm_repo_name }} ./"
     state: present
 
+- name: Configure apt to prefer the custom-built slurm packages
+  ansible.builtin.copy:
+    src: 99prefer-local-slurm
+    dest: /etc/apt/preferences.d/99prefer-local-slurm
+    owner: root
+    group: root
+    mode: 0644
+
 - name: Install the worker daemon and client tools from the custom repository
   ansible.builtin.apt:
     name:
