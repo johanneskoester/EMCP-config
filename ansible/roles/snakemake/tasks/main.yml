@@ -1,0 +1,20 @@
+- name: Setup slurm profile
+  ansible.builtin.copy:
+    content: |
+      slurm: true
+      use-conda: true
+      latency-wait: 60
+    dest: /etc/xdg/snakemake/slurm/config.yaml
+    owner: root
+    group: root
+    mode: u=rw,g=r,o=r
+
+- name: Setup local profile
+  ansible.builtin.copy:
+    content: |
+      use-conda: true
+      latency-wait: 60
+    dest: /etc/xdg/snakemake/local/config.yaml
+    owner: root
+    group: root
+    mode: u=rw,g=r,o=r
