@@ -8,7 +8,7 @@
   register: docker_socket
   tags: ipaclient-docker-group
 
-- name: Make sure there's no local duplicate of the IPA docker group
+- name: Make sure that the docker socket is owned by the IPA docker group
   block:
     - ansible.builtin.include_tasks: docker_group_ipa.yml
   when: docker_socket['stat']['exists']

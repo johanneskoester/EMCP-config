@@ -35,3 +35,30 @@
     local: true
     state: absent
   when: ansible_facts['getent_group']['docker']
+
+- name: Disable auto-startup of the the docker socket to prevent it from starting too early with other sockets
+  ansible.builtin.systemd:
+    name: docker.socket
+    enabled: false
+
+- name: Create a systemd configuration directory for the Docker socket
+  ansible.builtin.file:
+    path: /etc/systemd/system/docker.socket.d
+    owner: root
+    group: root
+    mode: 0755
+    state: directory
+
+- name: Instruct the Docker socket to start up after network groups are made available
+  ansible.builtin.template:
+    src: nss-dependency.conf.j2
+    dest: /etc/systemd/system/docker.socket.d/nss-dependency.conf
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Start the docker service
+  ansible.builtin.systemd:
+    name: docker.service
+    state: started
+    daemon_reload: true
