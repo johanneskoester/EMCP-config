@@ -6,13 +6,13 @@
     get_checksum: false
     get_mime: false
   register: docker_socket
-  tags: ipaclient-deduplicate-groups
+  tags: ipaclient-docker-group
 
 - name: Make sure there's no local duplicate of the IPA docker group
   block:
-    - ansible.builtin.include_tasks: docker_group_deduplicate.yml
+    - ansible.builtin.include_tasks: docker_group_ipa.yml
   when: docker_socket['stat']['exists']
-  tags: ipaclient-deduplicate-groups
+  tags: ipaclient-docker-group
 
 - name: Change the default umask for user homes created by the pam_mkhomedir module.
   block:
