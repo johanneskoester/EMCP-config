@@ -1,0 +1,58 @@
+---
+- name: Add the repository
+  vars:
+    # This name scheme must match the one defined in the slurm_pkgbuild role
+    slurm_repo_suffix: "{{ ansible_local['gpu']['count'] | default(0) | ternary('nvidia', '') }}"
+    slurm_repo_name: "{{ ansible_distribution_release }}{{ slurm_repo_suffix }}"
+  ansible.builtin.apt_repository:
+    repo: "deb [ trusted=yes ] {{ slurm_repo_uri }}/{{ slurm_repo_name }} ./"
+    state: present
+
+- name: Configure apt to prefer the custom-built slurm packages
+  ansible.builtin.copy:
+    src: 99prefer-local-slurm
+    dest: /etc/apt/preferences.d/99prefer-local-slurm
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Install the worker daemon and client tools from the custom repository
+  ansible.builtin.apt:
+    name:
+      - "slurmd={{ slurm_version_with_release }}"
+      - "slurm-wlm-basic-plugins={{ slurm_version_with_release }}"
+      - "slurm-client={{ slurm_version_with_release }}"
+    state: present
+    update_cache: true
+
+- name: Relax user limits
+  ansible.builtin.template:
+    src: ulimit_slurm_conf.j2
+    dest: /etc/security/limits.d/99-slurm.conf
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Copy the top-level epilog script
+  ansible.builtin.copy:
+    src: epilog.sh
+    dest: /etc/slurm-llnl/epilog.sh
+    owner: root
+    group: root
+    mode: 0755
+
+- name: Create the epilog script directory
+  ansible.builtin.file:
+    path: /etc/slurm-llnl/epilog.d
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+
+- name: Copy the GPU epilog script
+  ansible.builtin.copy:
+    src: 99-gpu-last-job-cleanup
+    dest: /etc/slurm-llnl/epilog.d/99-gpu-last-job-cleanup
+    owner: root
+    group: root
+    mode: 0755

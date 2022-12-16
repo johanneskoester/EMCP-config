@@ -1,0 +1,16 @@
+---
+- name: Include telegraf setup tasks
+  block:
+    - ansible.builtin.include_tasks: install_telegraf.yml
+  tags:
+    - monitoring-agent
+    - telegraf
+  become: true
+
+- name: Include telegraf config tasks
+  block:
+    - ansible.builtin.include_tasks: configure_telegraf.yml
+  tags:
+    - monitoring-agent
+    - telegraf
+  become: true

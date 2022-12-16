@@ -1,0 +1,27 @@
+name: Clean up old container images
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Every Monday at 4:15 am
+    - cron: 15 4 * * MON
+
+jobs:
+  delete-images:
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+
+    steps:
+      - name: Delete images older than a month built built by pull requests
+        uses: snok/container-retention-policy@v1
+        with:
+          image-names: "*"
+          filter-tags: pr-*
+          cut-off: One month ago UTC
+          account-type: org
+          org-name: ${{ github.repository_owner }}
+          # The default Github token cannot be used here as deleting packages
+          # requires a personal access token with the appropriate permissions.
+          # See https://github.com/snok/container-retention-policy#token.
+          token: ${{ secrets.PAT_HFRSCHMIDT }}

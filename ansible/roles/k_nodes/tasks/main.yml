@@ -1,6 +1,6 @@
 ---
 
-- name: partition the 2nd drive
+- name: Partition the 2nd drive
   community.general.parted:
     device: /dev/sdb
     number: 1
@@ -9,13 +9,13 @@
   tags:
     - mount_local
 
-- name: format the drive
-  filesystem:
+- name: Format the drive
+  community.general.filesystem:
     fstype: ext4
     dev: /dev/sdb1
   become: true
 
-- name: create /local directory
+- name: Create /local directory
   ansible.builtin.file:
     path: /local
     state: directory
@@ -26,8 +26,8 @@
   tags:
     - mount_local
 
-- name: mount /local/sdb
-  mount:
+- name: Mount /local/sdb
+  ansible.posix.mount:
     path: /local
     src: /dev/sdb1
     fstype: ext4
@@ -37,7 +37,7 @@
     - mount_local
 
 ##########
-- name: partition the 3rd drive
+- name: Partition the 3rd drive
   community.general.parted:
     device: /dev/sdc
     number: 1
@@ -46,14 +46,14 @@
   tags:
     - mount_local
 
-- name: format the drive
-  filesystem:
+- name: Format the drive
+  community.general.filesystem:
     fstype: ext4
     dev: /dev/sdc1
   become: true
 
-- name: mount /local/sdc
-  mount:
+- name: Mount /local/sdc
+  ansible.posix.mount:
     path: /local
     src: /dev/sdc1
     fstype: ext4
@@ -63,7 +63,7 @@
     - mount_local
 
 ##########
-- name: partition the 4th drive
+- name: Partition the 4th drive
   community.general.parted:
     device: /dev/sdd
     number: 1
@@ -72,14 +72,14 @@
   tags:
     - mount_local
 
-- name: format the drive
-  filesystem:
+- name: Format the drive
+  community.general.filesystem:
     fstype: ext4
     dev: /dev/sdd1
   become: true
 
-- name: mount /local/sdc
-  mount:
+- name: Mount /local/sdc
+  ansible.posix.mount:
     path: /local
     src: /dev/sdd1
     fstype: ext4

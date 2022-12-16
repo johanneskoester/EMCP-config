@@ -1,0 +1,70 @@
+# Put this file on all nodes of your cluster.
+# See the slurm.conf man page for more information.
+#
+ClusterName={{ slurm_cluster_name }}
+{% for host in groups[slurm_controller_group_name] %}
+SlurmctldHost={{ hostvars[host]['ansible_hostname'] }}({{ host }})
+{% endfor %}
+#
+Epilog=/etc/slurm-llnl/epilog.sh
+#MailProg=/bin/mail
+MpiDefault=none
+#MpiParams=ports=#-#
+ProctrackType=proctrack/cgroup
+ReturnToService=1
+RebootProgram="/usr/bin/systemctl reboot"
+ResumeTimeout=600
+SlurmctldPidFile=/run/slurm/slurmctld.pid
+#SlurmctldPort=6817
+SlurmdPidFile=/run/slurmd.pid
+#SlurmdPort=6818
+SlurmdSpoolDir=/var/spool/slurmd
+SlurmUser=slurm
+#SlurmdUser=root
+StateSaveLocation={{ slurmctld_state_save_location }}
+SwitchType=switch/none
+TaskPlugin=task/affinity
+#
+#
+# TIMERS
+KillWait=120
+#MinJobAge=300
+#SlurmctldTimeout=120
+#SlurmdTimeout=300
+UnkillableStepTimeout=120
+#
+#
+# SCHEDULING
+SchedulerType=sched/backfill
+SelectType=select/cons_tres
+SelectTypeParameters=CR_Core
+#
+#
+# LOGGING AND ACCOUNTING
+#AccountingStorageHost=
+#AccountingStorageType=accounting_storage/slurmdbd
+#JobCompType=jobcomp/filetxt
+#JobCompLoc=/n0/job_completions
+#JobAcctGatherFrequency=30
+#JobAcctGatherType=jobacct_gather/linux
+#SlurmctldDebug=info
+SlurmctldLogFile={{ slurm_log_dir }}/slurmctld.log
+#SlurmdDebug=info
+SlurmdLogFile={{ slurm_log_dir }}/slurmd.log
+#
+#
+# WORKER NODES
+GresTypes=gpu
+{% for host in groups[slurm_worker_group_name] %}
+{% set gpu_count = hostvars[host]['ansible_local']['gpu']['count'] | default(0) %}
+{% set usable_memory = hostvars[host]['ansible_memtotal_mb'] - slurm_reserved_mem_mb %}
+NodeName={{ hostvars[host]['ansible_hostname'] }} {% if gpu_count > 0 -%} Gres=gpu:{{ gpu_count }} {% endif -%} CPUs={{ hostvars[host]['ansible_processor_nproc'] }} RealMemory={{ usable_memory }} Boards=1 SocketsPerBoard={{ hostvars[host]['ansible_processor_count'] }} CoresPerSocket={{ hostvars[host]['ansible_processor_cores'] }} ThreadsPerCore={{ hostvars[host]['ansible_processor_threads_per_core'] }} State=UNKNOWN
+{% endfor %}
+
+# PARTITIONS
+{% for partition in slurm_partitions %}
+{% if partition['hosts'] %}
+{% set is_default = partition['default'] | default(false) | bool %}
+PartitionName={{ partition['name'] }} {% if partition['hosts'] == 'ALL' -%} Nodes=ALL {% else -%} {% set nodelist = partition['hosts'] | map('extract', hostvars, 'ansible_hostname') | join(',') -%} Nodes={{ nodelist }} {% endif -%} {% if is_default -%} Default=YES {% endif -%} MaxTime=INFINITE State=UP
+{% endif %}
+{% endfor %}

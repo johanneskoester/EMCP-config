@@ -1,7 +1,7 @@
 # per https://github.com/conda-forge/miniforge
 # setup mambaforge
 
-- name: check if conda is present
+- name: Check if conda is present
   ansible.builtin.command: conda --version
   changed_when: false
   failed_when: false
@@ -11,11 +11,26 @@
   ansible.builtin.get_url:
     url: https://github.com/conda-forge/miniforge/releases/latest/download/Mambaforge-Linux-x86_64.sh
     dest: /tmp/mambaforge.sh
+    mode: 0755
   when: cmd_conda_version.rc != 0
 
 - name: Install mambaforge into /opt/mambaforge
   ansible.builtin.command: bash /tmp/mambaforge.sh -b -p /opt/mambaforge
   when: cmd_conda_version.rc != 0
+
+- name: Configure mambaforge
+  # Ensure that mamba works robustly and uses the major channels in the right way.
+  ansible.builtin.copy:
+    content: |
+      channel_priority: strict  # see https://conda-forge.org/docs/user/tipsandtricks.html
+      channels:  # see https://bioconda.github.io
+        - conda-forge
+        - bioconda
+        - defaults
+    dest: /opt/mambaforge/.condarc
+    owner: root
+    group: root
+    mode: u=rw,g=r,o=r
 
 - name: Set permissions
   ansible.builtin.file:

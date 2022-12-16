@@ -1,22 +1,30 @@
-- name: include longhorn preparation tasks
+---
+# Source: https://longhorn.io/kb/troubleshooting-volume-with-multipath/
+- name: Disallow multipath on Longhorn devices
   block:
-    - include_tasks: prep.yml
+    - ansible.builtin.include_tasks: multipath-disallow.yml
+  tags: longhorn-multipath-disallow
+  become: true
+
+- name: Include longhorn preparation tasks
+  block:
+    - ansible.builtin.include_tasks: prep.yml
   tags:
     - longhorn
     - longhorn-prep
 
-- name: include longhorn install tasks
+- name: Include longhorn install tasks
   block:
-    - include_tasks: setup.yml
+    - ansible.builtin.include_tasks: setup.yml
   when: inventory_hostname in groups[rke2_servers_group_name]
   run_once: true
   tags:
     - longhorn
     - longhorn-install
 
-- name: include IngressRoutes tasks
+- name: Include IngressRoutes tasks
   block:
-    - include_tasks: ingress.yml
+    - ansible.builtin.include_tasks: ingress.yml
   when: inventory_hostname in groups[rke2_servers_group_name]
   run_once: true
   tags:

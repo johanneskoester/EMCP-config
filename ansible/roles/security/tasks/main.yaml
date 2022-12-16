@@ -6,7 +6,7 @@
 # install admin tools
 
 
-- name: add root account password
+- name: Add root account password
   ansible.builtin.user:
     name: root
     uid: 0
@@ -14,7 +14,7 @@
     update_password: always
   tags: security
 
-- name: install packages
+- name: Install packages
   apt:
     pkg:
       - htop
@@ -43,10 +43,3 @@
     group: root
     mode: 0644
   tags: no-auto-upgrades
-
-- name: Configure the adduser program to create home directories with mode 750 rather than the default 755
-  ansible.builtin.lineinfile:
-    path: /etc/adduser.conf
-    regexp: '^DIR_MODE=0755'
-    line: 'DIR_MODE=0750'
-  tags: homedir-permissions

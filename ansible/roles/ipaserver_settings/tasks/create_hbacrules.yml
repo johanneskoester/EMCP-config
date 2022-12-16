@@ -1,6 +1,6 @@
 ---
 
-- name: ensure all hosts can be accessed by admins
+- name: Ensure all hosts can be accessed by admins
   community.general.ipa_hbacrule:
     name: allow_admins_all
     description: Allow admins access to any host from any host
@@ -13,13 +13,14 @@
     state: present
   become: true
 
-- name: ensure that hostgroups can be accessed by the intended usergroup via ssh
+- name: Ensure that hostgroups can be accessed by the intended usergroup via ssh
   community.general.ipa_hbacrule:
     name: "{{ ipaserver_settings_item['hbacrule_name'] }}"
     description: "{{ ipaserver_settings_item['hbacrule_description'] }}"
     hostgroup: "{{ ipaserver_settings_item['name'] }}"
-    usergroup: "{{ ipaserver_settings_item['usergroup'] }}"
-    service: sshd
+    user: "{{ ipaserver_settings_item['user'] | default(omit) }}"
+    usergroup: "{{ ipaserver_settings_item['usergroup'] | default(omit) }}"
+    service: "{{ ipaserver_settings_item['service'] | default(['sshd']) }}"
     ipa_host: "{{ primary_ipaserver }}"
     ipa_pass: "{{ ipaadmin_password }}"
     validate_certs: false
@@ -29,7 +30,7 @@
     loop_var: ipaserver_settings_item
   become: true
 
-- name: ensure allow_all rule is disabled
+- name: Ensure allow_all rule is disabled
   community.general.ipa_hbacrule:
     name: allow_all
     ipa_host: "{{ primary_ipaserver }}"
@@ -38,7 +39,7 @@
     state: disabled
   become: true
 
-- name: ensure allow_systemd-user rule is disabled
+- name: Ensure allow_systemd-user rule is disabled
   community.general.ipa_hbacrule:
     name: allow_systemd-user
     ipa_host: "{{ primary_ipaserver }}"

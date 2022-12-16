@@ -1,4 +1,13 @@
 ---
+- hosts: all
+  remote_user: ubuntu
+  roles:
+    - timezone
+
+- hosts: all:!origin
+  remote_user: ubuntu
+  roles:
+    - ntpclient
 
 - hosts: dns_servers
   become: true
@@ -42,6 +51,19 @@
     - security
 
 
+- hosts: cpu
+  become: true
+  gather_facts: true
+  environment: "{{ proxy_env | default({}) }}"
+  roles:
+    - update
+    - c_nodes
+    - proxies
+    - security
+    - devtools
+    - snakemake
+
+
 - hosts: gpucluster
   become: true
   ignore_errors: true
@@ -57,7 +79,8 @@
     - docker
     - nvidia
     - miniconda
-    - g_node_devtools
+    - devtools
+    - seafile
     - poetry
     - snakemake
 
@@ -82,12 +105,6 @@
   remote_user: ubuntu
   gather_facts: true
   environment: "{{ proxy_env | default({}) }}"
-  pre_tasks:
-    - name: Install prerequisites
-      ansible.builtin.apt:
-        name:
-          - chrony
-      tags: freeIPA-client
   roles:
     - role: freeipa.ansible_freeipa.ipaclient
       state: present
@@ -96,7 +113,7 @@
     - role: subidmap
 
 
-- hosts: managed_cluster
+- hosts: nfs_clients
   become: true
   ignore_errors: true
   remote_user: ubuntu
@@ -106,17 +123,6 @@
     - nfs_client
 
 
-- hosts: managed_cluster_compute
-  gather_facts: true
-  environment: "{{ proxy_env | default({}) }}"
-  roles:
-    - update
-    - c_nodes
-    - proxies
-    - security
-    - snakemake
-
-
 - hosts: nfs_servers
   environment: "{{ proxy_env | default({}) }}"
   roles:
@@ -124,15 +130,21 @@
     - user_skel
 
 
-- hosts: ship
-  become: true
-  ignore_errors: true
+- hosts: slurm_packager
   remote_user: ubuntu
   gather_facts: true
   environment: "{{ proxy_env | default({}) }}"
   roles:
-    - seafile
-    - user_skel
+    - slurm_pkgbuild
+
+
+- hosts: slurm_controller, slurm_worker
+  remote_user: ubuntu
+  gather_facts: true
+  environment: "{{ proxy_env | default({}) }}"
+  roles:
+    - slurm_install
+
 
 - hosts: rke_k8s_cluster
   gather_facts: true
@@ -143,3 +155,12 @@
     - k8s_setup_longhorn
     - k8s_setup_traefik
     - k8s_setup_monitoring
+    - k8s_slurmctld
+
+- hosts: server, infra, origin
+  become: true
+  remote_user: ubuntu
+  gather_facts: true
+  environment: "{{ proxy_env | default({}) }}"
+  roles:
+    - telegraf_systemd

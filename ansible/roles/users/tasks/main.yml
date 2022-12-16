@@ -1,21 +1,28 @@
 ---
 - name: Create users
   block:
-    - include_tasks: users.yml
+    - ansible.builtin.include_tasks: users.yml
   run_once: true
   tags:
     - ipausers
 
 - name: Create groups
   block:
-    - include_tasks: groups.yml
+    - ansible.builtin.include_tasks: groups.yml
   run_once: true
   tags:
     - ipagroups
 
+- name: Create service accounts
+  block:
+    - ansible.builtin.include_tasks: systemusers.yml
+  run_once: true
+  tags:
+    - ipasystemusers
+
 - name: Define policies
   block:
-    - include_tasks: policies.yml
+    - ansible.builtin.include_tasks: policies.yml
   run_once: true
   tags:
     - ipapolicies

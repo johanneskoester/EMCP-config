@@ -1,0 +1,22 @@
+---
+- name: Install development tools
+  ansible.builtin.apt:
+    name:
+      - python3-venv
+      - python3-pip
+      - tmux
+      - zsh
+      - rename
+      - direnv
+      - jq
+      - tree
+      - unzip
+    state: present
+
+- name: Install Python 3.9 on Ubuntu hosts older than 22.04
+  ansible.builtin.apt:
+    name: python3.9-venv
+    state: present
+  when:
+    - ansible_facts['distribution'] == "Ubuntu"
+    - ansible_facts['distribution_major_version'] | int < 22

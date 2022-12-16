@@ -2,5 +2,5 @@
 - name: Install Poetry
   become: true
   block:
-    - include_tasks: poetry-install.yml
+    - ansible.builtin.include_tasks: poetry-install.yml
   tags: python-poetry

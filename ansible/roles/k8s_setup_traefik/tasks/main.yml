@@ -1,15 +1,15 @@
-- name: include metallb install tasks
+- name: Include metallb install tasks
   block:
-    - include_tasks: install_metallb.yml
+    - ansible.builtin.include_tasks: install_metallb.yml
   when: inventory_hostname in groups[rke2_servers_group_name]
   run_once: true
   tags:
     - traefik
     - metallb
 
-- name: include traefik install tasks
+- name: Include traefik install tasks
   block:
-    - include_tasks: install_traefik.yml
+    - ansible.builtin.include_tasks: install_traefik.yml
   when: inventory_hostname in groups[rke2_servers_group_name]
   run_once: true
   tags:

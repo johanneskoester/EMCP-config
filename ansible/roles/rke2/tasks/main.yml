@@ -1,6 +1,6 @@
-- name: install keepalived on the rke2 servers
+- name: Install keepalived on the rke2 servers
   block:
-    - include_tasks: keepalived.yml
+    - ansible.builtin.include_tasks: keepalived.yml
   tags:
     - rke2
     - rke2-keepalived
@@ -9,22 +9,22 @@
     - inventory_hostname in groups[rke2_servers_group_name]
     - rke2_ha_mode
 
-- name: include disable swap tasks
+- name: Include disable swap tasks
   block:
-    - include_tasks: disable_swap.yml
+    - ansible.builtin.include_tasks: disable_swap.yml
   tags:
     - rke2
     - rke2-disable-swap
 
-- name: install rke2 on the primary server
+- name: Install rke2 on the primary server
   block:
-    - include_tasks: install_rke2.yml
+    - ansible.builtin.include_tasks: install_rke2.yml
   when: inventory_hostname in groups[rke2_primary_server_group_name]
   tags:
     - rke2
     - install-rke2
 
-- name: wait for api server to become available
+- name: Wait for api server to become available
   ansible.builtin.uri:
     url: "https://{{ rke2_server_url }}:{{ rke2_apiserver_dest_port }}"
     method: GET
@@ -42,9 +42,9 @@
     - rke2
     - install-rke2
 
-- name: install rke2 on the rest of the cluster
+- name: Install rke2 on the rest of the cluster
   block:
-    - include_tasks: install_rke2.yml
+    - ansible.builtin.include_tasks: install_rke2.yml
   when: inventory_hostname not in groups[rke2_primary_server_group_name]
   tags:
     - rke2

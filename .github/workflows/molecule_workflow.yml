@@ -1,0 +1,46 @@
+name: Role test workflow
+on:
+  push:
+    branches:
+      - main
+    paths:
+    - ansible/roles/miniconda/**
+    - ansible/roles/poetry/**
+    - ansible/roles/proxies/**
+  pull_request:
+    branches:
+      - "*"
+    paths:
+    - ansible/roles/miniconda/**
+    - ansible/roles/poetry/**
+    - ansible/roles/proxies/**
+
+jobs:
+  build:
+    name: MOLECULE Role Test
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        roles: [miniconda, poetry, proxies]
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+          
+      - name: Set up Python 
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+          
+      - name: Install test dependencies
+        run: pip3 install ansible docker molecule[docker]
+        
+      - name: Run ansible requirements
+        run: ansible-galaxy collection install community.docker
+        
+      - name: Test roles that initialized with molecule
+        working-directory: ansible/roles/${{ matrix.roles }}
+        run: molecule test
+        env:
+          PY_COLORS: '1'
+          ANSIBLE_FORCE_COLOR: '1'

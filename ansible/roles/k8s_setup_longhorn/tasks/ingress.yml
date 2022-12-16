@@ -1,4 +1,4 @@
-- name: build svc-wss-headers middleware
+- name: Build svc-wss-headers middleware
   kubernetes.core.k8s:
     state: present
     kubeconfig: "{{ rke2_kubeconf_host_path }}{{ rke2_download_kubeconf_file_name }}"
@@ -13,7 +13,7 @@
           customRequestHeaders:
             X-Forwarded-Proto: "https"
 
-- name: strip prefix longhorn middleware
+- name: Strip prefix longhorn middleware
   kubernetes.core.k8s:
     state: present
     kubeconfig: "{{ rke2_kubeconf_host_path }}{{ rke2_download_kubeconf_file_name }}"
@@ -29,7 +29,7 @@
             - /longhorn
           forceSlash: false
 
-- name: create longhorn auth secret
+- name: Create longhorn auth secret
   kubernetes.core.k8s:
     state: present
     kubeconfig: "{{ rke2_kubeconf_host_path }}{{ rke2_download_kubeconf_file_name }}"
@@ -42,7 +42,7 @@
       data:
         users: "{{ longhorn_admin_secret }}"
 
-- name: basic auth longhorn middleware
+- name: Basic auth longhorn middleware
   kubernetes.core.k8s:
     state: present
     kubeconfig: "{{ rke2_kubeconf_host_path }}{{ rke2_download_kubeconf_file_name }}"
@@ -56,7 +56,7 @@
         basicAuth:
           secret: longhorn-auth-secret
 
-- name: build ingress route
+- name: Build ingress route
   kubernetes.core.k8s:
     state: present
     kubeconfig: "{{ rke2_kubeconf_host_path }}{{ rke2_download_kubeconf_file_name }}"
