@@ -4,5 +4,4 @@
   block:
     - ansible.builtin.include_tasks: profiles.yml
   tags:
-    - snakemake
     - snakemake-profiles

@@ -1,0 +1,5 @@
+{% if inventory_hostname in groups[slurm_worker_group_name] %}
+slurm: true
+{% endif %}
+use-conda: true
+latency-wait: 60

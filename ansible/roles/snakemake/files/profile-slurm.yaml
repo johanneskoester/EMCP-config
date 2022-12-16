@@ -1,3 +1,0 @@
-slurm: true
-use-conda: true
-latency-wait: 60

@@ -59,6 +59,7 @@
     - miniconda
     - g_node_devtools
     - poetry
+    - snakemake
 
 
 - hosts: ipaserver
@@ -113,6 +114,7 @@
     - c_nodes
     - proxies
     - security
+    - snakemake
 
 
 - hosts: nfs_servers

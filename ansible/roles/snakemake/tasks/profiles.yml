@@ -1,31 +1,17 @@
-- name: Create the slurm profile directory
+- name: Create the profile directory
   ansible.builtin.file:
-    path: /etc/xdg/snakemake/slurm
+    path: "/etc/xdg/snakemake/{{ (inventory_hostname in groups[slurm_worker_group_name]) | ternary('slurm', 'local') }}"
     state: directory
     owner: root
     group: root
     mode: 0755
+  register: snakemake_profile_dir
 
 - name: Add the slurm profile
-  ansible.builtin.copy:
-    src: profile-slurm.yaml
-    dest: /etc/xdg/snakemake/slurm/config.yaml
+  ansible.builtin.template:
+    src: profile.yaml.j2
+    dest: "{{ snakemake_profile_dir['path'] }}/config.yaml"
     owner: root
     group: root
     mode: 0644
-
-- name: Create the local profile directory
-  ansible.builtin.file:
-    path: /etc/xdg/snakemake/local
-    state: directory
-    owner: root
-    group: root
-    mode: 0755
-
-- name: Add the local profile
-  ansible.builtin.copy:
-    src: profile-local.yaml
-    dest: /etc/xdg/snakemake/local/config.yaml
-    owner: root
-    group: root
-    mode: 0644
+  when: snakemake_profile_dir['path'] is defined
