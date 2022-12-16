@@ -61,6 +61,7 @@
     - proxies
     - security
     - devtools
+    - snakemake
 
 
 - hosts: gpucluster
@@ -81,6 +82,7 @@
     - devtools
     - seafile
     - poetry
+    - snakemake
 
 
 - hosts: ipaserver

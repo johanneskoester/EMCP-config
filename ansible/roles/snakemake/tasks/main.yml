@@ -1,0 +1,7 @@
+---
+- name: Add profiles for Snakemake
+  become: true
+  block:
+    - ansible.builtin.include_tasks: profiles.yml
+  tags:
+    - snakemake-profiles
