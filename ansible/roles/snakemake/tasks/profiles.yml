@@ -7,7 +7,7 @@
     mode: 0755
   register: snakemake_profile_dir
 
-- name: Add the slurm profile
+- name: Add the profile
   ansible.builtin.template:
     src: profile.yaml.j2
     dest: "{{ snakemake_profile_dir['path'] }}/config.yaml"
