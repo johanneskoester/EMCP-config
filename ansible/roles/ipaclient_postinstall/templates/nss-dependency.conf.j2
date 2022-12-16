@@ -1,0 +1,12 @@
+[Unit]
+# Make sure that network groups are available before starting this socket.
+After=nss-user-lookup.target
+Wants=nss-user-lookup.target
+
+# Don't generate an automatic dependency on sockets.target as it's incompatible
+# with the dependency on nss-user-lookup.target.
+DefaultDependencies=no
+
+[Install]
+# Clear the dependency on sockets.target defined in the base unit file.
+WantedBy=
