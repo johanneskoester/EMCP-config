@@ -11,6 +11,7 @@
       - jq
       - tree
       - unzip
+      - athena-jot
     state: present
 
 - name: Install Python 3.9 on Ubuntu hosts older than 22.04
