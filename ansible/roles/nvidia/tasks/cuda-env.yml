@@ -1,0 +1,7 @@
+- name: Add the cuda compiler to PATH
+  ansible.builtin.copy:
+    src: cuda_env.sh
+    dest: /etc/profile.d/cuda_env.sh
+    owner: root
+    group: root
+    mode: 0644
