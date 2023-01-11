@@ -1,0 +1,16 @@
+
+- name: Install apptainer
+  become: true
+  block:
+    - ansible.builtin.include_tasks: install.yml
+  tags: 
+    - apptainer
+    - apptainer-install
+
+- name: Configure the apptainer installation
+  become: true
+  block:
+    - ansible.builtin.include_tasks: configure.yml
+  tags: 
+    - apptainer
+    - apptainer-configure
