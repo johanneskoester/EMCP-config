@@ -1,3 +1,0 @@
-
-- name: do nothing
-  ansible.builtin.debug: msg="nothing"

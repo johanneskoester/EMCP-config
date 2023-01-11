@@ -1,0 +1,26 @@
+---
+- name: Install the Apptainer deb package
+  ansible.builtin.apt:
+    deb: "{{ apptainer_deb_url }}"
+    state: present
+
+- name: Create the world-writeable cache root
+  ansible.builtin.file:
+    path: "{{ apptainer_cache_root }}"
+    state: directory
+    owner: root
+    group: root
+    mode: 0777
+
+- name: Add environment variables
+  ansible.builtin.template:
+    src: apptainer_env.sh.j2
+    dest: /etc/profile.d/apptainer_env.sh
+    owner: root
+    group: root
+    mode: 0755
+
+- name: Test the installation as an unprivileged user
+  ansible.builtin.shell: . /etc/profile.d/apptainer_env.sh && apptainer exec docker://alpine cat /etc/alpine-release
+  changed_when: false
+  become: false
