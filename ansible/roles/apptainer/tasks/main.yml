@@ -3,7 +3,7 @@
   become: true
   block:
     - ansible.builtin.include_tasks: apptainer.yml
-  tags: 
+  tags:
     - apptainer
 
 - name: Configure apptainer on GPU hosts
@@ -13,6 +13,6 @@
   when:
     - ansible_local['gpu']['count'] is defined
     - ansible_local['gpu']['count'] > 0
-  tags: 
+  tags:
     - apptainer
     - apptainer-gpu
