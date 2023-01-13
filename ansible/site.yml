@@ -62,6 +62,7 @@
     - security
     - devtools
     - snakemake
+    - apptainer
 
 
 - hosts: gpucluster
@@ -80,6 +81,7 @@
     - nvidia
     - miniconda
     - devtools
+    - apptainer
     - seafile
     - poetry
     - snakemake

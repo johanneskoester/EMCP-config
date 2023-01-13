@@ -1,0 +1,2 @@
+apptainer_release: "1.1.5"
+apptainer_cache_root: "/local/apptainercache"
