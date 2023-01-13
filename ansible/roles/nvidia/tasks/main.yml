@@ -3,6 +3,11 @@
   - ansible.builtin.include_tasks: nvidia-driver-libs.yml
   tags: nvidia
 
+- name: Add CUDA to PATH
+  block:
+  - ansible.builtin.include_tasks: cuda-env.yml
+  tags: nvidia
+
 - name: Install the Docker runtime
   block:
   - ansible.builtin.include_tasks: nvidia-docker.yml

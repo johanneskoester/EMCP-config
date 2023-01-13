@@ -25,6 +25,14 @@
     state: present
     update_cache: true
 
+# Even if CUDA is only installed on GPU nodes, PATH and other env vars should be
+# consistent across the cluster, otherwise it can be difficult to submit a job
+# to a GPU node from a non-GPU node.
+- name: Add the CUDA PATH component
+  ansible.builtin.include_role:
+    name: nvidia
+    tasks_from: cuda-env
+
 - name: Relax user limits
   ansible.builtin.template:
     src: ulimit_slurm_conf.j2
