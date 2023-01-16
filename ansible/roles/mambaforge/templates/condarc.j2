@@ -6,8 +6,11 @@ auto_activate_base: false
 # Set channel priority to strict as described in https://conda-forge.org/docs/user/tipsandtricks.html.
 channel_priority: strict
 
-Add the https://bioconda.github.io channel.
 channels:
+{% set gpu_count = ansible_local['gpu']['count'] | default(0) %}
+{% if gpu_count > 0 %}
+- nvidia
+{% endif %}
 - conda-forge
 - bioconda
 - defaults
