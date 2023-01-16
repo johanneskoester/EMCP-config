@@ -4,14 +4,12 @@ on:
     branches:
       - main
     paths:
-    - ansible/roles/miniconda/**
     - ansible/roles/poetry/**
     - ansible/roles/proxies/**
   pull_request:
     branches:
       - "*"
     paths:
-    - ansible/roles/miniconda/**
     - ansible/roles/poetry/**
     - ansible/roles/proxies/**
 
@@ -21,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        roles: [miniconda, poetry, proxies]
+        roles: [poetry, proxies]
 
     steps:
       - name: Checkout Code
