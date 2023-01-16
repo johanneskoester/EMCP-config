@@ -1,0 +1,2 @@
+mambaforge_url: "https://github.com/conda-forge/miniforge/releases/download/{{ mambaforge_release }}/Mambaforge-{{ mambaforge_release }}-Linux-{{ ansible_facts['architecture'] }}.sh"
+mambaforge_digest_url: "{{ mambaforge_url }}.sha256"
