@@ -1,5 +1,4 @@
-
-- name: install lftp
+- name: Install lftp
   ansible.builtin.apt:
     name:
       - lftp

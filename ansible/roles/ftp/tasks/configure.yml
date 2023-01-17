@@ -1,5 +1,4 @@
-
-- name: write lftp.conf
+- name: Write lftp.conf
   ansible.builtin.template:
     src: lftp.conf.j2
     dest: /etc/lftp.conf
@@ -8,7 +7,7 @@
     group: root
     force: true
 
-- name: set an ftp alias to warn users
+- name: Set an ftp alias to warn users
   ansible.builtin.copy:
     src: ftp_alias.sh
     dest: /etc/profile.d/ftp_alias.sh
