@@ -1,0 +1,12 @@
+---
+- name: Install lftp
+  become: true
+  block:
+    - ansible.builtin.include_tasks: install.yml
+  tags: ftp
+
+- name: Configure ftp
+  become: true
+  block:
+    - ansible.builtin.include_tasks: configure.yml
+  tags: ftp

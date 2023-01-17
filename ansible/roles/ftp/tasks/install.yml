@@ -1,0 +1,6 @@
+
+- name: install lftp
+  ansible.builtin.apt:
+    name:
+      - lftp
+    state: present
