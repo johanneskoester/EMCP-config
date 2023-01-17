@@ -6,7 +6,6 @@
     mode: 0644
     owner: root
     group: root
-    state: present
     force: true
 
 - name: set an ftp alias to warn users
