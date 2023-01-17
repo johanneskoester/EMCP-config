@@ -1,5 +1,0 @@
----
-- name: Install Miniconda
-  block:
-    - ansible.builtin.include_tasks: miniconda.yml
-  tags: miniconda

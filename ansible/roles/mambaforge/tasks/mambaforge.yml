@@ -1,0 +1,52 @@
+---
+- name: Create the installation directory
+  ansible.builtin.file:
+    path: "{{ mamba_home }}"
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+
+- name: Download the installation script
+  ansible.builtin.get_url:
+    url: "{{ mambaforge_url }}"
+    dest: /tmp/mambaforge.sh
+    owner: root
+    group: root
+    mode: 0755
+    checksum: "sha256:{{ lookup('url', mambaforge_digest_url) | regex_search('[0-9a-f]{64}') }}"
+
+- name: Execute the installation script
+  ansible.builtin.command:
+    argv:
+      - /tmp/mambaforge.sh
+      - -b
+      - -u
+      - -p
+      - "{{ mamba_home }}"
+  register: mambaforge_result
+  changed_when: ('All requested packages already installed') not in mambaforge_result['stdout']
+
+- name: Apply system-wide settings
+  ansible.builtin.template:
+    src: condarc.j2
+    dest: "{{ mamba_home }}/.condarc"
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Add the conda shell profile
+  ansible.builtin.file:
+    src: "{{ mamba_home }}/etc/profile.d/conda.sh"
+    dest: /etc/profile.d/conda.sh
+    state: link
+    owner: root
+    group: root
+
+- name: Add the mamba shell profile
+  ansible.builtin.file:
+    src: "{{ mamba_home }}/etc/profile.d/mamba.sh"
+    dest: /etc/profile.d/mamba.sh
+    state: link
+    owner: root
+    group: root

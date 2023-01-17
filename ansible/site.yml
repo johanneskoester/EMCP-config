@@ -61,6 +61,7 @@
     - proxies
     - security
     - devtools
+    - mambaforge
     - snakemake
     - apptainer
 
@@ -78,7 +79,7 @@
     - proxies
     - ssh_config
     - nvidia
-    - miniconda
+    - mambaforge
     - devtools
     - apptainer
     - seafile
