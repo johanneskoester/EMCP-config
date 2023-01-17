@@ -24,6 +24,8 @@
       - -u
       - -p
       - "{{ mamba_home }}"
+  register: mambaforge_result
+  changed_when: ('All requested packages already installed') not in mambaforge_result['stdout']
 
 - name: Apply system-wide settings
   ansible.builtin.template:
