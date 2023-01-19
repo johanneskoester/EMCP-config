@@ -1,0 +1,16 @@
+- name: Write lftp.conf
+  ansible.builtin.template:
+    src: lftp.conf.j2
+    dest: /etc/lftp.conf
+    mode: 0644
+    owner: root
+    group: root
+    force: true
+
+- name: Set an ftp alias to warn users
+  ansible.builtin.copy:
+    src: ftp_alias.sh
+    dest: /etc/profile.d/ftp_alias.sh
+    owner: root
+    group: root
+    mode: 0644
