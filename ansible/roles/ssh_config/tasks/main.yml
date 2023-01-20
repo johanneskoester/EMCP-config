@@ -1,21 +1,9 @@
 ---
-- name: Install socat to send tcp traffic through proxy
-  ansible.builtin.apt:
-    pkg:
-      - socat
-  tags: ssh
-
-- name: Add system-wide SSH config to access github.com and gitlab.com.
+- name: Add a ProxyJump directive for connections outside of the cluster
   ansible.builtin.template:
-    src: "{{ ssh_config_item }}.j2"
-    dest: "/etc/ssh/ssh_config.d/00-{{ ssh_config_item }}"
+    src: jump.conf.j2
+    dest: /etc/ssh/ssh_config.d/00_jump.conf
     owner: root
     group: root
     mode: 0644
-  loop:
-    - github.com.conf
-    - gitlab.com.conf
-    - proxy.conf
-  loop_control:
-    loop_var: ssh_config_item
-  tags: ssh
+  tags: ssh-config

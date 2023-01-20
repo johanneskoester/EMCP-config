@@ -1,3 +1,0 @@
-# Set up a proxy jump for ssh connections to external hosts
-Host * !*.{{ ansible_facts['fqdn'] }}
-ProxyJump {{ http_proxy }}
