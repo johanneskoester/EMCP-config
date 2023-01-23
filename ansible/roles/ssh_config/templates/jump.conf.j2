@@ -1,0 +1,8 @@
+{% if ansible_facts['domain'] is defined %}
+# Set up a proxy jump for ssh connections to external hosts.
+Host * !{{ ssh_jump_host }} !*.{{ ansible_facts['domain'] }}
+{% else %}
+# Set up a proxy jump for ssh connections
+Host * !{{ ssh_jump_host }}
+{% endif %}
+	ProxyJump {{ ssh_jump_host }}

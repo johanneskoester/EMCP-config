@@ -59,6 +59,7 @@
     - update
     - c_nodes
     - proxies
+    - ssh_config
     - security
     - devtools
     - mambaforge
