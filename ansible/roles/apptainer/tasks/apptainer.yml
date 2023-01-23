@@ -24,3 +24,11 @@
   ansible.builtin.shell: . /etc/profile.d/apptainer_env.sh && apptainer exec docker://alpine cat /etc/alpine-release
   changed_when: false
   become: false
+
+- name: Test GPU support as an unprivileged user
+  ansible.builtin.shell: . /etc/profile.d/apptainer_env.sh && apptainer exec --nv docker://nvcr.io/nvidia/cuda:12.0.0-base-ubuntu20.04 /usr/bin/nvidia-smi
+  changed_when: false
+  when:
+    - ansible_local['gpu']['count'] is defined
+    - ansible_local['gpu']['count'] > 0
+  become: false
