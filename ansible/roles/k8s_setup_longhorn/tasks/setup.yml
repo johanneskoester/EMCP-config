@@ -88,6 +88,7 @@
         createDefaultDiskLabeledNodes: true
     wait: true
     create_namespace: true
+    update_repo_cache: true
     release_state: present
   environment: "{{ proxy_env | default('') }}"
   become: true
