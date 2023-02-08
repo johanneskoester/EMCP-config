@@ -18,7 +18,7 @@
   ansible.builtin.apt_repository:
     repo: "deb [arch=amd64 signed-by={{ influxdata_apt_repo_key }}] \
       https://repos.influxdata.com/{{ ansible_lsb.id | lower }} {{ ansible_lsb.codename }} stable"
-    filename: influxdata
+    filename: influxdata-archive_compat
     state: present
 
 - name: Install telegraf
