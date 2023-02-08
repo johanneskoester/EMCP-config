@@ -1,16 +1,23 @@
 ---
 - name: Get influxdata apt repo key
   ansible.builtin.get_url:
-    url: https://repos.influxdata.com/influxdb.key
-    dest: /etc/apt/trusted.gpg.d/influxdb.asc
+    url: https://repos.influxdata.com/influxdata-archive_compat.key
+    dest: /etc/apt/keyrings/influxdata-archive_compat.pgp
     mode: 0644
     owner: root
     group: root
   environment: "{{ proxy_env | default('') }}"
+  register: get_url_output
+
+- name: dearmor pgp key to gpg key
+  ansible.builtin.shell:
+    cmd: cat /etc/apt/keyrings/influxdata-archive_compat.pgp | gpg --dearmor | tee {{ influxdata_apt_repo_key }}
+  when: get_url_output is changed
 
 - name: Install influxdata apt repo
   ansible.builtin.apt_repository:
-    repo: "deb https://repos.influxdata.com/{{ ansible_lsb.id | lower }} {{ ansible_lsb.codename }} stable"
+    repo: "deb [arch=amd64 signed-by={{ influxdata_apt_repo_key }}] \
+      https://repos.influxdata.com/{{ ansible_lsb.id | lower }} {{ ansible_lsb.codename }} stable"
     filename: influxdata
     state: present
 
