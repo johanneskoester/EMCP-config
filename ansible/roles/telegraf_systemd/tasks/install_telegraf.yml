@@ -8,11 +8,7 @@
     group: root
   environment: "{{ proxy_env | default('') }}"
   register: get_url_output
-
-- name: dearmor pgp key to gpg key
-  ansible.builtin.shell:
-    cmd: cat /etc/apt/keyrings/influxdata-archive_compat.pgp | gpg --dearmor | tee {{ influxdata_apt_repo_key }}
-  when: get_url_output is changed
+  notify: Dearmor pgp key to gpg key
 
 - name: Install influxdata apt repo
   ansible.builtin.apt_repository:
@@ -20,12 +16,6 @@
       https://repos.influxdata.com/{{ ansible_lsb.id | lower }} {{ ansible_lsb.codename }} stable"
     filename: influxdata-archive_compat
     state: present
-
-- name: Remove old influxdata apt repo
-  ansible.builtin.apt_repository:
-    repo: "deb https://repos.influxdata.com/{{ ansible_lsb.id | lower }} {{ ansible_lsb.codename }} stable"
-    filename: influxdata
-    state: absent
 
 - name: Install telegraf
   ansible.builtin.apt:
