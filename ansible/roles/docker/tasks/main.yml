@@ -3,13 +3,17 @@
   become: true
   block:
     - ansible.builtin.include_tasks: docker-engine-install.yml
-  tags: docker
+  tags:
+    - docker
+    - docker-engine
 
 - name: Make Docker aware of the http proxy
   become: true
   block:
     - ansible.builtin.include_tasks: docker-proxy-config.yml
-  tags: docker-proxy
+  tags:
+    - docker
+    - docker-proxy
 
 # As of version 2.2.2, Docker Compose V2 has a regression over V1 in that
 # it doesn't read the proxy configuration from the config.json file.
@@ -18,4 +22,17 @@
   become: true
   block:
     - ansible.builtin.include_tasks: compose-install-v1.yml
-  tags: docker-compose
+  tags:
+    - docker
+    - docker-compose
+
+- name: Install the Nvidia Docker runtime
+  become: true
+  block:
+    - ansible.builtin.include_tasks: docker-nvidia.yml
+  when:
+    - ansible_local['gpu']['count'] is defined
+    - ansible_local['gpu']['count'] > 0
+  tags:
+    - docker
+    - docker-nvidia
