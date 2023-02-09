@@ -10,7 +10,7 @@ slurm_ubuntu_repo_version: "19.05.5"
 slurm_ubuntu_repo_version_with_release: "{{ slurm_ubuntu_repo_version }}-1"
 
 # Versions of the build dependencies for the NVML-enabled slurm package.
-# They should match the nvidia driver packages installed on GPU compute nodes.
+# They should match the nvidia driver version installed on GPU compute nodes.
 slurm_builddep_nvidia_version: "520"
 slurm_builddep_cuda_version: "11.8"
 
