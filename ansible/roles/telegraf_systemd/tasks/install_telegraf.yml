@@ -1,4 +1,10 @@
 ---
+- name: Make sure /etc/apt/keyrings is present on target machine
+  ansible.builtin.file:
+    path: "{{ influxdata_apt_repo_key | dirname }}"
+    state: directory
+    mode: '0755'
+
 - name: Get influxdata apt repo key
   ansible.builtin.get_url:
     url: https://repos.influxdata.com/influxdata-archive_compat.key
