@@ -4,8 +4,3 @@
     name: telegraf
     state: restarted
   become: true
-
-- name: Dearmor pgp key to gpg key
-  ansible.builtin.shell:
-    cmd: cat /etc/apt/keyrings/influxdata-archive_compat.pgp | gpg --dearmor | tee {{ influxdata_apt_repo_key }}
-  become: true

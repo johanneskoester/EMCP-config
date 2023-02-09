@@ -2,13 +2,11 @@
 - name: Get influxdata apt repo key
   ansible.builtin.get_url:
     url: https://repos.influxdata.com/influxdata-archive_compat.key
-    dest: /etc/apt/keyrings/influxdata-archive_compat.pgp
+    dest: "{{ influxdata_apt_repo_key }}"
     mode: 0644
     owner: root
     group: root
   environment: "{{ proxy_env | default('') }}"
-  register: get_url_output
-  notify: Dearmor pgp key to gpg key
 
 - name: Install influxdata apt repo
   ansible.builtin.apt_repository:
