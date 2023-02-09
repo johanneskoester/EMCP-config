@@ -8,3 +8,5 @@ docker_compose_v2_digest_url: "{{ docker_compose_v2_url }}.sha256"
 docker_cli_plugins_dir: /usr/libexec/docker/cli-plugins
 docker_signing_key_directory: "/etc/apt/keyrings"
 docker_signing_key_path: "{{ docker_signing_key_directory }}/docker-gpg.asc"
+
+docker_cuda_image: "nvidia/cuda:12.0.0-base-{{ ansible_distribution | lower }}{{ ansible_distribution_version }}"

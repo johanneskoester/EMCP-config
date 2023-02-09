@@ -8,7 +8,7 @@
 - name: Test the container runtime
   community.docker.docker_container:
     name: "nvidia-smi"
-    image: "{{ cuda_nvidia_image }}"
+    image: "{{ docker_cuda_image }}"
     auto_remove: true
     cleanup: true
     command: "nvidia-smi"
