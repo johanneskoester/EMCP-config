@@ -1,8 +1,14 @@
 ---
+- name: Make sure /etc/apt/keyrings is present on target machine
+  ansible.builtin.file:
+    path: "{{ influxdata_apt_repo_key | dirname }}"
+    state: directory
+    mode: '0755'
+
 - name: Get influxdata apt repo key
   ansible.builtin.get_url:
-    url: https://repos.influxdata.com/influxdb.key
-    dest: /etc/apt/trusted.gpg.d/influxdb.asc
+    url: https://repos.influxdata.com/influxdata-archive_compat.key
+    dest: "{{ influxdata_apt_repo_key }}"
     mode: 0644
     owner: root
     group: root
@@ -10,8 +16,9 @@
 
 - name: Install influxdata apt repo
   ansible.builtin.apt_repository:
-    repo: "deb https://repos.influxdata.com/{{ ansible_lsb.id | lower }} {{ ansible_lsb.codename }} stable"
-    filename: influxdata
+    repo: "deb [arch=amd64 signed-by={{ influxdata_apt_repo_key }}] \
+      https://repos.influxdata.com/{{ ansible_lsb.id | lower }} {{ ansible_lsb.codename }} stable"
+    filename: influxdata-archive_compat
     state: present
 
 - name: Install telegraf
