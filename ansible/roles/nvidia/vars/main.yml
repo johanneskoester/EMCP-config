@@ -1,1 +1,0 @@
-cuda_toolkit_package_name: "cuda-{{ cuda_toolkit_version | replace('.', '-') }}"

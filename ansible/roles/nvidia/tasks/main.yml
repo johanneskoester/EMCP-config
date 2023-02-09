@@ -1,9 +1,4 @@
-- name: Install drivers and libraries
+- name: Install the NVIDIA driver
   block:
-  - ansible.builtin.include_tasks: nvidia-driver-libs.yml
-  tags: nvidia
-
-- name: Add CUDA to PATH
-  block:
-  - ansible.builtin.include_tasks: cuda-env.yml
+  - ansible.builtin.include_tasks: nvidia-driver.yml
   tags: nvidia
