@@ -1,15 +1,25 @@
 ---
+# The sequence of the slurm daemon handlers should not be changed.
+# When applying changes to the slurm deployment, the controller should be the
+# first node to be stopped and the last to be started to make sure that it
+# correctly recovers the state of running jobs.
+- name: stop slurmctld
+  become: true
+  community.general.supervisorctl:
+    name: slurmctld
+    state: stopped
+
 - name: restart slurmd
   become: true
   ansible.builtin.systemd:
     name: slurmd
     state: restarted
 
-- name: restart slurmctld
+- name: start slurmctld
   become: true
   community.general.supervisorctl:
     name: slurmctld
-    state: restarted
+    state: started
 
 - name: restart munge systemd
   become: true

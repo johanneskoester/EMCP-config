@@ -27,22 +27,26 @@
     - slurm
     - slurm-munge
 
-- name: Install slurm
+- name: Deploy worker nodes
   become: true
   block:
-    - ansible.builtin.include_tasks: slurm_controller_prepare.yml
-      when: inventory_hostname in groups[slurm_controller_group_name]
-
-    - ansible.builtin.include_tasks: slurm_worker_prepare.yml
-      when: inventory_hostname in groups[slurm_worker_group_name]
-
-    - ansible.builtin.include_tasks: slurm_configure.yml
-
+    - ansible.builtin.include_tasks: slurm_worker_install.yml
+    - ansible.builtin.include_tasks: slurm_worker_configure.yml
     - ansible.builtin.include_tasks: slurm_worker_start.yml
-      when: inventory_hostname in groups[slurm_worker_group_name]
-
-    - ansible.builtin.include_tasks: slurm_controller_start.yml
-      when: inventory_hostname in groups[slurm_controller_group_name]
+  when: inventory_hostname in groups[slurm_worker_group_name]
   tags:
     - slurm
     - slurm-node
+    - slurm-worker
+
+- name: Deploy the controller node
+  become: true
+  block:
+    - ansible.builtin.include_tasks: slurm_controller_install.yml
+    - ansible.builtin.include_tasks: slurm_controller_configure.yml
+    - ansible.builtin.include_tasks: slurm_controller_start.yml
+  when: inventory_hostname in groups[slurm_controller_group_name]
+  tags:
+    - slurm
+    - slurm-node
+    - slurm-controller

@@ -17,17 +17,3 @@
   ansible.builtin.set_fact:
     init_system: "{{ ansible_facts['service_mgr'] }}"
   when: init_system is not defined
-
-- name: Associate the controller node with daemon slurmctld owned by user slurm
-  ansible.builtin.set_fact:
-    slurm_daemon:
-      name: slurmctld
-      owner: slurm
-  when: inventory_hostname in groups[slurm_controller_group_name]
-
-- name: Associate worker nodes with daemon slurmd owned by root
-  ansible.builtin.set_fact:
-    slurm_daemon:
-      name: slurmd
-      owner: root
-  when: inventory_hostname in groups[slurm_worker_group_name]
