@@ -1,0 +1,70 @@
+---
+- name: Add the cgroup configuration file
+  ansible.builtin.copy:
+    src: cgroup.conf
+    dest: /etc/slurm-llnl/cgroup.conf
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart slurmd
+
+- name: Add the GPU configuration file
+  ansible.builtin.template:
+    src: gres.conf.j2
+    dest: /etc/slurm-llnl/gres.conf
+    owner: root
+    group: root
+    mode: 0644
+  when:
+    - ansible_local['gpu']['count'] is defined
+    - ansible_local['gpu']['count'] > 0
+  notify: restart slurmd
+
+- name: Add the main configuration file
+  ansible.builtin.template:
+    src: slurm.conf.j2
+    dest: /etc/slurm-llnl/slurm.conf
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart slurmd
+
+- name: Create the log directory
+  ansible.builtin.file:
+    path: "{{ slurm_log_dir }}"
+    state: directory
+    mode: 0755
+    owner: root
+    group: root
+
+- name: Relax user limits
+  ansible.builtin.template:
+    src: ulimit_slurm_conf.j2
+    dest: /etc/security/limits.d/99-slurm.conf
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Copy the top-level epilog script
+  ansible.builtin.copy:
+    src: epilog.sh
+    dest: /etc/slurm-llnl/epilog.sh
+    owner: root
+    group: root
+    mode: 0755
+
+- name: Create the epilog script directory
+  ansible.builtin.file:
+    path: /etc/slurm-llnl/epilog.d
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+
+- name: Copy the GPU epilog script
+  ansible.builtin.copy:
+    src: 99-gpu-last-job-cleanup
+    dest: /etc/slurm-llnl/epilog.d/99-gpu-last-job-cleanup
+    owner: root
+    group: root
+    mode: 0755
