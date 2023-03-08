@@ -10,7 +10,9 @@
         namespace: "{{ slurm_namespace }}"
       type: Opaque
       data:
-        mariadb-root-password: "{{ slurm-mariadb-root-password | b64encode }}"
+        mariadb-root-password: "{{ slurm_mariadb_root_password | b64encode }}"
+        mariadb-user-name: "{{ slurm_mariadb_user_name | b64encode }}"
+        mariadb-user-password: "{{ slurm_mariadb_user_password | b64encode }}"
 
 - name: Create the slurm-mariadb service
   kubernetes.core.k8s:
@@ -92,6 +94,16 @@
                       secretKeyRef:
                         name: slurm-mariadb-secret
                         key: mariadb-root-password
+                  - name: MARIADB_USER
+                    valueFrom:
+                      secretKeyRef:
+                        name: slurm-mariadb-secret
+                        key: mariadb-user-name
+                  - name: MARIADB_USER_PASSWORD
+                    valueFrom:
+                      secretKeyRef:
+                        name: slurm-mariadb-secret
+                        key: mariadb-user-password
                 volumeMounts:
                   - name: slurm-mariadb-storage
                     mountPath: "{{ slurm_mariadb_data_mount_path }}"
