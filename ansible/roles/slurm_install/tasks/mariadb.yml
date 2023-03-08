@@ -20,7 +20,7 @@
       apiVersion: v1
       kind: Service
       metadata:
-        name: "{{ slurm_mariadb_deployment_name }}-headless"
+        name: slurm-mariadb-svc
         namespace: "{{ slurm_namespace }}"
       spec:
         selector:
