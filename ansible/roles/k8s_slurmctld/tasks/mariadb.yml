@@ -39,7 +39,7 @@
     state: present
     definition:
       apiVersion: traefik.containo.us/v1alpha1
-      kind: IngressRoute
+      kind: IngressRouteTCP
       metadata:
         name: slurm-mariadb-ingress-route
         namespace: default
@@ -47,7 +47,7 @@
         entrypoints:
           - mariadb
         routes:
-          - match: Host(`{{ slurm_mariadb_host_header_to_match }}`)
+          - match: HostSNI(`*`)
             kind: Rule
             services:
               - name: slurm-mariadb-svc
@@ -67,7 +67,7 @@
         labels:
           app: slurm-mariadb
       spec:
-        serviceName: "{{ slurm_mariadb_deployment_name }}-headless"
+        serviceName: slurm-mariadb-svc
         replicas: 1
         selector:
           matchLabels:
@@ -81,6 +81,7 @@
               - name: mariadb-slurm
                 image: "{{ slurm_mariadb_image_url }}"
                 imagePullPolicy: "{{ slurmctld_image_pull_policy | default(omit) }}"
+                args: ["--ignore-db-dirs=lost+found", "--bind_address=0.0.0.0"]
                 resources:
                   requests:
                     memory: "{{ slurm_mariadb_resources_req_mem }}"
@@ -110,9 +111,9 @@
                 ports:
                   - containerPort: "{{ slurm_mariadb_internal_port }}"
             volumes:
-              - name: ipaadmin
+              - name: slurm-mariadb-secret
                 secret:
-                  secretName: ipaadmin
+                  secretName: slurm-mariadb-secret
         volumeClaimTemplates:
           - metadata:
               name: slurm-mariadb-storage
