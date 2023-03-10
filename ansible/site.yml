@@ -160,6 +160,11 @@
     - k8s_setup_longhorn
     - k8s_setup_traefik
     - k8s_setup_monitoring
+
+- hosts: rke_servers
+  gather_facts: true
+  remote_user: ubuntu
+  roles:
     - k8s_slurmctld
 
 - hosts: server, infra, origin
