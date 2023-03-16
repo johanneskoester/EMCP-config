@@ -1,0 +1,6 @@
+---
+- name: Install Z shell
+  become: true
+  block:
+    - ansible.builtin.include_tasks: zsh.yml
+  tags: zsh

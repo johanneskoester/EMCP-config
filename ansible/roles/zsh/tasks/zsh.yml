@@ -1,0 +1,14 @@
+---
+- name: Install zsh
+  ansible.builtin.apt:
+    name: zsh
+    state: present
+
+- name: Configure Z shell to load the Bash profile on login
+  ansible.builtin.blockinfile:
+    path: /etc/zsh/zprofile
+    block: "{{ lookup('file', 'load_bash_profile') }}"
+    owner: root
+    group: root
+    mode: 0644
+    state: present
