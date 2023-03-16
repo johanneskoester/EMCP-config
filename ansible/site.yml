@@ -61,6 +61,7 @@
     - proxies
     - ssh_config
     - security
+    - zsh
     - devtools
     - mambaforge
     - snakemake
@@ -80,6 +81,7 @@
     - g_nodes
     - proxies
     - ssh_config
+    - zsh
     - nvidia
     - mambaforge
     - devtools

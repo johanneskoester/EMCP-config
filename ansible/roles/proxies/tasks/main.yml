@@ -9,23 +9,3 @@
   tags:
     - proxy
   become: true
-
-- name: Gather information about installed packages
-  ansible.builtin.package_facts:
-    manager: apt
-  tags:
-    - proxy
-  become: true
-
-- name: Set up proxy variables in zsh
-  ansible.builtin.blockinfile:
-    path: /etc/zsh/zprofile
-    block: "{{ lookup('template', 'zprofile.j2') }}"
-    owner: root
-    group: root
-    create: false
-    state: present
-  when: "'zsh' in ansible_facts.packages"
-  tags:
-    - proxy
-  become: true
