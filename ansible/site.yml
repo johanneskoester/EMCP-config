@@ -4,7 +4,7 @@
   roles:
     - timezone
 
-- hosts: all:!origin
+- hosts: all:!origin:!slurm_controller
   remote_user: ubuntu
   roles:
     - ntpclient
