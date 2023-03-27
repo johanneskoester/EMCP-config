@@ -3,4 +3,13 @@
   become: true
   block:
     - ansible.builtin.include_tasks: timesyncd.yml
+      register: task_timesyncd
+  when: ansible_facts['service_mgr'] == "systemd"
+  tags: ntpclient
+
+- name: Notify when ntpclient task is skipped
+  block:
+    - ansible.builtin.debug:
+        msg: "NTP timesyncd setup was skipped because the init system is not systemd."
+  when: task_timesyncd is skipped
   tags: ntpclient
