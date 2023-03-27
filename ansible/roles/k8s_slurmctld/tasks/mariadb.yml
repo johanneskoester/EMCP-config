@@ -126,13 +126,13 @@
                 requests:
                   storage: "{{ slurm_mariadb_storage_size }}"
 
-- name: ensure the presence of the python3 mysql library on the executing machine
+- name: Ensure the presence of the python3 mysql library on the executing machine
   ansible.builtin.apt:
     name: python3-pymysql
     state: present
   become: true
 
-- name: create the slurm accounting database
+- name: Create the slurm accounting database
   community.mysql.mysql_db:
     login_host: "{{ slurm_mariadb_external_url }}"
     login_port: "{{ slurm_mariadb_external_port }}"
@@ -141,7 +141,7 @@
     name: "{{ slurm_mariadb_database_name }}"
     state: present
 
-- name: create the slurm database user
+- name: Create the slurm database user
   community.mysql.mysql_user:
     login_host: "{{ slurm_mariadb_external_url }}"
     login_port: "{{ slurm_mariadb_external_port }}"
