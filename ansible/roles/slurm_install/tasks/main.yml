@@ -27,6 +27,12 @@
     - slurm
     - slurm-munge
 
+- name: Flush handlers to avoid missing restarts when subsequent tasks fail
+  ansible.builtin.meta: flush_handlers
+  tags:
+    - slurm
+    - slurm-munge
+
 - name: Deploy worker nodes
   become: true
   block:
