@@ -12,6 +12,9 @@
     mode: 0600
   notify: "restart munge {{ init_system }}"
 
+- name: Flush handlers
+  ansible.builtin.meta: flush_handlers
+
 - name: Enable and start munge with systemd
   ansible.builtin.systemd:
     name: munge
