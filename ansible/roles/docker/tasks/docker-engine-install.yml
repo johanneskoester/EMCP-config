@@ -1,16 +1,20 @@
 ---
-- name: Remove old docker install
+- name: Remove old docker packages
   ansible.builtin.apt:
-    name: ['docker', 'docker-engine', 'docker.io', 'containerd', 'runc']
+    name:
+      - docker
+      - docker-engine
+      - docker.io
+      - containerd
+      - runc
     state: absent
 
 - name: Install prerequisites for https apt repositories
   ansible.builtin.apt:
     name:
-      - apt-transport-https
       - ca-certificates
       - curl
-      - software-properties-common
+      - gnupg
     state: present
 
 - name: Make sure signing key directory exists
@@ -38,12 +42,14 @@
     mode: 0644
   notify: refresh apt cache
 
-- name: Install Docker Engine and the Docker SDK for Python
+- name: Install Docker Engine, Docker Compose and the Docker SDK for Python
   ansible.builtin.apt:
     name:
       - docker-ce
       - docker-ce-cli
       - containerd.io
+      - docker-buildx-plugin
+      - docker-compose-plugin
       # The Docker SDK for Python is required to use the Ansible Docker collection.
       - python3-docker
     state: present
