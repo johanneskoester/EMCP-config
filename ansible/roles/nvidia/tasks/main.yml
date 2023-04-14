@@ -1,4 +1,15 @@
 - name: Install the NVIDIA driver
+  become: true
   block:
-  - ansible.builtin.include_tasks: nvidia-driver.yml
-  tags: nvidia
+    - ansible.builtin.include_tasks: nvidia-driver.yml
+  tags:
+    - nvidia
+    - nvidia-driver
+
+- name: Install GPU tools
+  become: true
+  block:
+    - ansible.builtin.include_tasks: gpu-tools.yml
+  tags:
+    - nvidia
+    - nvidia-tools

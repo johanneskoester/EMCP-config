@@ -6,5 +6,6 @@
     name: nvidia.nvidia_driver
 
 - name: Test the installation
+  become: false
   ansible.builtin.command: /usr/bin/nvidia-smi
   changed_when: false
