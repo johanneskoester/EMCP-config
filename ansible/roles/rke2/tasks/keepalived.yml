@@ -10,7 +10,7 @@
     state: directory
     owner: root
     group: root
-    mode: 0755
+    mode: "0755"
   become: true
 
 - name: Create the keepalived_script user
@@ -27,7 +27,7 @@
     dest: /etc/keepalived/check_apiserver.sh
     owner: root
     group: root
-    mode: 0755
+    mode: "0755"
   become: true
   notify: restart keepalived
 
@@ -37,7 +37,7 @@
     dest: /etc/keepalived/keepalived.conf
     owner: root
     group: root
-    mode: 0644
+    mode: "0644"
   become: true
   notify: restart keepalived
 

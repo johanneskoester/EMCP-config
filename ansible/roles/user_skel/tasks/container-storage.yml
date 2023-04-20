@@ -4,7 +4,7 @@
     path: /etc/skel/.config/containers
     owner: root
     group: root
-    mode: 0755
+    mode: "0755"
     state: directory
 
 - name: Copy the rootless container storage configuration
@@ -13,5 +13,5 @@
     dest: /etc/skel/.config/containers/storage.conf
     owner: root
     group: root
-    mode: 0644
+    mode: "0644"
     force: true

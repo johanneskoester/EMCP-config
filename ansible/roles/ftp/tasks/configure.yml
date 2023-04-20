@@ -2,7 +2,7 @@
   ansible.builtin.template:
     src: lftp.conf.j2
     dest: /etc/lftp.conf
-    mode: 0644
+    mode: "0644"
     owner: root
     group: root
     force: true
@@ -13,4 +13,4 @@
     dest: /etc/profile.d/ftp_alias.sh
     owner: root
     group: root
-    mode: 0644
+    mode: "0644"

@@ -17,7 +17,7 @@
     state: directory
     owner: root
     group: root
-    mode: 0755
+    mode: "0755"
 
 - name: Copy the pbuilder hook which adds the nvidia repository
   become: true
@@ -26,7 +26,7 @@
     dest: "{{ pbuilder_hookdir }}/D99nvidiarepo"
     owner: root
     group: root
-    mode: 0755
+    mode: "0755"
 
 - name: Configure pbuilder
   become: true
@@ -35,20 +35,20 @@
     block: "{{ lookup('template', 'pbuilderrc.j2') }}"
     owner: root
     group: root
-    mode: 0644
+    mode: "0644"
     state: present
 
 - name: Create the work directory
   ansible.builtin.file:
     path: "{{ slurm_builddir }}"
     state: directory
-    mode: 0755
+    mode: "0755"
 
 - name: Obtain the upstream source code
   ansible.builtin.get_url:
     url: "https://github.com/SchedMD/slurm/archive/refs/tags/{{ slurm_github_tag }}.tar.gz"
     dest: "{{ slurm_builddir }}/slurm-llnl_{{ slurm_version }}.orig.tar.gz"
-    mode: 0644
+    mode: "0644"
 
 - name: Clean up the patched source tree if it already exists
   ansible.builtin.file:
@@ -138,11 +138,11 @@
     dest: "{{ slurm_repo_local_path }}/{{ slurm_repo_name }}/"
     remote_src: true
     mode: preserve
-    directory_mode: 02775
+    directory_mode: "02775"
   register: slurm_pkg_copy
 
 - name: Create the package index on the local repository
   ansible.builtin.shell:
     chdir: "{{ slurm_pkg_copy['dest'] }}"
-    cmd: dpkg-scanpackages . /dev/null | gzip -9c > Packages.gz
+    cmd: set -o pipefail && dpkg-scanpackages . /dev/null | gzip -9c > Packages.gz
   changed_when: true

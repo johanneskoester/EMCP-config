@@ -3,7 +3,7 @@
 - name: Ensure nfs share directories are present
   ansible.builtin.file:
     path: "{{ nfs_share_root }}/{{ nfs_shares_item }}"
-    mode: '0755'
+    mode: "0755"
     owner: root
     group: root
     recurse: false
@@ -18,7 +18,7 @@
   ansible.builtin.template:
     src: exports.j2
     dest: /etc/exports
-    mode: 0644
+    mode: "0644"
     owner: root
     group: root
   notify: reload nfs

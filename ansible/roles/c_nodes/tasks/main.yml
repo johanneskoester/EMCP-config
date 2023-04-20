@@ -22,7 +22,7 @@
     state: directory
     owner: root
     group: root
-    mode: 0755
+    mode: "0755"
   become: true
   tags:
     - mount_local
@@ -45,7 +45,7 @@
     state: directory
     owner: root
     group: root
-    mode: 0777
+    mode: "0777"
   become: true
   tags:
     - mount_local
@@ -56,7 +56,7 @@
     state: directory
     owner: root
     group: root
-    mode: 0770
+    mode: "0770"
   become: true
   tags:
     - mount_local
@@ -68,7 +68,7 @@
     state: directory
     owner: root
     group: root
-    mode: 0770
+    mode: "0770"
   become: true
   tags:
     - mount_local

@@ -9,7 +9,7 @@
     dest: /etc/munge/munge.key
     owner: munge
     group: munge
-    mode: 0600
+    mode: "0600"
   notify: "restart munge {{ init_system }}"
 
 - name: Enable and start munge with systemd

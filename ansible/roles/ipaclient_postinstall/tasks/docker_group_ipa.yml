@@ -14,7 +14,7 @@
     path: /var/run/docker.sock
     owner: root
     group: "{{ ipa_docker_gid }}"
-    mode: 0660
+    mode: "0660"
 
 - name: Check whether a local docker group exists
   ansible.builtin.getent:
@@ -46,7 +46,7 @@
     path: /etc/systemd/system/docker.socket.d
     owner: root
     group: root
-    mode: 0755
+    mode: "0755"
     state: directory
 
 - name: Instruct the Docker socket to start up after network groups are made available
@@ -55,7 +55,7 @@
     dest: /etc/systemd/system/docker.socket.d/nss-dependency.conf
     owner: root
     group: root
-    mode: 0644
+    mode: "0644"
 
 - name: Start the docker service
   ansible.builtin.systemd:

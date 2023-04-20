@@ -10,5 +10,5 @@
     block: "{{ lookup('file', 'load_bash_profile') }}"
     owner: root
     group: root
-    mode: 0644
+    mode: "0644"
     state: present

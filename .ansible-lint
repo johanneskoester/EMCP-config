@@ -36,7 +36,7 @@ use_default_rules: true
 # This makes linter to fully ignore rules/tags listed below
 skip_list:
   - name[missing]  # This rule flags missing names in blocks, which would result in many redundant names
-  - key-order[tasks]
+  - key-order[task]
 
 # Any rule that has the 'opt-in' tag will not be loaded unless its 'id' is
 # mentioned in the enable_list:

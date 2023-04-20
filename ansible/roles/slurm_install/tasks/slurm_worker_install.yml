@@ -14,7 +14,7 @@
     dest: /etc/apt/preferences.d/99prefer-local-slurm
     owner: root
     group: root
-    mode: 0644
+    mode: "0644"
 
 - name: Install the worker daemon and client tools from the custom repository
   ansible.builtin.apt:

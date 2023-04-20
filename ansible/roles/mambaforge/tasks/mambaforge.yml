@@ -5,7 +5,7 @@
     state: directory
     owner: root
     group: root
-    mode: 0755
+    mode: "0755"
 
 - name: Download the installation script
   ansible.builtin.get_url:
@@ -13,7 +13,7 @@
     dest: /tmp/mambaforge.sh
     owner: root
     group: root
-    mode: 0755
+    mode: "0755"
     checksum: "sha256:{{ lookup('url', mambaforge_digest_url) | regex_search('[0-9a-f]{64}') }}"
 
 - name: Execute the installation script
@@ -33,7 +33,7 @@
     dest: "{{ mamba_home }}/.condarc"
     owner: root
     group: root
-    mode: 0644
+    mode: "0644"
 
 - name: Add the conda shell profile
   ansible.builtin.file:
