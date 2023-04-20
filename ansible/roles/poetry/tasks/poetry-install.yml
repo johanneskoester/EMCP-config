@@ -3,13 +3,13 @@
   ansible.builtin.file:
     path: "{{ poetry_home }}"
     state: directory
-    mode: 0755
+    mode: "0755"
 
 - name: Download the installation script
   ansible.builtin.get_url:
     url: https://install.python-poetry.org
     dest: "{{ poetry_installation_script }}"
-    mode: 0755
+    mode: "0755"
 
 - name: Execute the installation script (max 30 minutes, poll every 10 seconds)
   environment:
@@ -41,7 +41,7 @@
     dest: "/etc/profile.d/{{ poetry_env_filename }}"
     owner: root
     group: root
-    mode: 0755
+    mode: "0755"
     force: true
   when: poetry_verification_result is success
 
@@ -52,7 +52,7 @@
     state: directory
     owner: root
     group: root
-    mode: 0755
+    mode: "0755"
 
 - name: Run Bash completions command
   ansible.builtin.command: "{{ poetry_home | quote }}/bin/poetry completions bash"
@@ -66,4 +66,4 @@
     dest: "/etc/bash_completion.d/poetry.bash-completion"
     owner: root
     group: root
-    mode: 0755
+    mode: "0755"

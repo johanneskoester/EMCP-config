@@ -13,7 +13,7 @@
     dest: "/etc/systemd/system/{{ cmd_escape['stdout'] }}.service"
     owner: root
     group: root
-    mode: 0644
+    mode: "0644"
   when: cmd_escape['stdout']
 
 - name: Install the timer file
@@ -22,7 +22,7 @@
     dest: "/etc/systemd/system/{{ cmd_escape['stdout'] }}.timer"
     owner: root
     group: root
-    mode: 0644
+    mode: "0644"
   when: cmd_escape['stdout']
   register: install_timer
   notify: restart timer units

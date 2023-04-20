@@ -4,7 +4,7 @@
     state: directory
     owner: root
     group: root
-    mode: 0755
+    mode: "0755"
 
 - name: Add the longhorn configuration
   ansible.builtin.template:
@@ -12,7 +12,7 @@
     dest: "/etc/multipath/conf.d/{{ multipath_longhorn_conf_filename }}"
     owner: root
     group: root
-    mode: 0644
+    mode: "0644"
   notify: reload multipathd
 
 - name: Flush handlers before testing

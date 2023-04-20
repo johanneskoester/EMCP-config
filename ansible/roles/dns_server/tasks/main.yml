@@ -32,7 +32,7 @@
   ansible.builtin.file:
     path: "{{ pdns_mount_host_path }}"
     state: directory
-    mode: 0777
+    mode: "0777"
     owner: "{{ pdns_user }}"
     group: "{{ pdns_group }}"
   tags:
@@ -44,7 +44,7 @@
   ansible.builtin.file:
     path: "{{ pdns_mount_host_path }}/config"
     state: directory
-    mode: 0777
+    mode: "0777"
     owner: "{{ pdns_user }}"
     group: "{{ pdns_group }}"
   tags:
@@ -56,7 +56,7 @@
   ansible.builtin.file:
     path: "{{ pdns_mount_host_path }}/data"
     state: directory
-    mode: 0777
+    mode: "0777"
     owner: "{{ pdns_user }}"
     group: "{{ pdns_group }}"
   tags:
@@ -70,7 +70,7 @@
     dest: "{{ pdns_mount_host_path }}/config/pdns.conf"
     owner: pdns
     group: pdns
-    mode: 0666
+    mode: "0666"
   tags:
     - dns
     - powerdns
@@ -82,7 +82,7 @@
     dest: "{{ pdns_mount_host_path }}/data/bind.conf"
     owner: pdns
     group: pdns
-    mode: 0666
+    mode: "0666"
   tags:
     - dns
     - powerdns
@@ -94,7 +94,7 @@
     dest: "{{ pdns_mount_host_path }}/data/{{ ikim_zone_file_name }}"
     owner: pdns
     group: pdns
-    mode: 0666
+    mode: "0666"
   tags:
     - dns
     - powerdns
@@ -117,7 +117,7 @@
     dest: /etc/resolv.conf
     owner: root
     group: root
-    mode: 0644
+    mode: "0644"
   tags:
     - dns
     - powerdns

@@ -10,7 +10,7 @@
     state: directory
     owner: root
     group: root
-    mode: 0777
+    mode: "0777"
 
 - name: Add environment variables
   ansible.builtin.template:
@@ -18,7 +18,7 @@
     dest: /etc/profile.d/apptainer_env.sh
     owner: root
     group: root
-    mode: 0755
+    mode: "0755"
 
 - name: Test the installation as an unprivileged user
   ansible.builtin.shell: . /etc/profile.d/apptainer_env.sh && apptainer exec docker://alpine cat /etc/alpine-release

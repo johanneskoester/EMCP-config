@@ -23,7 +23,7 @@
     state: directory
     owner: root
     group: root
-    mode: 0755
+    mode: "0755"
 
 - name: Download and install the docker gpg key
   ansible.builtin.get_url:
@@ -39,7 +39,7 @@
     dest: "/etc/apt/sources.list.d/docker-repo-ubuntu.list"
     owner: root
     group: root
-    mode: 0644
+    mode: "0644"
   notify: refresh apt cache
 
 - name: Install Docker Engine, Docker Compose and the Docker SDK for Python

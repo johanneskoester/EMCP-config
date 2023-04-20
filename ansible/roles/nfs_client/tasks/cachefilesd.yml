@@ -16,7 +16,7 @@
     line: "{{ nfs_client_item['name'] }} {{ nfs_client_item['value'] }}"
     owner: root
     group: root
-    mode: 0644
+    mode: "0644"
   loop: "{{ cachefilesd_options }}"
   loop_control:
     loop_var: nfs_client_item
@@ -30,5 +30,5 @@
     line: "RUN={{ 'yes' if cachefilesd_enabled else 'no' }}"
     owner: root
     group: root
-    mode: 0644
+    mode: "0644"
   notify: restart cachefilesd
