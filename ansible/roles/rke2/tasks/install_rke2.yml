@@ -35,6 +35,7 @@
     HTTP_PROXY: "{{ http_proxy }}"
     HTTPS_PROXY: "{{ http_proxy }}"
     NO_PROXY: "{{ no_proxy }}"
+  changed_when: true
   when: (rke2_version != (installed_rke2_version.stdout | default({})))
         or installed_rke2_version is not defined
   become: true

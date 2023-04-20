@@ -29,6 +29,9 @@
   ansible.builtin.get_url:
     url: https://download.docker.com/linux/ubuntu/gpg
     dest: "{{ docker_signing_key_path }}"
+    owner: root
+    group: root
+    mode: "0644"
   environment:
     http_proxy: "{{ http_proxy }}"
     https_proxy: "{{ http_proxy }}"

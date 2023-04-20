@@ -144,5 +144,5 @@
 - name: Create the package index on the local repository
   ansible.builtin.shell:
     chdir: "{{ slurm_pkg_copy['dest'] }}"
-    cmd: dpkg-scanpackages . /dev/null | gzip -9c > Packages.gz
+    cmd: set -o pipefail && dpkg-scanpackages . /dev/null | gzip -9c > Packages.gz
   changed_when: true
