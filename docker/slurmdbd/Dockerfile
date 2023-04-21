@@ -64,4 +64,4 @@ CMD ["--nodaemon"]
 
 VOLUME ["/ipaadmin"]
 EXPOSE 22
-EXPOSE 6817
+EXPOSE 6819
