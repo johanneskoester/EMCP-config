@@ -1,4 +1,4 @@
-name: Build slurm with NVIDIA autodetect support and publish to Github Packages
+name: (WIP) Build slurm with NVIDIA autodetect support and publish to Github Packages
 
 on:
   workflow_dispatch:
@@ -19,5 +19,5 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
         with:
-          repository: https://github.com/SchedMD/slurm
+          repository: SchedMD/slurm
           ref: ${{ inputs.ref }}
