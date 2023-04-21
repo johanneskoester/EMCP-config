@@ -1,0 +1,23 @@
+name: Build slurm with NVIDIA autodetect support and publish to Github Packages
+
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: The branch, tag or commit of the slurm repository
+        required: true
+        default: slurm-23-02-1-1
+
+jobs:
+  build-and-push-slurm:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          repository: https://github.com/SchedMD/slurm
+          ref: ${{ inputs.ref }}
