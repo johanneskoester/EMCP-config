@@ -1,23 +1,68 @@
-name: (WIP) Build slurm with NVIDIA autodetect support and publish to Github Packages
+name: Rebuild slurm with nvml autodetect support
 
 on:
   workflow_dispatch:
-    inputs:
-      ref:
-        description: The branch, tag or commit of the slurm repository
-        required: true
-        default: slurm-23-02-1-1
+
+env:
+  NVIDIA_DRIVER_VERSION: "520"
+  NVIDIA_CUDA_VERSION: "12.1"
+  BUILDDIR: build
+  BUILDLOG_SUFFIX: .buildlog
 
 jobs:
-  build-and-push-slurm:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-
+  slurm-build:
+    strategy:
+      matrix:
+        os: ["ubuntu-22.04"]
+    runs-on: ${{ matrix.os }}
+    env:
+      DEBIAN_FRONTEND: noninteractive
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+      - name: Update the apt index
+        run: sudo apt-get update
+
+      - name: Install the NVIDIA package repository
+        env:
+          CUDA_KEYRING_PKG: cuda-keyring_1.1-1_all.deb
+        run: |
+          sudo apt-get -y install \
+            ca-certificates \
+            curl
+          source /etc/os-release
+          curl -LO "https://developer.download.nvidia.com/compute/cuda/repos/${ID}$(echo ${VERSION_ID} | tr -d ".")/x86_64/${CUDA_KEYRING_PKG}"
+          sudo dpkg -i "${CUDA_KEYRING_PKG}"
+          sudo apt-get update
+          sudo ln -s "/usr/local/cuda-${NVIDIA_CUDA_VERSION}" /usr/local/cuda
+
+      - name: Install the NVIDIA build dependencies
+        run: |
+          sudo apt-get -y install \
+            "libnvidia-compute-${NVIDIA_DRIVER_VERSION}" \
+            "cuda-nvml-dev-$(echo "${NVIDIA_CUDA_VERSION}" | tr "." "-" )"
+
+      - name: Install the regular build dependencies
+        run: |
+          sudo sed -i 's/^# deb-src/deb-src/' /etc/apt/sources.list
+          sudo apt-get update
+          sudo apt-get build-dep slurm-wlm
+
+      - name: Build the package
+        run: |
+          set -o pipefail
+          mkdir "${BUILDDIR}"
+          cd "${BUILDDIR}"
+          sudo apt-get source --compile slurm-wlm | tee "slurm-wlm${BUILDLOG_SUFFIX}"
+
+      - name: Verify that the nvml library was built
+        run: |
+          set -o pipefail
+          dpkg-deb -c "${BUILDDIR}"/slurm-wlm-basic-plugins_*_amd64.deb | grep 'gpu_nvml.so' > /dev/null
+
+      - name: Upload the build output
+        uses: actions/upload-artifact@v3
         with:
-          repository: SchedMD/slurm
-          ref: ${{ inputs.ref }}
+          name: slurm-build-output
+          path: |
+            ${{ env.BUILDDIR }}/*.deb
+            ${{ env.BUILDDIR }}/*${{ env.BUILDLOG_SUFFIX }}
+          if-no-files-found: error
