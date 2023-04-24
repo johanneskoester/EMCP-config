@@ -9,7 +9,7 @@ ARG USER_GID=${USER_UID}
 # The following values must match their counterparts in slurm.conf.
 ARG SLURM_STATE_SAVE_LOCATION=/var/spool/slurmctld
 ARG SLURM_LOG_DIR=/var/log/slurm
-ARG SLURMCTLD_PID_DIR=/run/slurm
+ARG SLURMDBD_PID_DIR=/run/slurm
 
 ENV TZ=Etc/UTC
 
@@ -50,8 +50,8 @@ COPY etc/ssh/sshd_config.d/*.conf /etc/ssh/sshd_config.d/
 RUN mkdir /run/sshd
 
 # Create directories used by SLURM.
-RUN mkdir "$SLURM_STATE_SAVE_LOCATION" "$SLURM_LOG_DIR" "$SLURMCTLD_PID_DIR" \
-    && chown slurm:slurm "$SLURM_STATE_SAVE_LOCATION" "$SLURM_LOG_DIR" "$SLURMCTLD_PID_DIR"
+RUN mkdir "$SLURM_STATE_SAVE_LOCATION" "$SLURM_LOG_DIR" "$SLURMDBD_PID_DIR" \
+    && chown slurm:slurm "$SLURM_STATE_SAVE_LOCATION" "$SLURM_LOG_DIR" "$SLURMDBD_PID_DIR"
 
 # Copy the supervisor definition files.
 COPY etc/supervisor/conf.d/*.conf /etc/supervisor/conf.d/
