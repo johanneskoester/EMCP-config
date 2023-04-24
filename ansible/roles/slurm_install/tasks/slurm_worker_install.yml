@@ -1,17 +1,14 @@
 ---
 - name: Download the deb packages
-  ansible.builtin.get_url:
-    url: "{{ slurm_worker_package_base_url }}/{{ slurm_install_item }}"
-    dest: /tmp/"{{ slurm_install_item }}"
-    owner: root
-    group: root
-    mode: "0644"
-  loop: "{{ slurm_worker_package_names }}"
-  loop_control:
-    loop_var: slurm_install_item
+  ansible.builtin.unarchive:
+    src: "{{ slurm_worker_debs_url }}"
+    dest: /tmp
+    remote_src: true
 
+# The apt module can't be used because it doesn't handle the installation of
+# multiple local deb packages in the same transaction.
 - name: Install the worker daemon and client tools
-  ansible.builtin.apt:
-    name: "{{ slurm_worker_package_names | map('regex_replace', '^', '/tmp/') | list }}"
-    state: present
-    update_cache: true
+  environment:
+    DEBIAN_FRONTEND: noninteractive
+  ansible.builtin.command: "apt-get -y install {{ slurm_worker_package_paths | map('regex_replace', '^', '/tmp/') | join(' ') }}"
+  changed_when: true

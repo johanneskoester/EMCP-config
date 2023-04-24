@@ -2,12 +2,15 @@
 slurm_controller_group_name: slurm_controller
 slurm_worker_group_name: slurm_worker
 
-# The packages to install on worker nodes
-slurm_worker_package_base_url: https://github.com/IKIM-Essen/EMCP-slurm/releases/download/ubuntu-22.04
-slurm_worker_package_names:
-  - slurmd_21.08.5-2ubuntu1_amd64.deb
-  - slurm-wlm-basic-plugins_21.08.5-2ubuntu1_amd64.deb
-  - slurm-client_21.08.5-2ubuntu1_amd64.deb
+# URL of the archive containing the deb packages.
+slurm_worker_debs_url: https://github.com/IKIM-Essen/EMCP-slurm/releases/download/v21.08.5/slurm-21.08.5-ubuntu22.04-debs.zip
+
+# Packages to install on worker nodes as a list of paths relative to the
+# directory where slurm_worker_debs_url is extracted.
+slurm_worker_package_paths:
+  - slurm-21.08.5-ubuntu22.04-debs/slurmd_21.08.5-2ubuntu1_amd64.deb
+  - slurm-21.08.5-ubuntu22.04-debs/slurm-wlm-basic-plugins_21.08.5-2ubuntu1_amd64.deb
+  - slurm-21.08.5-ubuntu22.04-debs/slurm-client_21.08.5-2ubuntu1_amd64.deb
 
 # Optional: the SSSD domain that slurm should be able to enumerate.
 # If undefined, defaults to ansible_facts['domain'].
