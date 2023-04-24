@@ -1,0 +1,8 @@
+---
+- name: Copy the yarn proxy configuration
+  ansible.builtin.template:
+    src: yarnrc.yml.j2
+    dest: /etc/skel/.yarnrc.yml
+    owner: root
+    group: root
+    mode: "0644"
