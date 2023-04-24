@@ -2,19 +2,16 @@
 slurm_controller_group_name: slurm_controller
 slurm_worker_group_name: slurm_worker
 
-# The version to install.
-slurm_version: "19.05.8"
-slurm_version_with_release: "{{ slurm_version }}-1"
+# The packages to install on worker nodes
+slurm_worker_package_base_url: https://github.com/IKIM-Essen/EMCP-slurm/releases/download/ubuntu-22.04
+slurm_worker_package_names:
+  - slurmd_21.08.5-2ubuntu1_amd64.deb
+  - slurm-wlm-basic-plugins_21.08.5-2ubuntu1_amd64.deb
+  - slurm-client_21.08.5-2ubuntu1_amd64.deb
 
 # Optional: the SSSD domain that slurm should be able to enumerate.
 # If undefined, defaults to ansible_facts['domain'].
 # slurm_sssd_domain:
-
-# URI of the package repository.
-# The package repository can be built using the slurm_pkgbuild role.
-# See `man sources.list` for the supported URI schemes.
-slurm_repo_local_path: /srv/pkg
-slurm_repo_uri: "file:{{ slurm_repo_local_path }}"
 
 # The munge secret which is hashed to create the munge key.
 # It should be encrypted with Ansible Vault.
