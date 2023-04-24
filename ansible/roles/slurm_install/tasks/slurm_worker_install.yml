@@ -5,7 +5,7 @@
     dest: /tmp/"{{ slurm_install_item }}"
     owner: root
     group: root
-    mode: "0755"
+    mode: "0644"
   loop: "{{ slurm_worker_package_names }}"
   loop_control:
     loop_var: slurm_install_item
