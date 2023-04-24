@@ -137,14 +137,6 @@
     - user_skel
 
 
-- hosts: slurm_packager
-  remote_user: ubuntu
-  gather_facts: true
-  environment: "{{ proxy_env | default({}) }}"
-  roles:
-    - slurm_pkgbuild
-
-
 - hosts: slurm_controller, slurm_worker
   remote_user: ubuntu
   gather_facts: true
