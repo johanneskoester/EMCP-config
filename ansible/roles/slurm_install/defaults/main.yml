@@ -68,10 +68,12 @@ slurm_ulimit_stack_hard: "unlimited"
 #   name: the partition name as a string
 #   hosts: either the special value "ALL" or a list of inventory hosts
 #   default: the value of the "Default" parameter in slurm.conf (optional boolean, false if unspecified)
+#   opts: custom options for the partition configuration in slurm.conf (optional string, empty if unspecified)
 # Example:
 #   - name: compute
 #     hosts: "{{ groups['slurm_compute'] }}"
 #     default: true
+#     opts: AllowGroups=ipausers
 #   - name: debug
 #     hosts:
 #       - t01.example.org
@@ -80,3 +82,4 @@ slurm_partitions:
   - name: batch
     hosts: ALL
     default: true
+    opts: ""

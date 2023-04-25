@@ -67,6 +67,6 @@ NodeName={{ hostvars[host]['ansible_hostname'] }} {% if gpu_count > 0 -%} Gres=g
 {% for partition in slurm_partitions %}
 {% if partition['hosts'] %}
 {% set is_default = partition['default'] | default(false) | bool %}
-PartitionName={{ partition['name'] }} {% if partition['hosts'] == 'ALL' -%} Nodes=ALL {% else -%} {% set nodelist = partition['hosts'] | map('extract', hostvars, 'ansible_hostname') | join(',') -%} Nodes={{ nodelist }} {% endif -%} {% if is_default -%} Default=YES {% endif -%} MaxTime=INFINITE State=UP
+PartitionName={{ partition['name'] }} {% if partition['hosts'] == 'ALL' -%} Nodes=ALL {% else -%} {% set nodelist = partition['hosts'] | map('extract', hostvars, 'ansible_hostname') | join(',') -%} Nodes={{ nodelist }} {% endif -%} {% if is_default -%} Default=YES {% endif -%} {{ partition['opts'] | default('') }} MaxTime=INFINITE State=UP
 {% endif %}
 {% endfor %}
