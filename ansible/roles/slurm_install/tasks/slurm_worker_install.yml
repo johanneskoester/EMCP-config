@@ -1,14 +1,26 @@
 ---
-- name: Download the deb packages
-  ansible.builtin.unarchive:
-    src: "{{ slurm_worker_debs_url }}"
-    dest: /tmp
-    remote_src: true
+- name: Add the repository
+  vars:
+    # This name scheme must match the one defined in the slurm_pkgbuild role
+    slurm_repo_suffix: "{{ ansible_local['gpu']['count'] | default(0) | ternary('nvidia', '') }}"
+    slurm_repo_name: "{{ ansible_distribution_release }}{{ slurm_repo_suffix }}"
+  ansible.builtin.apt_repository:
+    repo: "deb [ trusted=yes ] {{ slurm_repo_uri }}/{{ slurm_repo_name }} ./"
+    state: present
 
-# The apt module can't be used because it doesn't handle the installation of
-# multiple local deb packages in the same transaction.
-- name: Install the worker daemon and client tools
-  environment:
-    DEBIAN_FRONTEND: noninteractive
-  ansible.builtin.command: "apt-get -y install {{ slurm_worker_package_paths | map('regex_replace', '^', '/tmp/') | join(' ') }}"
-  changed_when: true
+- name: Configure apt to prefer the custom-built slurm packages
+  ansible.builtin.copy:
+    src: 99prefer-local-slurm
+    dest: /etc/apt/preferences.d/99prefer-local-slurm
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Install the worker daemon and client tools from the custom repository
+  ansible.builtin.apt:
+    name:
+      - "slurmd={{ slurm_version_with_release }}"
+      - "slurm-wlm-basic-plugins={{ slurm_version_with_release }}"
+      - "slurm-client={{ slurm_version_with_release }}"
+    state: present
+    update_cache: true
