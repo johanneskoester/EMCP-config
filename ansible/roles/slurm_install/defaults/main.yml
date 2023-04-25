@@ -16,10 +16,6 @@ slurm_worker_package_paths:
   - slurm-21.08.5-ubuntu22.04-debs/slurm-wlm-basic-plugins_21.08.5-2ubuntu1_amd64.deb
   - slurm-21.08.5-ubuntu22.04-debs/slurm-client_21.08.5-2ubuntu1_amd64.deb
 
-# Optional: the SSSD domain that slurm should be able to enumerate.
-# If undefined, defaults to ansible_facts['domain'].
-# slurm_sssd_domain:
-
 # URI of the package repository.
 # The package repository can be built using the slurm_pkgbuild role.
 # See `man sources.list` for the supported URI schemes.
