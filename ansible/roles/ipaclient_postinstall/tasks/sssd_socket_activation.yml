@@ -1,4 +1,4 @@
-- name: modify sssd.conf to not block sssd service socket activation
+- name: Modify sssd.conf to not block sssd service socket activation
   ansible.builtin.lineinfile:
     path: /etc/sssd/sssd.conf
     state: absent
