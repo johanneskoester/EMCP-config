@@ -1,0 +1,7 @@
+- name: Modify sssd.conf to not block sssd service socket activation
+  ansible.builtin.lineinfile:
+    path: /etc/sssd/sssd.conf
+    state: absent
+    regexp: '^services = nss, pam, ssh, sudo$'
+  notify: restart sssd service
+  become: true

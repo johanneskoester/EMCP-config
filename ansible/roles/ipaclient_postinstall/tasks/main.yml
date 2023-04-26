@@ -18,3 +18,8 @@
   block:
     - ansible.builtin.include_tasks: pam_mkhomedir_umask.yml
   tags: ipaclient-homedir-permissions
+
+- name: Make sure the sockets for activation sssd services are not blocked by sssd.conf
+  block:
+    - ansible.builtin.include_tasks: sssd_socket_activation.yml
+  tags: ipaclient-sssd-socket-activation-fix
