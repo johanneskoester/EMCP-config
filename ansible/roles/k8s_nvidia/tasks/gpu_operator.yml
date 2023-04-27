@@ -1,0 +1,21 @@
+---
+- name: Add the nvidia helm repo
+  kubernetes.core.helm_repository:
+    repo_name: nvidia
+    repo_url: https://helm.ngc.nvidia.com/nvidia
+    repo_state: present
+  environment: "{{ proxy_env | default('') }}"
+
+- name: Install the nvidia gpu operator
+  kubernetes.core.helm:
+    kubeconfig: "{{ rke2_kubeconf_host_path }}{{ rke2_download_kubeconf_file_name }}"
+    release_name: gpu-operator
+    release_namespace: gpu-operator 
+    chart_ref: nvidia/gpu-operator
+    chart_version: "{{ gpu_operator_chart_version }}"
+    create_namespace: true
+    update_repo_cache: true
+    atomic: true
+    values: "{{ lookup('template', 'gpu_operator_helm_values.yml.j2') | from_yaml }}"
+    release_state: present
+  environment: "{{ proxy_env | default('') }}"
