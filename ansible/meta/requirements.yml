@@ -8,3 +8,4 @@ collections:
   - freeipa.ansible_freeipa
   - community.docker
   - kubernetes.core
+  - community.mysql

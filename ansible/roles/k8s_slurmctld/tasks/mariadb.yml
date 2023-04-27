@@ -1,0 +1,155 @@
+- name: Create the slurm-mariadb secret
+  kubernetes.core.k8s:
+    kubeconfig: "{{ rke2_kubeconf_host_path }}{{ rke2_download_kubeconf_file_name }}"
+    state: present
+    definition:
+      api_version: v1
+      kind: Secret
+      metadata:
+        name: slurm-mariadb-secret
+        namespace: "{{ slurm_namespace }}"
+      type: Opaque
+      data:
+        mariadb-root-password: "{{ slurm_mariadb_root_password | b64encode }}"
+        mariadb-user-name: "{{ slurm_mariadb_user_name | b64encode }}"
+        mariadb-user-password: "{{ slurm_mariadb_user_password | b64encode }}"
+
+- name: Create the slurm-mariadb service
+  kubernetes.core.k8s:
+    kubeconfig: "{{ rke2_kubeconf_host_path }}{{ rke2_download_kubeconf_file_name }}"
+    state: present
+    definition:
+      apiVersion: v1
+      kind: Service
+      metadata:
+        name: slurm-mariadb-svc
+        namespace: "{{ slurm_namespace }}"
+      spec:
+        selector:
+          app: slurm-mariadb
+        ports:
+          - name: mariadb
+            protocol: TCP
+            port: "{{ slurm_mariadb_external_port }}"
+            targetPort: "{{ slurm_mariadb_internal_port }}"
+
+- name: Build the mariadb ingress route
+  kubernetes.core.k8s:
+    kubeconfig: "{{ rke2_kubeconf_host_path }}{{ rke2_download_kubeconf_file_name }}"
+    state: present
+    definition:
+      apiVersion: traefik.containo.us/v1alpha1
+      kind: IngressRouteTCP
+      metadata:
+        name: slurm-mariadb-ingress-route
+        namespace: default
+      spec:
+        entryPoints:
+          - mariadb
+        routes:
+          - match: HostSNI(`*`)
+            kind: Rule
+            services:
+              - name: slurm-mariadb-svc
+                namespace: "{{ slurm_namespace }}"
+                port: "{{ slurm_mariadb_internal_port }}"
+
+- name: Create the mariadb StatefulSet
+  kubernetes.core.k8s:
+    kubeconfig: "{{ rke2_kubeconf_host_path }}{{ rke2_download_kubeconf_file_name }}"
+    state: present
+    definition:
+      apiVersion: apps/v1
+      kind: StatefulSet
+      metadata:
+        name: "{{ slurm_mariadb_deployment_name }}"
+        namespace: "{{ slurm_namespace }}"
+        labels:
+          app: slurm-mariadb
+      spec:
+        serviceName: slurm-mariadb-svc
+        replicas: 1
+        selector:
+          matchLabels:
+            app: slurm-mariadb
+        template:
+          metadata:
+            labels:
+              app: slurm-mariadb
+          spec:
+            containers:
+              - name: mariadb-slurm
+                image: "{{ slurm_mariadb_image_url }}"
+                imagePullPolicy: "{{ slurmctld_image_pull_policy | default(omit) }}"
+                args: ["--ignore-db-dirs=lost+found", "--bind_address=0.0.0.0"]
+                resources:
+                  requests:
+                    memory: "{{ slurm_mariadb_resources_req_mem }}"
+                    cpu: "{{ slurm_mariadb_resources_req_cpu }}"
+                  limits:
+                    memory: "{{ slurm_mariadb_resources_lim_mem }}"
+                    cpu: "{{ slurm_mariadb_resources_lim_cpu }}"
+                env:
+                  - name: MARIADB_ROOT_PASSWORD
+                    valueFrom:
+                      secretKeyRef:
+                        name: slurm-mariadb-secret
+                        key: mariadb-root-password
+                  - name: MARIADB_USER
+                    valueFrom:
+                      secretKeyRef:
+                        name: slurm-mariadb-secret
+                        key: mariadb-user-name
+                  - name: MARIADB_USER_PASSWORD
+                    valueFrom:
+                      secretKeyRef:
+                        name: slurm-mariadb-secret
+                        key: mariadb-user-password
+                volumeMounts:
+                  - name: slurm-mariadb-storage
+                    mountPath: "{{ slurm_mariadb_data_mount_path }}"
+                ports:
+                  - containerPort: "{{ slurm_mariadb_internal_port }}"
+            volumes:
+              - name: slurm-mariadb-secret
+                secret:
+                  secretName: slurm-mariadb-secret
+        volumeClaimTemplates:
+          - metadata:
+              name: slurm-mariadb-storage
+              namespace: "{{ slurm_namespace }}"
+            spec:
+              accessModes:
+                - ReadWriteOnce
+              storageClassName: longhorn
+              resources:
+                requests:
+                  storage: "{{ slurm_mariadb_storage_size }}"
+
+- name: Ensure the presence of the python3 mysql library on the executing machine
+  ansible.builtin.apt:
+    name: python3-pymysql
+    state: present
+  become: true
+
+- name: Create the slurm accounting database
+  community.mysql.mysql_db:
+    login_host: "{{ slurm_mariadb_external_url }}"
+    login_port: "{{ slurm_mariadb_external_port }}"
+    login_user: "root"
+    login_password: "{{ slurm_mariadb_root_password }}"
+    name: "{{ slurm_mariadb_database_name }}"
+    state: present
+
+- name: Create the slurm database user
+  community.mysql.mysql_user:
+    login_host: "{{ slurm_mariadb_external_url }}"
+    login_port: "{{ slurm_mariadb_external_port }}"
+    login_user: "root"
+    login_password: "{{ slurm_mariadb_root_password }}"
+    host: "%"
+    name: "{{ slurm_mariadb_user_name }}"
+    password: "{{ slurm_mariadb_user_password }}"
+    update_password: "always"
+    priv: "{{ slurm_mariadb_database_name }}.*:ALL"
+    state: present
