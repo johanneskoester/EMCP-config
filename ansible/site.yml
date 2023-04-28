@@ -158,7 +158,10 @@
   gather_facts: true
   remote_user: ubuntu
   roles:
+    - k8s_mariadb
+    - k8s_slurm_mariadb
     - k8s_slurmctld
+    - k8s_slurmdbd
 
 - hosts: slurm_controller, slurm_worker
   remote_user: ubuntu
