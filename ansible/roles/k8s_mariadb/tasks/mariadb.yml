@@ -1,3 +1,11 @@
+- name: Ensure the mariadb namespace is present
+  kubernetes.core.k8s:
+    kubeconfig: "{{ rke2_kubeconf_host_path }}{{ rke2_download_kubeconf_file_name }}"
+    state: present
+    api_version: v1
+    kind: Namespace
+    name: "{{ mariadb_namespace }}"
+
 - name: Create the mariadb secret
   kubernetes.core.k8s:
     kubeconfig: "{{ rke2_kubeconf_host_path }}{{ rke2_download_kubeconf_file_name }}"
