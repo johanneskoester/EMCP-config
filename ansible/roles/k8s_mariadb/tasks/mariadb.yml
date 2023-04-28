@@ -1,4 +1,4 @@
-- name: Create the slurm-mariadb secret
+- name: Create the mariadb secret
   kubernetes.core.k8s:
     kubeconfig: "{{ rke2_kubeconf_host_path }}{{ rke2_download_kubeconf_file_name }}"
     state: present
@@ -6,13 +6,13 @@
       api_version: v1
       kind: Secret
       metadata:
-        name: slurm-mariadb-secret
-        namespace: "{{ slurm_namespace }}"
+        name: mariadb-secret
+        namespace: "{{ mariadb_namespace }}"
       type: Opaque
       data:
-        mariadb-root-password: "{{ slurm_mariadb_root_password | b64encode }}"
-        mariadb-user-name: "{{ slurm_mariadb_user_name | b64encode }}"
-        mariadb-user-password: "{{ slurm_mariadb_user_password | b64encode }}"
+        mariadb-root-password: "{{ mariadb_root_password | b64encode }}"
+        mariadb-user-name: "{{ mariadb_user_name | b64encode }}"
+        mariadb-user-password: "{{ mariadb_user_password | b64encode }}"
 
 - name: Create the slurm-mariadb service
   kubernetes.core.k8s:
@@ -22,8 +22,8 @@
       apiVersion: v1
       kind: Service
       metadata:
-        name: slurm-mariadb-svc
-        namespace: "{{ slurm_namespace }}"
+        name: mariadb-svc
+        namespace: "{{ mariadb_namespace }}"
       spec:
         selector:
           app: slurm-mariadb
@@ -51,8 +51,9 @@
             kind: Rule
             services:
               - name: slurm-mariadb-svc
-                namespace: "{{ slurm_namespace }}"
+                namespace: "{{ mariadb_namespace }}"
                 port: "{{ slurm_mariadb_internal_port }}"
+  when: mariadb_used_externally
 
 - name: Create the mariadb StatefulSet
   kubernetes.core.k8s:
@@ -63,7 +64,7 @@
       kind: StatefulSet
       metadata:
         name: "{{ slurm_mariadb_deployment_name }}"
-        namespace: "{{ slurm_namespace }}"
+        namespace: "{{ mariadb_namespace }}"
         labels:
           app: slurm-mariadb
       spec:
@@ -117,7 +118,7 @@
         volumeClaimTemplates:
           - metadata:
               name: slurm-mariadb-storage
-              namespace: "{{ slurm_namespace }}"
+              namespace: "{{ mariadb_namespace }}"
             spec:
               accessModes:
                 - ReadWriteOnce
@@ -125,31 +126,3 @@
               resources:
                 requests:
                   storage: "{{ slurm_mariadb_storage_size }}"
-
-- name: Ensure the presence of the python3 mysql library on the executing machine
-  ansible.builtin.apt:
-    name: python3-pymysql
-    state: present
-  become: true
-
-- name: Create the slurm accounting database
-  community.mysql.mysql_db:
-    login_host: "{{ slurm_mariadb_external_url }}"
-    login_port: "{{ slurm_mariadb_external_port }}"
-    login_user: "root"
-    login_password: "{{ slurm_mariadb_root_password }}"
-    name: "{{ slurm_mariadb_database_name }}"
-    state: present
-
-- name: Create the slurm database user
-  community.mysql.mysql_user:
-    login_host: "{{ slurm_mariadb_external_url }}"
-    login_port: "{{ slurm_mariadb_external_port }}"
-    login_user: "root"
-    login_password: "{{ slurm_mariadb_root_password }}"
-    host: "%"
-    name: "{{ slurm_mariadb_user_name }}"
-    password: "{{ slurm_mariadb_user_password }}"
-    update_password: "always"
-    priv: "{{ slurm_mariadb_database_name }}.*:ALL"
-    state: present

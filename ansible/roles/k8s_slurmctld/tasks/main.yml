@@ -6,12 +6,3 @@
   tags:
     - slurm
     - slurmctld
-
-- name: Include slurm-mariadb install tasks
-  block:
-    - ansible.builtin.include_tasks: mariadb.yml
-  when: inventory_hostname in groups[rke2_servers_group_name]
-  run_once: true
-  tags:
-    - slurm
-    - slurm-mariadb
