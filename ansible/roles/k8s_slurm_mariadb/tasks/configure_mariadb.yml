@@ -6,22 +6,22 @@
 
 - name: Create the slurm accounting database
   community.mysql.mysql_db:
-    login_host: "{{ slurm_mariadb_external_url }}"
-    login_port: "{{ slurm_mariadb_external_port }}"
+    login_host: "{{ mariadb_external_url }}"
+    login_port: "{{ mariadb_external_port }}"
     login_user: "root"
-    login_password: "{{ slurm_mariadb_root_password }}"
+    login_password: "{{ mariadb_root_password }}"
     name: "{{ slurm_mariadb_database_name }}"
     state: present
 
 - name: Create the slurm database user
   community.mysql.mysql_user:
-    login_host: "{{ slurm_mariadb_external_url }}"
-    login_port: "{{ slurm_mariadb_external_port }}"
+    login_host: "{{ mariadb_external_url }}"
+    login_port: "{{ mariadb_external_port }}"
     login_user: "root"
-    login_password: "{{ slurm_mariadb_root_password }}"
+    login_password: "{{ mariadb_root_password }}"
     host: "%"
-    name: "{{ slurm_mariadb_user_name }}"
-    password: "{{ slurm_mariadb_user_password }}"
+    name: "{{ mariadb_user_name }}"
+    password: "{{ mariadb_user_password }}"
     update_password: "always"
-    priv: "{{ slurm_mariadb_database_name }}.*:ALL"
+    priv: "{{ mariadb_database_name }}.*:ALL"
     state: present
