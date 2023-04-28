@@ -38,8 +38,8 @@
         ports:
           - name: mariadb
             protocol: TCP
-            port: "{{ slurm_mariadb_external_port }}"
-            targetPort: "{{ slurm_mariadb_internal_port }}"
+            port: "{{ mariadb_external_port }}"
+            targetPort: "{{ mariadb_internal_port }}"
 
 - name: Build the mariadb ingress route
   kubernetes.core.k8s:
@@ -49,7 +49,7 @@
       apiVersion: traefik.containo.us/v1alpha1
       kind: IngressRouteTCP
       metadata:
-        name: slurm-mariadb-ingress-route
+        name: mariadb-ingress-route
         namespace: default
       spec:
         entryPoints:
@@ -58,9 +58,9 @@
           - match: HostSNI(`*`)
             kind: Rule
             services:
-              - name: slurm-mariadb-svc
+              - name: mariadb-svc
                 namespace: "{{ mariadb_namespace }}"
-                port: "{{ slurm_mariadb_internal_port }}"
+                port: "{{ mariadb_internal_port }}"
   when: mariadb_used_externally
 
 - name: Create the mariadb StatefulSet
@@ -71,61 +71,61 @@
       apiVersion: apps/v1
       kind: StatefulSet
       metadata:
-        name: "{{ slurm_mariadb_deployment_name }}"
+        name: "{{ mariadb_deployment_name }}"
         namespace: "{{ mariadb_namespace }}"
         labels:
-          app: slurm-mariadb
+          app: mariadb
       spec:
-        serviceName: slurm-mariadb-svc
+        serviceName: mariadb-svc
         replicas: 1
         selector:
           matchLabels:
-            app: slurm-mariadb
+            app: mariadb
         template:
           metadata:
             labels:
-              app: slurm-mariadb
+              app: mariadb
           spec:
             containers:
-              - name: mariadb-slurm
-                image: "{{ slurm_mariadb_image_url }}"
-                imagePullPolicy: "{{ slurmctld_image_pull_policy | default(omit) }}"
+              - name: mariadb
+                image: "{{ mariadb_image_url }}"
+                imagePullPolicy: "{{ mariadb_image_pull_policy | default(omit) }}"
                 args: ["--ignore-db-dirs=lost+found", "--bind_address=0.0.0.0"]
                 resources:
                   requests:
-                    memory: "{{ slurm_mariadb_resources_req_mem }}"
-                    cpu: "{{ slurm_mariadb_resources_req_cpu }}"
+                    memory: "{{ mariadb_resources_req_mem }}"
+                    cpu: "{{ mariadb_resources_req_cpu }}"
                   limits:
-                    memory: "{{ slurm_mariadb_resources_lim_mem }}"
-                    cpu: "{{ slurm_mariadb_resources_lim_cpu }}"
+                    memory: "{{ mariadb_resources_lim_mem }}"
+                    cpu: "{{ mariadb_resources_lim_cpu }}"
                 env:
                   - name: MARIADB_ROOT_PASSWORD
                     valueFrom:
                       secretKeyRef:
-                        name: slurm-mariadb-secret
+                        name: mariadb-secret
                         key: mariadb-root-password
                   - name: MARIADB_USER
                     valueFrom:
                       secretKeyRef:
-                        name: slurm-mariadb-secret
+                        name: mariadb-secret
                         key: mariadb-user-name
                   - name: MARIADB_USER_PASSWORD
                     valueFrom:
                       secretKeyRef:
-                        name: slurm-mariadb-secret
+                        name: mariadb-secret
                         key: mariadb-user-password
                 volumeMounts:
-                  - name: slurm-mariadb-storage
-                    mountPath: "{{ slurm_mariadb_data_mount_path }}"
+                  - name: mariadb-storage
+                    mountPath: "{{ mariadb_data_mount_path }}"
                 ports:
-                  - containerPort: "{{ slurm_mariadb_internal_port }}"
+                  - containerPort: "{{ mariadb_internal_port }}"
             volumes:
-              - name: slurm-mariadb-secret
+              - name: mariadb-secret
                 secret:
-                  secretName: slurm-mariadb-secret
+                  secretName: mariadb-secret
         volumeClaimTemplates:
           - metadata:
-              name: slurm-mariadb-storage
+              name: mariadb-storage
               namespace: "{{ mariadb_namespace }}"
             spec:
               accessModes:
@@ -133,4 +133,4 @@
               storageClassName: longhorn
               resources:
                 requests:
-                  storage: "{{ slurm_mariadb_storage_size }}"
+                  storage: "{{ mariadb_storage_size }}"
