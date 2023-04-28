@@ -1,0 +1,12 @@
+---
+# This block runs on an RKE2 server only if at least one node in the
+# RKE2 cluster is GPU-equipped.
+- name: Install the NVIDIA GPU operator
+  block:
+    - ansible.builtin.include_tasks: gpu_operator.yml
+  when:
+    - groups['rke_k8s_cluster'] | map('extract', hostvars, ['ansible_local', 'gpu', 'count']) | list | max > 0
+    - inventory_hostname in groups[rke2_servers_group_name]
+  run_once: true
+  tags:
+    - nvidia-gpu-operator
