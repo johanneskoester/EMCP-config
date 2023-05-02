@@ -22,46 +22,27 @@
         mariadb-user-name: "{{ mariadb_user_name | b64encode }}"
         mariadb-user-password: "{{ mariadb_user_password | b64encode }}"
 
-- name: Create the slurm-mariadb service
+- name: Create the external-facing mariadb lb
   kubernetes.core.k8s:
     kubeconfig: "{{ rke2_kubeconf_host_path }}{{ rke2_download_kubeconf_file_name }}"
-    state: present
     definition:
       apiVersion: v1
       kind: Service
       metadata:
-        name: mariadb-svc
+        name: "{{ mariadb_deployment_name }}-lb"
         namespace: "{{ mariadb_namespace }}"
+        annotations:
+          metallb.universe.tf/loadBalancerIPs: "{{ mariadb_lb_ip | default(omit) }}"
       spec:
         selector:
-          app: slurm-mariadb
+          app: mariadb
         ports:
           - name: mariadb
             protocol: TCP
             port: "{{ mariadb_external_port }}"
             targetPort: "{{ mariadb_internal_port }}"
-
-- name: Build the mariadb ingress route
-  kubernetes.core.k8s:
-    kubeconfig: "{{ rke2_kubeconf_host_path }}{{ rke2_download_kubeconf_file_name }}"
+        type: LoadBalancer
     state: present
-    definition:
-      apiVersion: traefik.containo.us/v1alpha1
-      kind: IngressRouteTCP
-      metadata:
-        name: mariadb-ingress-route
-        namespace: default
-      spec:
-        entryPoints:
-          - mariadb
-        routes:
-          - match: HostSNI(`*`)
-            kind: Rule
-            services:
-              - name: mariadb-svc
-                namespace: "{{ mariadb_namespace }}"
-                port: "{{ mariadb_internal_port }}"
-  when: mariadb_used_externally
 
 - name: Create the mariadb StatefulSet
   kubernetes.core.k8s:
@@ -76,7 +57,7 @@
         labels:
           app: mariadb
       spec:
-        serviceName: mariadb-svc
+        serviceName: "{{ mariadb_deployment_name }}-lb"
         replicas: 1
         selector:
           matchLabels:
