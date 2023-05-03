@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: authorized_keys_slurmdbd
+  namespace: {{ slurm_namespace }}
+data:
+  authorized_keys: |
+{% for key in slurmdbd_ssh_access_keys -%}
+    {{ key }}
+{% endfor -%}

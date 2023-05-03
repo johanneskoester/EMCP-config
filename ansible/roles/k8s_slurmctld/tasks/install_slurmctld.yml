@@ -19,6 +19,12 @@
     kubeconfig: "{{ rke2_kubeconf_host_path }}{{ rke2_download_kubeconf_file_name }}"
     definition: "{{ lookup('template', 'ipa_configmap.yml.j2') | from_yaml }}"
 
+- name: Create the authorized_keys ConfigMap
+  kubernetes.core.k8s:
+    state: present
+    kubeconfig: "{{ rke2_kubeconf_host_path }}{{ rke2_download_kubeconf_file_name }}"
+    definition: "{{ lookup('template', 'authorized_keys_configmap.yml.j2') | from_yaml }}"
+
 # A headless service is required for StatefulSet in order to keep the network
 # identity of pods stable.
 - name: Create the internal-facing slurmctld headless service
@@ -147,7 +153,8 @@
                   - name: munge-config
                     mountPath: "{{ slurmctld_munge_dir }}"
                   - name: slurmctld-ssh
-                    mountPath: "/home/{{ slurmctld_ssh_user }}/.ssh"
+                    mountPath: "/home/{{ slurmctld_ssh_user }}/.ssh/authorized_keys"
+                    subPath: authorized_keys
                   - name: ipaadmin
                     mountPath: /ipaadmin
                     readOnly: true
@@ -158,6 +165,9 @@
               - name: ipaadmin
                 secret:
                   secretName: ipaadmin
+              - name: slurmctld-ssh
+                configMap:
+                  name: authorized_keys_slurmctld
         volumeClaimTemplates:
           - metadata:
               name: slurm-state
