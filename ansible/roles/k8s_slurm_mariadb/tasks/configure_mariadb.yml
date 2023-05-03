@@ -12,6 +12,10 @@
     login_password: "{{ mariadb_root_password }}"
     name: "{{ slurm_mariadb_database_name }}"
     state: present
+  retries: 10
+  delay: 5
+  register: create_db_result
+  until: create_db_result is not failed
 
 - name: Create the slurm database user
   community.mysql.mysql_user:
