@@ -158,8 +158,6 @@
               - name: ipaadmin
                 secret:
                   secretName: ipaadmin
-            imagePullSecrets:
-              - name: "{{ slurmctld_image_registry_secret_name | default(omit) }}"
         volumeClaimTemplates:
           - metadata:
               name: slurm-state
