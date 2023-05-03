@@ -136,14 +136,6 @@
     - nfs_shares
     - user_skel
 
-
-- hosts: slurm_packager
-  remote_user: ubuntu
-  gather_facts: true
-  environment: "{{ proxy_env | default({}) }}"
-  roles:
-    - slurm_pkgbuild
-
 - hosts: rke_k8s_cluster
   gather_facts: true
   remote_user: ubuntu
