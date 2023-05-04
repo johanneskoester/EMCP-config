@@ -9,11 +9,23 @@
     name: slurmctld
     state: stopped
 
+- name: stop slurmdbd
+  become: true
+  community.general.supervisorctl:
+    name: slurmdbd
+    state: stopped
+
 - name: restart slurmd
   become: true
   ansible.builtin.systemd:
     name: slurmd
     state: restarted
+
+- name: start slurmdbd
+  become: true
+  community.general.supervisorctl:
+    name: slurmdbd
+    state: started
 
 - name: start slurmctld
   become: true
