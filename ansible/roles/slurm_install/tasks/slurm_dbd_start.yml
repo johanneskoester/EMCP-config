@@ -1,0 +1,4 @@
+- name: Start the database daemon
+  community.general.supervisorctl:
+    name: slurmdbd
+    state: started
