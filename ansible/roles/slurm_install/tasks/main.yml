@@ -56,3 +56,15 @@
     - slurm
     - slurm-node
     - slurm-controller
+
+- name: Deploy the database node
+  become: true
+  block:
+    - ansible.builtin.include_tasks: slurm_dbd_install.yml
+    - ansible.builtin.include_tasks: slurm_dbd_configure.yml
+    - ansible.builtin.include_tasks: slurm_dbd_start.yml
+  when: inventory_hostname in groups[slurm_dbd_group_name]
+  tags:
+    - slurm
+    - slurm-node
+    - slurm-dbd
