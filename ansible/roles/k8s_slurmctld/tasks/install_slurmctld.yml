@@ -113,6 +113,19 @@
                 volumeMounts:
                   - name: slurm-state
                     mountPath: "{{ slurmctld_state_save_location }}"
+              - name: ssh-pub-keys-mv-chown
+                image: "{{ slurmctld_image_url }}"
+                command:
+                  - /bin/bash
+                  - "-c"
+                  - "cp /pub_ssh_keys/authorized_keys /home/{{ slurmctld_ssh_user }}/.ssh/"
+                  - "&&"
+                  - "chown -R {{ slurmctld_ssh_user }}:{{ slurmctld_ssh_user }} /home/{{ slurmctld_ssh_user }}/.ssh"
+                volumeMounts:
+                  - name: slurmctld-ssh-ro
+                    mountPath: "/pub_ssh_keys"
+                  - name: slurmctld-ssh
+                    mountPath: "/home/{{ slurmctld_ssh_user }}/.ssh"
             containers:
               - name: slurmctld
                 image: "{{ slurmctld_image_url }}"
@@ -153,8 +166,7 @@
                   - name: munge-config
                     mountPath: "{{ slurmctld_munge_dir }}"
                   - name: slurmctld-ssh
-                    mountPath: "/home/{{ slurmctld_ssh_user }}/.ssh/authorized_keys"
-                    subPath: authorized_keys
+                    mountPath: "/home/{{ slurmctld_ssh_user }}/.ssh"
                   - name: ipaadmin
                     mountPath: /ipaadmin
                     readOnly: true
@@ -165,9 +177,9 @@
               - name: ipaadmin
                 secret:
                   secretName: ipaadmin
-              - name: slurmctld-ssh
+              - name: slurmctld-ssh-ro
                 configMap:
-                  name: authorized_keys_slurmctld
+                  name: authorized-keys-slurmctld
         volumeClaimTemplates:
           - metadata:
               name: slurm-state
