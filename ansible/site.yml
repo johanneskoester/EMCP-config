@@ -26,6 +26,7 @@
     ansible_ssh_private_key_file: files/ikimk8s_rsa
   environment: "{{ k8s_env | default({}) }}"
   roles:
+    - facts
     - update
     - security
     - proxies
@@ -56,6 +57,7 @@
   gather_facts: true
   environment: "{{ proxy_env | default({}) }}"
   roles:
+    - facts
     - update
     - c_nodes
     - proxies
@@ -76,6 +78,7 @@
   gather_facts: true
   environment: "{{ proxy_env | default({}) }}"
   roles:
+    - facts
     - update
     - security
     - g_nodes
@@ -142,6 +145,7 @@
   roles:
     - set_default_gw
     - rke2
+    - k8s_nvidia
     - k8s_setup_longhorn
     - k8s_setup_traefik
     - k8s_setup_monitoring

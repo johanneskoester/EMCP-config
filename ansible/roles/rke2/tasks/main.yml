@@ -16,6 +16,13 @@
     - rke2
     - rke2-disable-swap
 
+- name: Tweak kernel parameters
+  block:
+    - ansible.builtin.include_tasks: kernelparams.yml
+  tags:
+    - rke2
+    - rke2-kernel-params
+
 - name: Install rke2 on the primary server
   block:
     - ansible.builtin.include_tasks: install_rke2.yml

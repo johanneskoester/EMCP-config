@@ -23,7 +23,7 @@
 #     state: directory
 #     owner: root
 #     group: root
-#     mode: 0755
+#     mode: "0755"
 #   tags:
 #     - mount_local
 
@@ -47,7 +47,7 @@
     state: directory
     owner: root
     group: root
-    mode: 0777
+    mode: "0777"
 
 - name: Create /local/cache directory
   ansible.builtin.file:
@@ -55,7 +55,7 @@
     state: directory
     owner: root
     group: root
-    mode: 0770
+    mode: "0770"
 
 
 - name: Create /local/cache directory
@@ -64,4 +64,4 @@
     state: directory
     owner: root
     group: root
-    mode: 0770
+    mode: "0770"

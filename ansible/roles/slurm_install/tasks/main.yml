@@ -5,19 +5,8 @@
     - ansible.builtin.include_tasks: facts.yml
   tags:
     - slurm
-    - slurm-sssd
     - slurm-munge
     - slurm-node
-
-# This needs testing to find out if it's necessary.
-# See https://slurm.schedmd.com/faq.html#sssd
-# - name: Enable enumeration in SSSD
-#   become: true
-#   block:
-#     - ansible.builtin.include_tasks: sssd_enumerate.yml
-#   tags:
-#     - slurm
-#     - slurm-sssd
 
 - name: Install munge
   become: true

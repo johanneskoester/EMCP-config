@@ -5,7 +5,7 @@
     state: directory
     owner: root
     group: root
-    mode: 0755
+    mode: "0755"
   notify: restart freeipa service
   tags: freeIPA-server
 
@@ -15,7 +15,7 @@
     dest: "{{ server_options_path }}"
     owner: root
     group: root
-    mode: 0600
+    mode: "0600"
   notify: restart freeipa service
   tags: freeIPA-server
 
@@ -31,7 +31,7 @@
     dest: "/etc/systemd/system/{{ server_service_name }}.service"
     owner: root
     group: root
-    mode: 0644
+    mode: "0644"
   notify: restart freeipa service
   when: resolvectl_command is defined
   tags: freeIPA-server
@@ -50,7 +50,7 @@
     dest: "/etc/ufw/applications.d/{{ server_service_name }}"
     owner: root
     group: root
-    mode: 0644
+    mode: "0644"
   tags: freeIPA-server
 
 - name: Enable ufw

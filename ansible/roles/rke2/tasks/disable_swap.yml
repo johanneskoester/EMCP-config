@@ -21,6 +21,7 @@
 - name: Disable swap for current session
   ansible.builtin.command: swapoff -a
   become: true
+  changed_when: true
   when: swap_is_on
 
 - name: Comment out swap line in /etc/fstab

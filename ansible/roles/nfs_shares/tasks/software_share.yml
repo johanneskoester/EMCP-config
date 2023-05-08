@@ -4,7 +4,7 @@
   ansible.builtin.file:
     path: "{{ software_share_root }}/{{ nfs_shares_item }}"
     state: directory
-    mode: 02775
+    mode: "02775"
     recurse: false
     owner: root
     group: software_install

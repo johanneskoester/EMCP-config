@@ -21,7 +21,7 @@
     dest: /etc/netplan/60-default-gw.yaml
     owner: root
     group: root
-    mode: 0644
+    mode: "0644"
   when: cloud_init_res['cloud_init_data_facts']['status']['v1']['stage'] is defined
   become: true
   notify: apply netplan config

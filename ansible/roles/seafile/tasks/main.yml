@@ -12,7 +12,7 @@
     dest: "{{ seafile_key_path }}"
     owner: root
     group: root
-    mode: 0644
+    mode: "0644"
   tags:
     - seafile
 
