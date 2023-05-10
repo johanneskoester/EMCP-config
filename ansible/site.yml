@@ -159,7 +159,7 @@
     - k8s_slurmctld
     - k8s_slurmdbd
 
-- hosts: slurm_controller, slurm_worker
+- hosts: slurm_controller, slurm_worker, slurm_database
   remote_user: ubuntu
   gather_facts: true
   environment: "{{ proxy_env | default({}) }}"
