@@ -70,9 +70,9 @@
         name: "{{ longhorn_backup_cred_secret }}"
         namespace: longhorn-system
       data:
-        AWS_ACCESS_KEY_ID: "{{ longhorn_minio_access_key }}"
-        AWS_SECRET_ACCESS_KEY: "{{ longhorn_minio_secret_key }}"
-        AWS_ENDPOINTS: "{{ longhorn_minio_endpoint }}"
+        AWS_ACCESS_KEY_ID: "{{ longhorn_minio_access_key | b64encode }}"
+        AWS_SECRET_ACCESS_KEY: "{{ longhorn_minio_secret_key | b64encode }}"
+        AWS_ENDPOINTS: "{{ longhorn_minio_endpoint | b64encode }}"
 
 - name: Install longhorn chart
   kubernetes.core.helm:
