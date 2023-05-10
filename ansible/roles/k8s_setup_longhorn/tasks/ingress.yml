@@ -40,7 +40,7 @@
         name: longhorn-auth-secret
         namespace: default
       data:
-        users: "{{ longhorn_admin_secret }}"
+        users: "{{ longhorn_admin_secret | b64encode }}"
 
 - name: Basic auth longhorn middleware
   kubernetes.core.k8s:
