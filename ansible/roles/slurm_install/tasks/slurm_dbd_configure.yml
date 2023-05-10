@@ -2,9 +2,9 @@
   ansible.builtin.template:
     src: slurmdbd.conf.j2
     dest: /etc/slurm/slurmdbd.conf
-    owner: root
-    group: root
-    mode: 0644
+    owner: "{{ slurm_user_name }}"
+    group: "{{ slurm_user_name }}"
+    mode: 0600
   notify:
     - stop slurmdbd
     - start slurmdbd
