@@ -41,14 +41,17 @@ SelectTypeParameters=CR_Core
 #
 #
 # LOGGING AND ACCOUNTING
-#AccountingStorageHost=
-#AccountingStorageType=accounting_storage/slurmdbd
+{% if slurm_use_dbd %}
+AccountingStorageHost={{ slurmdbd_url }}
+AccountingStorageType=accounting_storage/slurmdbd
+{% else %}
 AccountingStorageType=accounting_storage/filetxt
 AccountingStorageLoc={{ slurm_log_dir }}/accounting
 JobCompType=jobcomp/filetxt
 JobCompLoc={{ slurm_log_dir }}/job_completions
-#JobAcctGatherFrequency=30
-#JobAcctGatherType=jobacct_gather/linux
+{% endif %}
+JobAcctGatherFrequency=30
+JobAcctGatherType=jobacct_gather/linux
 #SlurmctldDebug=info
 SlurmctldLogFile={{ slurm_log_dir }}/slurmctld.log
 #SlurmdDebug=info
