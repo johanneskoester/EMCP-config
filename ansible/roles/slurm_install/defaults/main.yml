@@ -6,6 +6,8 @@ slurm_dbd_group_name: slurm_database
 # The version to install.
 slurm_version: "19.05.8"
 slurm_version_with_release: "{{ slurm_version }}-1"
+slurm_client_version: "{{ slurm_version }}"
+slurm_client_version_with_release: "{{ slurm_version }}-1"
 
 # URL of the archive containing the deb packages.
 slurm_worker_debs_url: https://github.com/IKIM-Essen/EMCP-slurm/releases/download/v21.08.5/slurm-21.08.5-ubuntu22.04-debs.zip

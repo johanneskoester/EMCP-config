@@ -20,7 +20,7 @@
   ansible.builtin.apt:
     name:
       - "slurmd={{ slurm_version_with_release }}"
-      - "slurm-wlm-basic-plugins={{ slurm_version_with_release }}"
-      - "slurm-client={{ slurm_version_with_release }}"
+      - "slurm-wlm-basic-plugins={{ slurm_client_version_with_release }}"
+      - "slurm-client={{ slurm_client_version_with_release }}"
     state: present
     update_cache: true
