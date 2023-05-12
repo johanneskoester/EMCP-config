@@ -23,12 +23,14 @@
 
 - name: start slurmdbd
   become: true
+  ignore_errors: true
   community.general.supervisorctl:
     name: slurmdbd
     state: started
 
 - name: start slurmctld
   become: true
+  ignore_errors: true
   community.general.supervisorctl:
     name: slurmctld
     state: started
