@@ -29,3 +29,43 @@
     update_password: "always"
     priv: "{{ slurm_mariadb_database_name }}.*:ALL"
     state: present
+
+- name: Set the innodb_buffer_pool_size variable
+  community.mysql.mysql_variables:
+    login_host: "{{ mariadb_external_url }}"
+    login_port: "{{ mariadb_external_port }}"
+    login_user: "root"
+    login_password: "{{ mariadb_root_password }}"
+    mode: persist
+    variable: innodb_buffer_pool_size
+    value: 4294967296
+
+- name: Set the innodb_log_file_size variable
+  community.mysql.mysql_variables:
+    login_host: "{{ mariadb_external_url }}"
+    login_port: "{{ mariadb_external_port }}"
+    login_user: "root"
+    login_password: "{{ mariadb_root_password }}"
+    mode: persist
+    variable: innodb_log_file_size
+    value: 100663296
+
+- name: Set the innodb_lock_wait_timeout variable
+  community.mysql.mysql_variables:
+    login_host: "{{ mariadb_external_url }}"
+    login_port: "{{ mariadb_external_port }}"
+    login_user: "root"
+    login_password: "{{ mariadb_root_password }}"
+    mode: persist
+    variable: innodb_lock_wait_timeout
+    value: 900
+
+- name: Set the max_allowed_packet variable
+  community.mysql.mysql_variables:
+    login_host: "{{ mariadb_external_url }}"
+    login_port: "{{ mariadb_external_port }}"
+    login_user: "root"
+    login_password: "{{ mariadb_root_password }}"
+    mode: persist
+    variable: max_allowed_packet
+    value: 16777216
