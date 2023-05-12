@@ -1,4 +1,5 @@
 - name: Start the database daemon
+  ignore_errors: true
   community.general.supervisorctl:
     name: slurmdbd
     state: started
