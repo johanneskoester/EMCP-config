@@ -3,8 +3,8 @@
   ansible.builtin.copy:
     src: cgroup.conf
     dest: /etc/slurm-llnl/cgroup.conf
-    owner: root
-    group: root
+    owner: "{{ slurm_user_name }}"
+    group: "{{ slurm_user_name }}"
     mode: "0644"
   notify:
     - stop slurmctld
@@ -14,8 +14,8 @@
   ansible.builtin.template:
     src: slurm.conf.j2
     dest: /etc/slurm-llnl/slurm.conf
-    owner: root
-    group: root
+    owner: "{{ slurm_user_name }}"
+    group: "{{ slurm_user_name }}"
     mode: "0644"
   notify:
     - stop slurmctld
@@ -26,5 +26,5 @@
     path: "{{ slurm_log_dir }}"
     state: directory
     mode: "0755"
-    owner: slurm
-    group: slurm
+    owner: "{{ slurm_user_name }}"
+    group: "{{ slurm_user_name }}"

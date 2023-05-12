@@ -14,5 +14,5 @@
     path: "{{ slurm_log_dir }}"
     state: directory
     mode: 0755
-    owner: slurm
-    group: slurm
+    owner: "{{ slurm_user_name }}"
+    group: "{{ slurm_user_name }}"
