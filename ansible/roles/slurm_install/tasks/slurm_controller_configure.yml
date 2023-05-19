@@ -1,15 +1,4 @@
 ---
-- name: Add the cgroup configuration file
-  ansible.builtin.copy:
-    src: cgroup.conf
-    dest: "{{ slurmctld_config_dir }}/cgroup.conf"
-    owner: "{{ slurm_user_name }}"
-    group: "{{ slurm_user_name }}"
-    mode: "0644"
-  notify:
-    - stop slurmctld
-    - start slurmctld
-
 - name: Add the main configuration file
   ansible.builtin.template:
     src: slurm.conf.j2
