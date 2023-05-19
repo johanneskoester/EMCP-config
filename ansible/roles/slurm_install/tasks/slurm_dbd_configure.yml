@@ -5,9 +5,7 @@
     owner: "{{ slurm_user_name }}"
     group: "{{ slurm_user_name }}"
     mode: 0600
-  notify:
-    - stop slurmdbd
-    - start slurmdbd
+  notify: restart slurmdbd
 
 - name: Create the log directory
   ansible.builtin.file:

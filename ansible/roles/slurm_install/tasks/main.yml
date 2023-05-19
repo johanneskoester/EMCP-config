@@ -16,11 +16,23 @@
     - slurm
     - slurm-munge
 
-- name: Flush handlers to avoid missing restarts when subsequent tasks fail
+- name: Flush handlers as Munge needs to be up and running for the Slurm daemons to start correctly.
   ansible.builtin.meta: flush_handlers
   tags:
     - slurm
     - slurm-munge
+
+- name: Deploy the database node
+  become: true
+  block:
+    - ansible.builtin.include_tasks: slurm_dbd_install.yml
+    - ansible.builtin.include_tasks: slurm_dbd_configure.yml
+    - ansible.builtin.include_tasks: slurm_dbd_start.yml
+  when: inventory_hostname in groups[slurm_dbd_group_name]
+  tags:
+    - slurm
+    - slurm-node
+    - slurm-dbd
 
 - name: Deploy worker nodes
   become: true
@@ -45,15 +57,3 @@
     - slurm
     - slurm-node
     - slurm-controller
-
-- name: Deploy the database node
-  become: true
-  block:
-    - ansible.builtin.include_tasks: slurm_dbd_install.yml
-    - ansible.builtin.include_tasks: slurm_dbd_configure.yml
-    - ansible.builtin.include_tasks: slurm_dbd_start.yml
-  when: inventory_hostname in groups[slurm_dbd_group_name]
-  tags:
-    - slurm
-    - slurm-node
-    - slurm-dbd
