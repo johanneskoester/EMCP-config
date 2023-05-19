@@ -24,8 +24,8 @@
   ansible.builtin.template:
     src: slurm.conf.j2
     dest: /etc/slurm-llnl/slurm.conf
-    owner: root
-    group: root
+    owner: "{{ slurmd_user_name }}"
+    group: "{{ slurmd_user_name }}"
     mode: "0644"
   notify: restart slurmd
 
@@ -33,9 +33,9 @@
   ansible.builtin.file:
     path: "{{ slurm_log_dir }}"
     state: directory
+    owner: "{{ slurmd_user_name }}"
+    group: "{{ slurmd_user_name }}"
     mode: "0755"
-    owner: root
-    group: root
 
 - name: Relax user limits
   ansible.builtin.template:
@@ -49,22 +49,22 @@
   ansible.builtin.copy:
     src: epilog.sh
     dest: /etc/slurm-llnl/epilog.sh
-    owner: root
-    group: root
+    owner: "{{ slurmd_user_name }}"
+    group: "{{ slurmd_user_name }}"
     mode: "0755"
 
 - name: Create the epilog script directory
   ansible.builtin.file:
     path: /etc/slurm-llnl/epilog.d
     state: directory
-    owner: root
-    group: root
+    owner: "{{ slurmd_user_name }}"
+    group: "{{ slurmd_user_name }}"
     mode: "0755"
 
 - name: Copy the GPU epilog script
   ansible.builtin.copy:
     src: 99-gpu-last-job-cleanup
     dest: /etc/slurm-llnl/epilog.d/99-gpu-last-job-cleanup
-    owner: root
-    group: root
+    owner: "{{ slurmd_user_name }}"
+    group: "{{ slurmd_user_name }}"
     mode: "0755"

@@ -48,10 +48,6 @@ slurmctld_state_save_location: /var/spool/slurmctld
 # Log directory
 slurm_log_dir: /var/log/slurm
 
-# The user name to be used as the slurm system user. This decides the
-# ownership of various directories inside the slurm containers.
-slurm_user_name: slurm
-
 # The amount of memory on each node that is *not* intended to be usable by
 # slurm jobs. The usable memory is obtained by subtracting slurm_reserved_mem_mb
 # from the physical memory.
