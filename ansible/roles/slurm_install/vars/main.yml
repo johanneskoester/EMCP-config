@@ -11,3 +11,9 @@ slurm_user_name: slurm
 # It should be an administrator account as slurmd needs to execute privileged
 # actions such as sending signals to processes.
 slurmd_user_name: root
+
+# Config directories for the slurm daemons.
+# From version 21.08 on these change to /etc/slurm by default.
+slurmdbd_config_dir: /etc/slurm-llnl
+slurmctld_config_dir: /etc/slurm-llnl
+slurmd_config_dir: /etc/slurm-llnl

@@ -36,11 +36,6 @@ slurm_munge_secret: "{{ vault_slurm_munge_secret }}"
 # Cluster name for the configuration file
 slurm_cluster_name: slurmcluster
 
-# Config directories for slurmdbd and slurmctld
-# From version 21.08 on these change to /etc/slurm by default.
-slurmdbd_config_dir: /etc/slurm-llnl
-slurmctld_config_dir: /etc/slurm-llnl
-
 # Value of StateSaveLocation in the configuration file.
 # It should match the variable of the same name in the k8s_slurmctld role.
 slurmctld_state_save_location: /var/spool/slurmctld
