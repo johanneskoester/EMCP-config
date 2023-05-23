@@ -13,7 +13,6 @@
 
 - name: restart slurmdbd
   become: true
-  ignore_errors: true
   community.general.supervisorctl:
     name: slurmdbd
     state: restarted
@@ -26,7 +25,6 @@
 
 - name: start slurmctld
   become: true
-  ignore_errors: true
   community.general.supervisorctl:
     name: slurmctld
     state: started
