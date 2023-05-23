@@ -71,7 +71,7 @@
               - name: mariadb
                 image: "{{ mariadb_image_url }}"
                 imagePullPolicy: "{{ mariadb_image_pull_policy | default(omit) }}"
-                args: ["--ignore-db-dirs=lost+found", "--bind_address=0.0.0.0"]
+                args: "{{ mariadb_container_args }}"
                 resources:
                   requests:
                     memory: "{{ mariadb_resources_req_mem }}"
