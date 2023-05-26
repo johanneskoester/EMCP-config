@@ -1,6 +1,10 @@
 ipa_default_shell: /bin/bash
 
 # List of automount mappings
+# If possible, avoid using a mix of cached and non-cached mounts from the same
+# filesystem. For more information, see the description of the option sharecache
+# in `man nfs`.
+# Example:
 # ipa-automountmaps:
 #   - name: homes
 #     cached: true
