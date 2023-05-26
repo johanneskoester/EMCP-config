@@ -54,7 +54,7 @@
       - automountkey-add
       - default
       - "--key \"*\""
-      - "--info \"-{{ 'no' if not mountmap['cached'] }}fsc,fstype=nfs,rw,nfsvers=3 nfs:/dpool/share/{{ mountmap['name'] }}/&\""
+      - "--info \"fstype=nfs,rw,nfsvers=3,{{ 'fsc' if mountmap['cached'] else 'nofsc,nosharecache' }} nfs:/dpool/share/{{ mountmap['name'] }}/&\""
       - "auto.{{ mountmap['name'] }}"
     tty: true
   become: true

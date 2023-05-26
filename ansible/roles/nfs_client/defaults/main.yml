@@ -18,6 +18,9 @@ autofs_root: /mnt
 
 # List of mountpoints with a local path relative to {{ autofs_root }}
 # The key "cached" controls whether cachefilesd should be enabled for the mountpoint.
+# If possible, avoid using a mix of cached and non-cached mounts from the same
+# filesystem. For more information, see the description of the option sharecache
+# in `man nfs`.
 # Example:
 # autofs_mounts:
 #   - localpath: shared
