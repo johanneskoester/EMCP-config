@@ -14,8 +14,8 @@
     state: present
   retries: 10
   delay: 5
-  register: create_db_result
-  until: create_db_result is not failed
+  register: k8s_slurm_mariadb_create_db_result
+  until: k8s_slurm_mariadb_create_db_result is not failed
 
 - name: Create the slurm database user
   community.mysql.mysql_user:
