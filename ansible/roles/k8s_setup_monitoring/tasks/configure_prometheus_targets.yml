@@ -11,4 +11,3 @@
         namespace: monitoring
       data:
         config: "{{ scrape_config | string | b64encode }}"
-  register: scrape_config_result

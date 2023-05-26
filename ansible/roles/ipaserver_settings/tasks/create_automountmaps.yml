@@ -17,7 +17,7 @@
     tty: true
   become: true
   changed_when: false
-  register: automountmap_search
+  register: ipaserver_settings_automountmap_search
 
 
 - name: Create the automount map
@@ -30,7 +30,7 @@
       - "auto.{{ mountmap['name'] }}"
     tty: true
   become: true
-  when: automountmap_search.stdout is search("0 automount maps matched")
+  when: ipaserver_settings_automountmap_search.stdout is search("0 automount maps matched")
 
 - name: Add the automountmap to auto.master
   community.docker.docker_container_exec:
@@ -44,7 +44,7 @@
       - "auto.master"
     tty: true
   become: true
-  when: automountmap_search.stdout is search("0 automount maps matched")
+  when: ipaserver_settings_automountmap_search.stdout is search("0 automount maps matched")
 
 - name: Add the automountkey
   community.docker.docker_container_exec:
@@ -58,4 +58,4 @@
       - "auto.{{ mountmap['name'] }}"
     tty: true
   become: true
-  when: automountmap_search.stdout is search("0 automount maps matched")
+  when: ipaserver_settings_automountmap_search.stdout is search("0 automount maps matched")

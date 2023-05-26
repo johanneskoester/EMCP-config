@@ -20,6 +20,6 @@
 
 - name: Verify that changes have been applied
   ansible.builtin.command: multipath -t
-  register: cmd_multipath
+  register: k8s_setup_longhorn_cmd_multipath
   changed_when: false
-  failed_when: not (cmd_multipath['stdout'] | regex_search(multipath_longhorn_regex | regex_escape))
+  failed_when: not (k8s_setup_longhorn_cmd_multipath['stdout'] | regex_search(multipath_longhorn_regex | regex_escape))
