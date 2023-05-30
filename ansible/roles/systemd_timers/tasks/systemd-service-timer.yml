@@ -5,39 +5,39 @@
       - /usr/bin/systemd-escape
       - "{{ systemd_timers_item['service_name'] }}"
   changed_when: false
-  register: cmd_escape
+  register: systemd_timers_cmd_escape
 
 - name: Install the service file
   ansible.builtin.template:
     src: "{{ systemd_timers_item['service_template'] }}"
-    dest: "/etc/systemd/system/{{ cmd_escape['stdout'] }}.service"
+    dest: "/etc/systemd/system/{{ systemd_timers_cmd_escape['stdout'] }}.service"
     owner: root
     group: root
     mode: "0644"
-  when: cmd_escape['stdout']
+  when: systemd_timers_cmd_escape['stdout']
 
 - name: Install the timer file
   ansible.builtin.template:
     src: "{{ systemd_timers_item['timer_template'] }}"
-    dest: "/etc/systemd/system/{{ cmd_escape['stdout'] }}.timer"
+    dest: "/etc/systemd/system/{{ systemd_timers_cmd_escape['stdout'] }}.timer"
     owner: root
     group: root
     mode: "0644"
-  when: cmd_escape['stdout']
-  register: install_timer
+  when: systemd_timers_cmd_escape['stdout']
+  register: systemd_timers_install_timer
   notify: restart timer units
 
 - name: Add the current timer unit name to the list of changed units
   ansible.builtin.set_fact:
-    changed_timer_units: "{{ (changed_timer_units | default([])) + [cmd_escape['stdout']] }}"
+    systemd_timers_changed_timer_units: "{{ (systemd_timers_changed_timer_units | default([])) + [systemd_timers_cmd_escape['stdout']] }}"
   when:
-    - cmd_escape['stdout']
-    - install_timer is changed
+    - systemd_timers_cmd_escape['stdout']
+    - systemd_timers_install_timer is changed
 
 - name: Make sure the timer service is enabled and started
   ansible.builtin.systemd:
-    name: "{{ cmd_escape['stdout'] }}.timer"
+    name: "{{ systemd_timers_cmd_escape['stdout'] }}.timer"
     state: started
     enabled: true
     daemon_reload: true
-  when: cmd_escape['stdout']
+  when: systemd_timers_cmd_escape['stdout']

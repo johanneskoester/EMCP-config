@@ -1,6 +1,6 @@
 - name: Loop through the network interfaces to find the current main one
   ansible.builtin.set_fact:
-    main_interface: "{{ set_default_gw_item }}"
+    set_default_gw_main_interface: "{{ set_default_gw_item }}"
   loop: "{{ ansible_interfaces }}"
   loop_control:
     loop_var: set_default_gw_item
@@ -12,7 +12,7 @@
 
 - name: Retrieve cloud-init information
   community.general.cloud_init_data_facts:
-  register: cloud_init_res
+  register: set_default_gw_cloud_init_res
   become: true
 
 - name: Write netplan default gw config
@@ -22,6 +22,6 @@
     owner: root
     group: root
     mode: "0644"
-  when: cloud_init_res['cloud_init_data_facts']['status']['v1']['stage'] is defined
+  when: set_default_gw_cloud_init_res['cloud_init_data_facts']['status']['v1']['stage'] is defined
   become: true
   notify: apply netplan config

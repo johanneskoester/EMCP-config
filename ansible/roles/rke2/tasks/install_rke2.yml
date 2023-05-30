@@ -21,7 +21,7 @@
   args:
     executable: /bin/bash
   changed_when: false
-  register: installed_rke2_version
+  register: rke2_installed_version
   when: ("rke2-" + rke2_type + ".service") in ansible_facts['services']
 
 - name: Run the rke2 install script
@@ -36,8 +36,8 @@
     HTTPS_PROXY: "{{ http_proxy }}"
     NO_PROXY: "{{ no_proxy }}"
   changed_when: true
-  when: (rke2_version != (installed_rke2_version.stdout | default({})))
-        or installed_rke2_version is not defined
+  when: (rke2_version != (rke2_installed_version.stdout | default({})))
+        or rke2_installed_version is not defined
   become: true
 
 - name: Create rke2 config dir

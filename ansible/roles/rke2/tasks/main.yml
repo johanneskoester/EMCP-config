@@ -40,8 +40,8 @@
     validate_certs: false
     status_code:
       - 401
-  register: apiserver_query_response
-  until: apiserver_query_response['status'] == 401
+  register: rke2_apiserver_query_response
+  until: rke2_apiserver_query_response['status'] == 401
   retries: 50
   delay: 15
   when: inventory_hostname not in groups[rke2_primary_server_group_name]

@@ -1,5 +1,5 @@
 - name: Start the database daemon
-  ignore_errors: true
+  ignore_errors: true  # noqa
   community.general.supervisorctl:
     name: slurmdbd
     state: started

@@ -16,14 +16,14 @@
     POETRY_VERSION: "{{ poetry_version }}"
     POETRY_HOME: "{{ poetry_home }}"
   vars:
-    already_installed_expr: "{{ ('version (' ~ poetry_version ~ ') is already installed.') | regex_escape() }}"
+    poetry_already_installed_expr: "{{ ('version (' ~ poetry_version ~ ') is already installed.') | regex_escape() }}"
   ansible.builtin.command:
     argv:
       - python3
       - "{{ poetry_installation_script }}"
   async: 1800
   poll: 10
-  changed_when: not (poetry_installation_result['stdout'] | regex_search(already_installed_expr))
+  changed_when: not (poetry_installation_result['stdout'] | regex_search(poetry_already_installed_expr))
   register: poetry_installation_result
 
 - name: Verify the installation
@@ -56,13 +56,13 @@
 
 - name: Run Bash completions command
   ansible.builtin.command: "{{ poetry_home | quote }}/bin/poetry completions bash"
-  register: "cmd_poetry_bash_completions"
+  register: poetry_cmd_bash_completions
   changed_when: false
   when: poetry_verification_result is success
 
 - name: Save the Bash completions output to a file
   ansible.builtin.copy:
-    content: "{{ cmd_poetry_bash_completions.stdout }}"
+    content: "{{ poetry_cmd_bash_completions.stdout }}"
     dest: "/etc/bash_completion.d/poetry.bash-completion"
     owner: root
     group: root
