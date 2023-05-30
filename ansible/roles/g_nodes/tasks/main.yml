@@ -4,3 +4,12 @@
   block:
     - ansible.builtin.include_tasks: mount_local.yml
   tags: mount_local
+
+- name: Install GPU tools
+  become: true
+  block:
+    - ansible.builtin.include_tasks: gpu-tools.yml
+  tags:
+    - g_nodes
+    - nvidia-tools
+    - gpu-tools
