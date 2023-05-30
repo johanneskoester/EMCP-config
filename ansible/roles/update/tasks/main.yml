@@ -1,7 +1,7 @@
 ---
 - name: Determine whether this role is being executed
   ansible.builtin.set_fact:
-    updating: true
+    update_updating: true
   tags:
     - never
     - update
@@ -9,7 +9,7 @@
 - name: Display a message if this role is being automatically skipped
   ansible.builtin.debug:
     msg: The update role is skipped by default. Add '--tags update' to enable it.
-  when: updating is not defined
+  when: update_updating is not defined
   tags:
     - update
 

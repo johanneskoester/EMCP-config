@@ -25,10 +25,10 @@
 
 - name: Extract the first allocated IPA ID and the number of possible IPA IDs
   vars:
-    parsed_ints: "{{ subidmap_cmd_idrange['stdout'] | regex_findall('range: (\\d+)') }}"
+    subidmap_parsed_ints: "{{ subidmap_cmd_idrange['stdout'] | regex_findall('range: (\\d+)') }}"
   ansible.builtin.set_fact:
-    subidmap_first_ipa_id: "{{ parsed_ints[0] }}"
-    subidmap_ipa_range_size: "{{ parsed_ints[1] }}"
+    subidmap_first_ipa_id: "{{ subidmap_parsed_ints[0] }}"
+    subidmap_ipa_range_size: "{{ subidmap_parsed_ints[1] }}"
   when: subidmap_cmd_idrange['stdout'] is defined
 
 - name: Calculate the last possible IPA ID
