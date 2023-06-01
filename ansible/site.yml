@@ -81,12 +81,11 @@
     - name: test nvidia driver deployment
       become: false
       changed_when: false
-      anible.builtin.command: /usr/bin/nvidia-smi
+      ansible.builtin.command: /usr/bin/nvidia-smi
   vars:
     nvidia_driver_ubuntu_install_from_cuda_repo: true
-    nvidia_driver_branch: "{{ cuda_driver_version }}"
-  module_defaults:
     cuda_driver_version: "520"
+    nvidia_driver_branch: "{{ cuda_driver_version }}"
   roles:
     - facts
     - update
