@@ -19,6 +19,12 @@
     kubeconfig: "{{ rke2_kubeconf_host_path }}{{ rke2_download_kubeconf_file_name }}"
     definition: "{{ lookup('template', 'ipa_configmap.yml.j2') | from_yaml }}"
 
+- name: Create the authorized_keys ConfigMap
+  kubernetes.core.k8s:
+    state: present
+    kubeconfig: "{{ rke2_kubeconf_host_path }}{{ rke2_download_kubeconf_file_name }}"
+    definition: "{{ lookup('template', 'authorized_keys_configmap.yml.j2') | from_yaml }}"
+
 # A headless service is required for StatefulSet in order to keep the network
 # identity of pods stable.
 - name: Create the internal-facing slurmctld headless service
@@ -107,6 +113,19 @@
                 volumeMounts:
                   - name: slurm-state
                     mountPath: "{{ slurmctld_state_save_location }}"
+              - name: ssh-pub-keys-mv-chown
+                image: "{{ slurmctld_image_url }}"
+                command:
+                  - /bin/bash
+                  - "-c"
+                  - "cp /pub_ssh_keys/authorized_keys /home/{{ slurmctld_ssh_user }}/.ssh/"
+                  - "&&"
+                  - "chown -R {{ slurmctld_ssh_user }}:{{ slurmctld_ssh_user }} /home/{{ slurmctld_ssh_user }}/.ssh"
+                volumeMounts:
+                  - name: slurmctld-ssh-ro
+                    mountPath: "/pub_ssh_keys"
+                  - name: slurmctld-ssh
+                    mountPath: "/home/{{ slurmctld_ssh_user }}/.ssh"
             containers:
               - name: slurmctld
                 image: "{{ slurmctld_image_url }}"
@@ -158,8 +177,9 @@
               - name: ipaadmin
                 secret:
                   secretName: ipaadmin
-            imagePullSecrets:
-              - name: "{{ slurmctld_image_registry_secret_name | default(omit) }}"
+              - name: slurmctld-ssh-ro
+                configMap:
+                  name: authorized-keys-slurmctld
         volumeClaimTemplates:
           - metadata:
               name: slurm-state

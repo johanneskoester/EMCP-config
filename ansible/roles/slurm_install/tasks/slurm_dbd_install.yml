@@ -1,0 +1,5 @@
+- name: Install the database daemon
+  ansible.builtin.apt:
+    name:
+      - slurmdbd
+    state: present

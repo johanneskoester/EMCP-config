@@ -9,9 +9,9 @@
 # The ipa-client-automount command uses the exit code 3 to indicate that no action is needed
 - name: Configure ipa automount
   ansible.builtin.command: ipa-client-automount -U
-  changed_when: cmd_automount['rc'] != 3
+  changed_when: nfs_client_cmd_automount['rc'] != 3
   failed_when:
-    - cmd_automount['rc'] != 0
-    - cmd_automount['rc'] != 3
-  register: cmd_automount
+    - nfs_client_cmd_automount['rc'] != 0
+    - nfs_client_cmd_automount['rc'] != 3
+  register: nfs_client_cmd_automount
   notify: reload autofs

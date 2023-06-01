@@ -20,3 +20,12 @@
   when:
     - ansible_facts['distribution'] == "Ubuntu"
     - ansible_facts['distribution_major_version'] | int < 22
+
+- name: Install nvtop
+  ansible.builtin.apt:
+    name:
+      - nvtop
+    state: present
+  when:
+    - ansible_local['gpu']['count'] is defined
+    - ansible_local['gpu']['count'] > 0

@@ -50,6 +50,7 @@ providers:
       - "default"
       - "monitoring"
       - "longhorn-system"
+      - "slurm"
   kubernetesIngress:
     enabled: false
 volumes: []
@@ -104,10 +105,20 @@ ports:
     expose: true
     exposedPort: 6817
     protocol: TCP
+  slurmdbd:
+    port: 6819
+    expose: true
+    exposedPort: 6819
+    protocol: TCP
   slurmctldssh:
     port: 2222
     expose: true
     exposedPort: 2222
+    protocol: TCP
+  mariadb:
+    port: 3306
+    expose: true
+    exposedPort: 3306
     protocol: TCP
 tlsOptions: {}
 service:

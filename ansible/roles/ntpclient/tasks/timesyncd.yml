@@ -21,7 +21,7 @@
 
 - name: Verify that timesyncd is configured correctly
   ansible.builtin.command: timedatectl show-timesync
-  register: cmd_timedatectl
+  register: ntpclient_cmd_timedatectl
   changed_when: false
-  failed_when: ('ServerAddress=' ~ ntp_server_ip) not in cmd_timedatectl['stdout_lines']
+  failed_when: ('ServerAddress=' ~ ntp_server_ip) not in ntpclient_cmd_timedatectl['stdout_lines']
   become: false

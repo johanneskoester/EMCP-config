@@ -2,7 +2,7 @@
 - name: Add the cgroup configuration file
   ansible.builtin.copy:
     src: cgroup.conf
-    dest: /etc/slurm-llnl/cgroup.conf
+    dest: "{{ slurmd_config_dir }}/cgroup.conf"
     owner: root
     group: root
     mode: "0644"
@@ -11,7 +11,7 @@
 - name: Add the GPU configuration file
   ansible.builtin.template:
     src: gres.conf.j2
-    dest: /etc/slurm-llnl/gres.conf
+    dest: "{{ slurmd_config_dir }}/gres.conf"
     owner: root
     group: root
     mode: "0644"
@@ -23,9 +23,9 @@
 - name: Add the main configuration file
   ansible.builtin.template:
     src: slurm.conf.j2
-    dest: /etc/slurm-llnl/slurm.conf
-    owner: root
-    group: root
+    dest: "{{ slurmd_config_dir }}/slurm.conf"
+    owner: "{{ slurmd_user_name }}"
+    group: "{{ slurmd_user_name }}"
     mode: "0644"
   notify: restart slurmd
 
@@ -33,9 +33,9 @@
   ansible.builtin.file:
     path: "{{ slurm_log_dir }}"
     state: directory
+    owner: "{{ slurmd_user_name }}"
+    group: "{{ slurmd_user_name }}"
     mode: "0755"
-    owner: root
-    group: root
 
 - name: Relax user limits
   ansible.builtin.template:
@@ -48,23 +48,23 @@
 - name: Copy the top-level epilog script
   ansible.builtin.copy:
     src: epilog.sh
-    dest: /etc/slurm-llnl/epilog.sh
-    owner: root
-    group: root
+    dest: "{{ slurmd_config_dir }}/epilog.sh"
+    owner: "{{ slurmd_user_name }}"
+    group: "{{ slurmd_user_name }}"
     mode: "0755"
 
 - name: Create the epilog script directory
   ansible.builtin.file:
-    path: /etc/slurm-llnl/epilog.d
+    path: "{{ slurmd_config_dir }}/epilog.d"
     state: directory
-    owner: root
-    group: root
+    owner: "{{ slurmd_user_name }}"
+    group: "{{ slurmd_user_name }}"
     mode: "0755"
 
 - name: Copy the GPU epilog script
   ansible.builtin.copy:
     src: 99-gpu-last-job-cleanup
-    dest: /etc/slurm-llnl/epilog.d/99-gpu-last-job-cleanup
-    owner: root
-    group: root
+    dest: "{{ slurmd_config_dir }}/epilog.d/99-gpu-last-job-cleanup"
+    owner: "{{ slurmd_user_name }}"
+    group: "{{ slurmd_user_name }}"
     mode: "0755"

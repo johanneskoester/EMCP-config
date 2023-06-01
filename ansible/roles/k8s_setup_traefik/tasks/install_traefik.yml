@@ -17,15 +17,15 @@
   ansible.builtin.tempfile:
     state: directory
     suffix: traefikcrd
-  register: traefik_crd_temp
+  register: k8s_setup_traefik_crd_temp
   become: false
 
 - name: Copy CRD files to the remote host
   ansible.builtin.copy:
     src: "{{ k8s_setup_traefik_item }}"
-    dest: "{{ (traefik_crd_temp['path'], k8s_setup_traefik_item) | path_join }}"
+    dest: "{{ (k8s_setup_traefik_crd_temp['path'], k8s_setup_traefik_item) | path_join }}"
     mode: "0644"
-  when: traefik_crd_temp['path'] is defined
+  when: k8s_setup_traefik_crd_temp['path'] is defined
   loop:
     - traefik_crd_definitions.yml
     - traefik_crd_rbac.yml
@@ -35,10 +35,10 @@
 
 - name: Install CRDs
   kubernetes.core.k8s:
-    src: "{{ (traefik_crd_temp['path'], k8s_setup_traefik_item) | path_join }}"
+    src: "{{ (k8s_setup_traefik_crd_temp['path'], k8s_setup_traefik_item) | path_join }}"
     kubeconfig: "{{ rke2_kubeconf_host_path }}{{ rke2_download_kubeconf_file_name }}"
     state: present
-  when: traefik_crd_temp['path'] is defined
+  when: k8s_setup_traefik_crd_temp['path'] is defined
   loop:
     - traefik_crd_definitions.yml
     - traefik_crd_rbac.yml
@@ -47,9 +47,9 @@
 
 - name: Delete the temp directory
   ansible.builtin.file:
-    path: "{{ traefik_crd_temp['path'] }}"
+    path: "{{ k8s_setup_traefik_crd_temp['path'] }}"
     state: absent
-  when: traefik_crd_temp['path'] is defined
+  when: k8s_setup_traefik_crd_temp['path'] is defined
   become: false
 
 - name: Create traefik service account

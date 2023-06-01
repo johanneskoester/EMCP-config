@@ -5,13 +5,13 @@
     get_attributes: false
     get_checksum: false
     get_mime: false
-  register: docker_socket
+  register: ipaclient_postinstall_docker_socket
   tags: ipaclient-docker-group
 
 - name: Make sure that the docker socket is owned by the IPA docker group
   block:
     - ansible.builtin.include_tasks: docker_group_ipa.yml
-  when: docker_socket['stat']['exists']
+  when: ipaclient_postinstall_docker_socket['stat']['exists']
   tags: ipaclient-docker-group
 
 - name: Change the default umask for user homes created by the pam_mkhomedir module.

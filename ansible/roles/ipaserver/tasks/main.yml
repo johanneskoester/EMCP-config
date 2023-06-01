@@ -22,7 +22,7 @@
 - name: Obtain information about network interfaces from resolvectl
   ansible.builtin.command: resolvectl default-route
   changed_when: false
-  register: resolvectl_command
+  register: ipaserver_resolvectl_command
   tags: freeIPA-server
 
 - name: Copy the systemd service file
@@ -33,7 +33,7 @@
     group: root
     mode: "0644"
   notify: restart freeipa service
-  when: resolvectl_command is defined
+  when: ipaserver_resolvectl_command is defined
   tags: freeIPA-server
 
 - name: Ensure ipa-systemd service is running

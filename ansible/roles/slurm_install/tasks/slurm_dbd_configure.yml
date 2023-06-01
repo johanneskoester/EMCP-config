@@ -1,0 +1,16 @@
+- name: Add the main configuration file
+  ansible.builtin.template:
+    src: slurmdbd.conf.j2
+    dest: "{{ slurmdbd_config_dir }}/slurmdbd.conf"
+    owner: "{{ slurm_user_name }}"
+    group: "{{ slurm_user_name }}"
+    mode: "0600"
+  notify: restart slurmdbd
+
+- name: Create the log directory
+  ansible.builtin.file:
+    path: "{{ slurm_log_dir }}"
+    state: directory
+    mode: "0755"
+    owner: "{{ slurm_user_name }}"
+    group: "{{ slurm_user_name }}"

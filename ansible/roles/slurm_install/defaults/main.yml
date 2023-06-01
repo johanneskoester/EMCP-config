@@ -1,10 +1,13 @@
 # Inventory group names
 slurm_controller_group_name: slurm_controller
 slurm_worker_group_name: slurm_worker
+slurm_dbd_group_name: slurm_database
 
 # The version to install.
 slurm_version: "19.05.8"
 slurm_version_with_release: "{{ slurm_version }}-1"
+slurm_client_version: "{{ slurm_version }}"
+slurm_client_version_with_release: "{{ slurm_version }}-1"
 
 # URL of the archive containing the deb packages.
 slurm_worker_debs_url: https://github.com/IKIM-Essen/EMCP-slurm/releases/download/v21.08.5/slurm-21.08.5-ubuntu22.04-debs.zip
@@ -59,6 +62,24 @@ slurm_ulimit_nofile_hard: "131072"  # 2^17
 slurm_ulimit_stack_soft: "67108864"  # 64 GiB
 slurm_ulimit_stack_hard: "unlimited"
 
+# Slurmdbd settings
+slurmdbd_archive_events: "yes"
+slurmdbd_archive_jobs: "yes"
+slurmdbd_archive_reservations: "yes"
+slurmdbd_archive_steps: "no"
+slurmdbd_archive_suspend: "no"
+slurmdbd_archive_transactions: "no"
+slurmdbd_archive_usage: "no"
+
+slurmdbd_purge_events_after: "1month"
+slurmdbd_purge_jobs_after: "12month"
+slurmdbd_purge_reservations_after: "1month"
+slurmdbd_purge_steps_after: "1month"
+slurmdbd_purge_suspend_after: "1month"
+slurmdbd_purge_transactions_after: "12month"
+slurmdbd_purge_usage_after: "24month"
+
+slurmdbd_mariadb_url: ""
 # The compute node partitions as a list of hashes.
 # Each hash has the following keys:
 #   name: the partition name as a string

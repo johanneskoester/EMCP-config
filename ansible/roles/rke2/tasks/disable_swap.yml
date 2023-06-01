@@ -1,11 +1,11 @@
 - name: Check if swap is enabled
   ansible.builtin.command: cat /proc/swaps
-  register: proc_swap
+  register: rke2_proc_swap
   changed_when: false
 
 - name: Set swap variable
   ansible.builtin.set_fact:
-    swap_is_on: "{{ proc_swap['stdout_lines'] | length > 1 }}"
+    rke2_swap_is_on: "{{ rke2_proc_swap['stdout_lines'] | length > 1 }}"
 
 - name: Get swap systemd unit
   ansible.builtin.shell: |
@@ -15,14 +15,14 @@
     executable: /bin/bash
   become: true
   changed_when: false
-  failed_when: swap_systemd_unit.rc > 1
-  register: swap_systemd_unit
+  failed_when: rke2_swap_systemd_unit.rc > 1
+  register: rke2_swap_systemd_unit
 
 - name: Disable swap for current session
   ansible.builtin.command: swapoff -a
   become: true
   changed_when: true
-  when: swap_is_on
+  when: rke2_swap_is_on
 
 - name: Comment out swap line in /etc/fstab
   ansible.builtin.replace:
@@ -33,7 +33,7 @@
 
 - name: Mask swap unit file
   ansible.builtin.systemd:
-    name: "{{ swap_systemd_unit['stdout'] }}"
+    name: "{{ rke2_swap_systemd_unit['stdout'] }}"
     masked: true
     state: stopped
   become: true
