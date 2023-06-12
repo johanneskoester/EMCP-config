@@ -10,17 +10,17 @@
     owner: munge
     group: munge
     mode: "0600"
-  notify: "restart munge {{ init_system }}"
+  notify: "restart munge {{ slurm_install_init_system }}"
 
 - name: Enable and start munge with systemd
   ansible.builtin.systemd:
     name: munge
     state: started
     enabled: true
-  when: init_system == 'systemd'
+  when: slurm_install_init_system == 'systemd'
 
 - name: Start munge with supervisord
   community.general.supervisorctl:
     name: munged
     state: started
-  when: init_system == 'supervisord'
+  when: slurm_install_init_system == 'supervisord'
