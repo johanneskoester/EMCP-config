@@ -24,12 +24,20 @@
     - ipa-hostgroups
     - ipa-settings
 
-- name: Include ipa habac rule tasks
+- name: Include ipa hbac rule tasks
   block:
     - ansible.builtin.include_tasks: create_hbacrules.yml
   run_once: true
   tags:
     - ipa-hbacrules
+    - ipa-settings
+
+- name: Include ipa rbac rule tasks
+  block:
+    - ansible.builtin.include_tasks: create_rbacrules.yml
+  run_once: true
+  tags:
+    - ipa-rbacrules
     - ipa-settings
 
 # FIXME: kerberos authentication needed to automatically create the automountmaps
