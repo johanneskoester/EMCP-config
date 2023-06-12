@@ -38,6 +38,12 @@ UnkillableStepTimeout=120
 SchedulerType=sched/backfill
 SelectType=select/cons_tres
 SelectTypeParameters=CR_Core
+{% if slurm_use_dbd %}
+PriorityType=priority/multifactor
+PriorityCalcPeriod=5
+PriorityDecayHalfLife=7-0
+PriorityFavorSmall=NO
+{% endif %}
 #
 #
 # LOGGING AND ACCOUNTING
