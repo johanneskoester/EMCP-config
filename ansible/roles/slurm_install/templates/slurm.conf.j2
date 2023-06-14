@@ -51,6 +51,7 @@ PriorityWeightFairshare=10000
 PriorityWeightJobSize=1000
 PriorityWeightPartition=1000
 PriorityWeightQOS=0
+PriorityWeightTRES=CPU=1000,Mem=2000,GRES/gpu=3000
 {% endif %}
 #
 #
@@ -58,6 +59,7 @@ PriorityWeightQOS=0
 {% if slurm_use_dbd %}
 AccountingStorageHost={{ slurmdbd_url }}
 AccountingStorageType=accounting_storage/slurmdbd
+AccountingStorageTRES=gres/gpu
 {% else %}
 AccountingStorageType=accounting_storage/filetxt
 AccountingStorageLoc={{ slurm_log_dir }}/accounting
