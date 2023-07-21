@@ -1,4 +1,1 @@
 AutoDetect=nvml
-{% for device in ansible_local['gpu']['devices'] %}
-Name=gpu File={{ device }}
-{% endfor %}
