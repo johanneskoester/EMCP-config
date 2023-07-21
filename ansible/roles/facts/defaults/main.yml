@@ -1,5 +1,0 @@
-# Use this variable to override the default autodetection of GPU devices.
-# The following example excludes /dev/nvidia1 from the enumeration.
-# facts_gpu_override:
-#   count: 2
-#   devices: ["/dev/nvidia0", "/dev/nvidia2"]
