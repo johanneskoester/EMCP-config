@@ -3,8 +3,24 @@ if ! command -v lspci >/dev/null 2>&1; then
     echo "lspci is not installed"
     exit 1
 fi
+if ! command -v jq >/dev/null 2>&1; then
+    echo "jq is not installed"
+    exit 1
+fi
+
+# Detect NVIDIA GPUs.
+count=$(lspci | grep --count -E "(3D|VGA compatible) controller: NVIDIA")
+
+# Enumerate devices if detected.
+if [ $count -gt 0 ]; then
+    devices="$(find /dev -regex '/dev/nvidia[0-9]+' | sort --version-sort | jq --raw-input | jq --slurp --compact-output)"
+else
+    devices="[]"
+fi
+
 cat <<EOF
 {
-    "count": $(lspci | grep --count -E "(3D|VGA compatible) controller: NVIDIA")
+    "count": $count,
+    "devices": $devices
 }
 EOF

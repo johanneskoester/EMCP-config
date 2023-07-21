@@ -1,2 +1,4 @@
 AutoDetect=nvml
-Name=gpu File=/dev/nvidia[0-{{ ansible_local['gpu']['count'] - 1 }}]
+{% for device in ansible_local['gpu']['devices'] %}
+Name=gpu File={{ device }}
+{% endfor %}
