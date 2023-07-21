@@ -14,8 +14,7 @@ if [ $SLURM_JOB_UID -eq 0 ]; then
 	exit 0
 fi
 
-gpu_count=$(/usr/bin/nvidia-smi -L | wc -l)
-nvidia_devices="$(/usr/bin/seq --separator=" " 0 $((gpu_count - 1)) | /usr/bin/sed -E 's|([[:digit:]]+)|/dev/nvidia\1|g')"
+nvidia_devices="$(/usr/bin/find /dev -regex '/dev/nvidia[0-9]+' -printf '%p ')"
 remaining_jobs="$(/usr/bin/squeue -h -u "$SLURM_JOB_USER" -w "$SLURMD_NODENAME" --states=pending,running)"
 
 if [ "$remaining_jobs" ]; then
