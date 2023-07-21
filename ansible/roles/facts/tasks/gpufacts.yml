@@ -18,7 +18,17 @@
 - name: Add the script for collecting GPU facts
   ansible.builtin.copy:
     src: gpu.fact
-    dest: /etc/ansible/facts.d/
+    dest: /etc/ansible/facts.d/gpu.fact
     owner: root
     group: root
     mode: "0755"
+  when: facts_gpu_override is not defined
+
+- name: Add custom GPU facts
+  ansible.builtin.template:
+    src: gpu.fact.override.j2
+    dest: /etc/ansible/facts.d/gpu.fact
+    owner: root
+    group: root
+    mode: "0644"
+  when: facts_gpu_override is defined
