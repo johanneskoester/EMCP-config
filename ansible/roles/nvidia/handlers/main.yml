@@ -1,0 +1,5 @@
+- name: Start the GPU draining service
+  become: true
+  ansible.builtin.systemd:
+    name: nvidia-drain.service
+    state: started

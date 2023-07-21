@@ -1,0 +1,24 @@
+---
+- name: Install the script
+  ansible.builtin.copy:
+    src: nvidia-drain.sh
+    dest: /usr/local/bin/nvidia-drain.sh
+    owner: root
+    group: root
+    mode: "0755"
+  notify: Start the GPU draining service
+
+- name: Install the service file
+  ansible.builtin.template:
+    src: nvidia-drain.service.j2
+    dest: /etc/systemd/system/nvidia-drain.service
+    owner: root
+    group: root
+    mode: "0644"
+  notify: Start the GPU draining service
+
+- name: Enable the service
+  ansible.builtin.systemd:
+    name: nvidia-drain.service
+    enabled: true
+    daemon_reload: true

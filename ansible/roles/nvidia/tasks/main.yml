@@ -1,4 +1,12 @@
 ---
+- name: Drain faulty GPUs
+  block:
+    - ansible.builtin.include_tasks: gpu_drain.yml
+  when: nvidia_drain_devices is defined
+  tags:
+    - nvidia
+    - nvidia-drain
+
 # This block runs on an RKE2 server only if at least one node in the
 # RKE2 cluster is GPU-equipped.
 - name: Install the NVIDIA GPU operator
@@ -9,4 +17,5 @@
     - inventory_hostname in groups[rke2_servers_group_name]
   run_once: true
   tags:
+    - nvidia
     - nvidia-gpu-operator
