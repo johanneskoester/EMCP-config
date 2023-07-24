@@ -95,6 +95,7 @@
     - ssh_config
     - zsh
     - nvidia.nvidia_driver
+    - nvidia
     - mambaforge
     - devtools
     - apptainer
@@ -154,7 +155,6 @@
   roles:
     - set_default_gw
     - rke2
-    - k8s_nvidia
     - k8s_setup_longhorn
     - k8s_setup_traefik
     - k8s_setup_monitoring

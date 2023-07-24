@@ -3,8 +3,22 @@ if ! command -v lspci >/dev/null 2>&1; then
     echo "lspci is not installed"
     exit 1
 fi
+
+# The number of physical GPUs installed
+count=$(lspci | grep --count -E "(3D|VGA compatible) controller: NVIDIA")
+
+# The number of usable devices
+# If drivers are installed correctly and no devices have been drained
+# (see `nvidia-smi drain --help`), this matches the physical count.
+if command -v nvidia-smi > /dev/null 2>&1; then
+    cuda_count=$(nvidia-smi -L | wc -l)
+else
+    cuda_count=0
+fi
+
 cat <<EOF
 {
-    "count": $(lspci | grep --count -E "(3D|VGA compatible) controller: NVIDIA")
+    "count": $count,
+    "cuda_count": $cuda_count
 }
 EOF

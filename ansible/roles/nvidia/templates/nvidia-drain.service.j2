@@ -1,0 +1,11 @@
+[Unit]
+Description=Drain selected GPUs
+# Start this service before services that perform GPU autodiscovery.
+Before=slurmd.service rke2-agent.service rke2-server.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/nvidia-drain.sh {{ nvidia_drain_devices | map('quote') | join(' ') }}
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,6 @@
+gpu_operator_chart_version: "23.3.1"
+
+# Define the list "nvidia_drain_devices" at the host level to create a boot-time
+# service which invokes `nvidia-smi drain` on the specified GPUs. For example:
+# nvidia_drain_devices:
+#   - "0000:A1:00.0"
