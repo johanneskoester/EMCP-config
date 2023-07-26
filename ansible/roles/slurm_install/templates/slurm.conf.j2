@@ -38,12 +38,28 @@ UnkillableStepTimeout=120
 SchedulerType=sched/backfill
 SelectType=select/cons_tres
 SelectTypeParameters=CR_Core
+{% if slurm_use_dbd %}
+PriorityType=priority/multifactor
+PriorityCalcPeriod=5
+PriorityDecayHalfLife=7-0
+# The job's age factor reaches 1.0 after waiting in the
+# queue for 1 week.
+PriorityMaxAge=7-0
+PriorityFavorSmall=NO
+PriorityWeightAge=1000
+PriorityWeightFairshare=10000
+PriorityWeightJobSize=1000
+PriorityWeightPartition=1000
+PriorityWeightQOS=0
+PriorityWeightTRES=CPU=1000,Mem=2000,GRES/gpu=3000
+{% endif %}
 #
 #
 # LOGGING AND ACCOUNTING
 {% if slurm_use_dbd %}
 AccountingStorageHost={{ slurmdbd_url }}
 AccountingStorageType=accounting_storage/slurmdbd
+AccountingStorageTRES=gres/gpu
 {% else %}
 AccountingStorageType=accounting_storage/filetxt
 AccountingStorageLoc={{ slurm_log_dir }}/accounting
