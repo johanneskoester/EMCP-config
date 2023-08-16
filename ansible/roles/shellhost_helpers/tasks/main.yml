@@ -1,0 +1,9 @@
+---
+- name: Add helper functions and aliases for shellhost machines
+  ansible.builtin.template:
+    src: shellhost.sh.j2
+    dest: /etc/profile.d/shellhost_helpers.sh
+    owner: root
+    group: root
+    mode: "0644"
+  tags: shellhost-helpers

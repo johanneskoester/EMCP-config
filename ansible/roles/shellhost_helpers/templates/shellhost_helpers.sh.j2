@@ -1,0 +1,2 @@
+# alias for listing all open tmux sessions on all shellhosts
+alias tmux-ls-shellhosts='for ip in $(host shellhost | cut -f4 -d" "); do ssh $ip "echo -n tmux sessions on; hostname -a; tmux ls"; done'
